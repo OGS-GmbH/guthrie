@@ -1,0 +1,386 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsl.example.com/schema/page.schema.json",
+  "title": "DSL Page v1",
+  "type": "object",
+  "required": ["route", "content"],
+  "additionalProperties": false,
+
+  "properties": {
+    "route": { "type": "string" },
+    "ref": { "type": "string" },
+
+    "dataSources": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/dataSource" }
+    },
+
+    "on": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/eventHandler" }
+    },
+
+    "content": { "$ref": "#/$defs/component" }
+  },
+
+  "$defs": {
+    "dataSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "http": {
+          "type": "object",
+          "required": ["method", "url"],
+          "properties": {
+            "method": { "type": "string" },
+            "url": { "type": "string" },
+            "body": { "type": ["object", "string"] }
+          }
+        },
+        "rootAccessor": { "type": "string" }
+      }
+    },
+
+    "eventHandler": {
+      "type": "object",
+      "properties": {
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key"],
+            "additionalProperties": false,
+            "properties": {
+              "key": { "type": "string" },
+              "shift": { "type": "boolean" },
+              "ctrl": { "type": "boolean" },
+              "alt": { "type": "boolean" }
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/action" }
+        }
+      }
+    },
+
+    "action": {
+      "oneOf": [
+        { "$ref": "#/$defs/httpAction" },
+        { "$ref": "#/$defs/navigateAction" },
+        { "$ref": "#/$defs/openDialogAction" },
+        { "$ref": "#/$defs/notifyAction" }
+      ]
+    },
+
+    "httpAction": {
+      "type": "object",
+      "required": ["http"],
+      "properties": {
+        "http": {
+          "type": "object",
+          "required": ["method", "url"],
+          "properties": {
+            "method": { "type": "string" },
+            "url": { "type": "string" },
+            "body": { "type": ["object", "string"] },
+
+            "onResponse": {
+              "type": "object",
+              "patternProperties": {
+                "^[1-5][0-9]{2}$": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/action" }
+                }
+              },
+              "properties": {
+                "success": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/action" }
+                },
+                "error": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/action" }
+                },
+                "clientError": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/action" }
+                },
+                "serverError": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/action" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "navigateAction": {
+      "type": "object",
+      "required": ["navigate"],
+      "additionalProperties": false,
+      "properties": {
+        "navigate": {
+          "type": "object",
+          "required": ["to"],
+          "additionalProperties": false,
+          "properties": {
+            "to": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "openDialogAction": {
+      "type": "object",
+      "required": ["openDialog"],
+      "additionalProperties": false,
+      "properties": {
+        "openDialog": {
+          "type": "object",
+          "properties": {
+            "on": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/eventHandler"
+              }
+            },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/component" }
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+
+    "notifyAction": {
+      "type": "object",
+      "required": ["notify"],
+      "additionalProperties": false,
+      "properties": {
+        "notify": {
+          "type": "object",
+          "properties": {
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/component" }
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+
+    "component": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "oneOf": [
+        { "$ref": "#/$defs/templateComponent" },
+        { "$ref": "#/$defs/ifComponent" },
+        { "$ref": "#/$defs/elseComponent" },
+        { "$ref": "#/$defs/elseIfComponent" },
+        { "$ref": "#/$defs/switchComponent" },
+        { "$ref": "#/$defs/forComponent" },
+        { "$ref": "#/$defs/forEachComponent" },
+        { "$ref": "#/$defs/htmlComponent" },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/standardComponent" }
+        }
+      ]
+    },
+    "templateComponent": {
+      "type": "object",
+      "required": ["template"],
+      "additionalProperties": false,
+      "properties": {
+        "template": {
+          "type": "object",
+          "required": ["ref"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "type": "string" },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/component" }
+            }
+          }
+        }
+      }
+    },
+
+    "ifComponent": {
+      "type": "object",
+      "required": ["if"],
+      "additionalProperties": false,
+      "properties": {
+        "if": {
+          "type": "object",
+          "required": ["condition", "children"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "type": "string" },
+            "condition": { "type": "string" },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/component" }
+            }
+          }
+        }
+      }
+    },
+
+    "elseComponent": {
+      "type": "object",
+      "required": ["else"],
+      "additionalProperties": false,
+      "properties": {
+        "else": {
+          "type": "object",
+          "required": ["ifRef", "children"],
+          "additionalProperties": false,
+          "properties": {
+            "ifRef": { "type": "string" },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/component" }
+            }
+          }
+        }
+      }
+    },
+
+    "elseIfComponent": {
+      "type": "object",
+      "required": ["elseIf"],
+      "additionalProperties": false,
+      "properties": {
+        "elseIf": {
+          "type": "object",
+          "required": ["ifRef", "condition", "children"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "type": "string" },
+            "ifRef": { "type": "string" },
+            "condition": { "type": "string" },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/component" }
+            }
+          }
+        }
+      }
+    },
+
+    "switchComponent": {
+      "type": "object",
+      "required": ["switch"],
+      "additionalProperties": false,
+      "properties": {
+        "switch": {
+          "type": "object",
+          "required": ["value", "cases"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "type": "string" },
+            "value": { "type": "string" },
+            "cases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["condition", "children"],
+                "additionalProperties": false,
+                "properties": {
+                  "condition": { "type": "string" },
+                  "children": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/component" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "forComponent": {
+      "type": "object",
+      "required": ["for"],
+      "additionalProperties": false,
+      "properties": {
+        "for": {
+          "type": "object",
+          "required": ["count", "children"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "type": "string" },
+            "count": { "type": "number" },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/component" }
+            }
+          }
+        }
+      }
+    },
+
+    "forEachComponent": {
+      "type": "object",
+      "required": ["forEach"],
+      "additionalProperties": false,
+      "properties": {
+        "forEach": {
+          "type": "object",
+          "required": ["iterator", "children"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "type": "string" },
+            "iterator": { "type": "string" },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/component" }
+            }
+          }
+        }
+      }
+    },
+
+    "htmlComponent": {
+      "type": "object",
+      "required": ["html"],
+      "additionalProperties": false,
+      "properties": {
+        "html": { "type": "string" }
+      }
+    },
+
+    "standardComponent": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "ref": { "type": "string" },
+          "children": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/component" }
+          },
+          "on": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/action" }
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}
