@@ -3,7 +3,7 @@ import  {type ReactNode} from "react";
 
 type HtmlProps = { content: string, children: ReactNode[] };
 
-function Html({content, children}: HtmlProps) {
+function RawHtml({content, children}: HtmlProps) {
     /*TODO: templateinterpolation"*/
 
     return (<>
@@ -12,4 +12,4 @@ function Html({content, children}: HtmlProps) {
     </>)
 }
 
-export {Html}
+export {RawHtml}

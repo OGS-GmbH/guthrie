@@ -13,6 +13,10 @@ type StageProps = {
     page: Page
 }
 
+type ContentRendererProps = {
+    elementProps: ElementProps;
+}
+
 function ContentRenderer({elementProps}: ContentRendererProps) {
     const elements = useGuthrieElements((state) => state.elements);
     const addRef = useGuthrieRefs((state) => state.addRef);
@@ -40,9 +44,6 @@ function Stage({components, page}: StageProps) {
     return <ContentRenderer elementProps={page.content}/>
 }
 
-type ContentRendererProps = {
-    elementProps: ElementProps;
-}
 
 
 

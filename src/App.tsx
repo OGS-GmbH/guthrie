@@ -5,10 +5,16 @@ function App() {
   return <Stage components={{}} page={{
       "route": "/example",
       "content": {
-          "element": "html",
+          "element": "raw-html",
           "ref": "html-ref",
           "content": "<h1>Guthrie</h1>",
           "children": [{
+              "element": "a",
+              "children": [{
+                  "element": "text",
+                  "content": "ich bin Guthries textNode"
+              }]
+          }, {
               "element": "for",
               "count": 7,
               "children": [{

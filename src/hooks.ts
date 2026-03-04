@@ -16,11 +16,8 @@ type RefsState = {
 };
 const useGuthrieRefs = create<RefsState>((set) => ({
     refs: {},
-    addRef: (refName: string, ref: ComponentRef<ElementType>) => set((state)=> {
-        state.refs[refName] = ref;
-
-        return {refs: state.refs};
-    })
+    addRef: (refName: string, ref: ComponentRef<ElementType>) => set((state)=>
+      ({refs: {...state.refs, [refName]: ref}}))
 }));
 
 export {useGuthrieElements, useGuthrieRefs}
