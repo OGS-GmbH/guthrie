@@ -1,65 +1,73 @@
-> *We're OGS, check out our work on [github.com/ogs-gmbh](https://github.com/ogs-gmbh)*
+# React + TypeScript + Vite
 
-# Project Template for TypeScript
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-*A project template with a ready-to-use structure.*
+Currently, two official plugins are available:
 
-![Preview](./docs/preview.avif)
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-<a href="./LICENSE" target="_blank"><img src="https://img.shields.io/github/license/OGS-GmbH/_ts-template?color=0f434e&logo=hackthebox&logoColor=000000&labelColor=ffffff" /></a>
+## React Compiler
 
-- **Easy to Set Up**\
-  Simple configuration lets you start your projects quickly without complex setup.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- **Preconfigured Tooling**\
-  Includes ESLint and TypeScript configs out of the box.
+## Expanding the ESLint configuration
 
-- **Modular Structure**\
-  Organized folder layout for scalable and maintainable projects.
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-- **Development Friendly**\
-  Quick start with minimal setup required for new applications.
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## License
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-The MIT License (MIT) - Please have a look at the [LICENSE file](./LICENSE) for more details.
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-## Contributing
-Contributions are always welcome and greatly appreciated. Whether you want to report a bug, suggest a new feature, or improve the documentation, your input helps make the project better for everyone.
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-Feel free to submit a pull request, issue or feature request.
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-### Issues and Feature Requests
-Reporting an issue or creating a feature request is made by creating a new issue on this repository.
-
-You can create a [new issue or feature request here](../../issues/new/choose).
-
-### Pull Requests
-GitHub offers a solid guideline for contributing to open source projects through pull requests, covering key practices. These best practices provide a reliable starting point for making effective contributions.
-
-You can find the [guidelines here](https://docs.github.com/get-started/exploring-projects-on-github/contributing-to-a-project).
-
-### Code Of Conduct
-We are committed to keeping a welcoming, inclusive, and respectful community for everyone. To help us achieve this, we kindly ask that you adhere to our [Code of Conduct](./CODE_OF_CONDUCT.md).
-
-## Disclaimer
-
-All trademarks and registered trademarks mentioned are property of their respective owners and are used for identification purposes only. Use of these names does not imply endorsement or affiliation.
-
-This project is a trademark of OGS Gesellschaft für Datenverarbeitung und Systemberatung mbH. The License does not grant rights to use the trademark without permission.
-
----
-
-<a href="https://www.ogs.de/en/">
-  <picture>
-    <source
-      srcset="https://raw.githubusercontent.com/OGS-GmbH/.github/refs/tags/v1.0.0/docs/assets/logo/light.svg"
-      media="(prefers-color-scheme: dark)"
-    />
-    <img height="64" alt="OGS Logo" src="https://raw.githubusercontent.com/OGS-GmbH/.github/refs/tags/v1.0.0/docs/assets/logo/dark.svg"
-  </picture>
-</a>
-
-Gesellschaft für Datenverarbeitung und Systemberatung mbH
-
-[Imprint](https://www.ogs.de/en/imprint/) | [Contact](https://www.ogs.de/en/contact/) | [Careers](https://www.ogs.de/en/about-ogs/#Careers)
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
