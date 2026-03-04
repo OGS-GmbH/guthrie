@@ -1,13 +1,14 @@
 import {Html} from "./components/html.tsx";
 import {If} from "./components/if.tsx";
 import {Else} from "./components/else.tsx";
-import {Fragment} from "react";
+import {type ElementType, Fragment} from "react";
+import {For} from "./components/for.tsx";
 
-const DEFAULT_COMPONENTS = {
+const DEFAULT_COMPONENTS: Record<string, ElementType> = {
     html: Html,
     if: If,
     else: Else,
-    button: "button",
+    for: For,
     text: Fragment
 }
 

@@ -9,6 +9,13 @@ function App() {
           "ref": "html-ref",
           "content": "<h1>Guthrie</h1>",
           "children": [{
+              "element": "for",
+              "count": 7,
+              "children": [{
+                  "element": "html",
+                  "content": "render mich x mal"
+              }]
+          }, {
               "element": "if",
               "ref": "if-ref",
               "condition": true,
