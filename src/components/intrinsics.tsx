@@ -1,8 +1,8 @@
 import {type ComponentPropsWithRef} from "react";
 
-type TextNodeProps = { content: string };
+type TextProps = { content: string };
 
-function Text({content}: TextNodeProps) {
+function Text({content}: TextProps) {
   // oxlint-disable-next-line react/jsx-no-useless-fragment
   return <>{content}</>;
 }
@@ -478,6 +478,4 @@ export {
   U, Ul,
   Var, Video,
   Wbr
-
 };
-
