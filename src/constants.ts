@@ -70,6 +70,7 @@ import {
     Meter,
     Nav,
     Noscript,
+    Object,
     Ol,
     Optgroup,
     Option,
