@@ -20,4 +20,26 @@ const useGuthrieRefs = create<RefsState>((set) => ({
       ({refs: {...state.refs, [refName]: ref}}))
 }));
 
-export {useGuthrieElements, useGuthrieRefs}
+type ContextStore = {
+  context: Record<string, unknown>;
+  setContext: <T> (key: string, value: T) => void;
+  updateContext: <T> (key: string, value: (value: T) => T) => void;
+}
+
+const useGuthrieContext = create<ContextStore>((set) => ({
+  context: {},
+  setContext: <T> (key: string, value: T) => set((state) => ({
+    context: {
+      ...state.context,
+      [key]: value
+    }
+  })),
+  updateContext: <T> (key: string, updateFn: (value: T) => T) => set((state) => ({
+    context: {
+      ...state.context,
+      [key]: updateFn(state.context[key] as T)
+    }
+  }))
+}));
+
+export {useGuthrieElements, useGuthrieRefs, useGuthrieContext}

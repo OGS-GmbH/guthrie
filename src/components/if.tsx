@@ -1,22 +1,23 @@
-import {type ReactNode, type RefObject, useImperativeHandle, useState} from "react";
+import {type ReactNode} from "react";
 
-type IfProps = { ref: RefObject<{isTrue: boolean}> | null; condition: boolean; children: ReactNode[] };
+type IfProps = {
+  condition: boolean,
+  children: ReactNode[],
+  refName: string
+};
 
-function If({ref, condition, children}: IfProps) {
-
-    /*TODO: resolve and parse condition*/
-    const [renderChildren, setRenderChildren] = useState(condition);
-
-    useImperativeHandle(ref, () => ({isTrue: renderChildren}), [])
-
-    return <>
-        <button onClick={()=> {
-            setRenderChildren((state) => !state);
-        }}>
-            GEHT AB
-        </button>
-        {renderChildren && children}
+function If({refName, condition, children}: IfProps) {
+  
+  return (
+    <>
+      <button onClick={()=> {
+        updateContext(refName, (cond) => !cond);
+      }}>
+        GEHT AB
+      </button>
+      {fullfilled && children}
     </>
+)
 }
 
 export {If}
