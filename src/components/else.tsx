@@ -1,20 +1,19 @@
-import {type ReactNode, type RefObject, useEffect, useMemo, useState} from "react";
-import {useGuthrieRefs} from "../hooks";
+import {useEffect, type ReactNode} from "react";
+import { useGuthrieContext } from "../hooks";
 
-type ElseProps = { ifRef: string, children: ReactNode[] };
+type ElseProps = {
+  ifRef: string,
+  children: ReactNode[]
+};
 
 function Else({ ifRef, children }: ElseProps) {
-    const guthrieRefs = useGuthrieRefs(state => state.refs);
-    const [renderChildren, setRenderChildren] = useState(false);
-    const ifNodeRef = useMemo(() => guthrieRefs[ifRef] as RefObject<{isTrue: boolean}>, [guthrieRefs])
+  const contextCondition = useGuthrieContext(state => state.context[ifRef]);
 
-    useEffect(()=> {
-        setRenderChildren(!ifNodeRef?.current?.isTrue)
-        console.log(ifNodeRef?.current?.isTrue);
-    }, [ifNodeRef?.current.isTrue])
+  useEffect(() => {
+    console.log("Else", !contextCondition)
+  }, [contextCondition])
 
-    return renderChildren && children
-
+  return contextCondition !== undefined && !contextCondition && children
 }
 
 export {Else}
