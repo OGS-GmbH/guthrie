@@ -1,6 +1,5 @@
-import {type ElementType, useEffect, useMemo, useRef} from "react";
+import {type ElementType, useEffect, useRef} from "react";
 import {useGuthrieElements, useGuthrieRefs} from "./hooks";
-import {DEFAULT_COMPONENTS} from "./constants";
 import {toUnreservedProps} from "./props";
 
 type ElementProps = { element: string; ref?: string, children?: ElementProps[], [key: string]: unknown };
@@ -47,11 +46,11 @@ function ContentRenderer({elementProps}: ContentRendererProps) {
   );
 }
 
+
 function Stage({components, page}: StageProps) {
-    const componentSet = useMemo(() => ({...components, ...DEFAULT_COMPONENTS}), [components])
     const setElements = useGuthrieElements((state) => state.setElements);
 
-    setElements(componentSet);
+    setElements(components);
 
     return <ContentRenderer elementProps={page.content} />
 }
