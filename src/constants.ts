@@ -87,7 +87,24 @@ import {
     Script,
     Search,
     Section,
-    Select, Slot, Small, Source, Span, Strong, Style, Sub, Summary
+    Select,
+    Slot,
+    Small,
+    Source,
+    Span,
+    Strong,
+    Style,
+    Sub,
+    Summary,
+    Sup,
+    Table,
+    Tbody,
+    Td,
+    Template,
+    Textarea,
+    Tfoot,
+    Th,
+    Thead, Time, Title, Tr, Track, U, Ul, Var, Video, Wbr
 } from "./components/html-elements.tsx";
 import { Conditional } from "./components/conditional.tsx";
 import { Switch } from "./components/switch.tsx";
@@ -194,7 +211,25 @@ const HTML_COMPONENTS: Record<string, ElementType> = {
     strong: Strong,
     style: Style,
     sub: Sub,
-    summary: Summary
+    summary: Summary,
+    sup: Sup,
+    table: Table,
+    tbody: Tbody,
+    td: Td,
+    template: Template,
+    textarea: Textarea,
+    tfoot: Tfoot,
+    th: Th,
+    thead: Thead,
+    time: Time,
+    title: Title,
+    tr: Tr,
+    track: Track,
+    u: U,
+    ul: Ul,
+    "var": Var,
+    video: Video,
+    wbr: Wbr
 }
 
 const DEFAULT_COMPONENTS: Record<string, ElementType> = {

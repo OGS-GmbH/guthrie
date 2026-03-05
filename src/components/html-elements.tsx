@@ -384,6 +384,78 @@ function Summary({...props}: ComponentPropsWithRef<"summary">) {
   return <summary {...props}>{props.children}</summary>;
 }
 
+function Sup({...props}: ComponentPropsWithRef<"sup">) {
+  return <sup {...props}>{props.children}</sup>;
+}
+
+function Table({...props}: ComponentPropsWithRef<"table">) {
+  return <table {...props}>{props.children}</table>;
+}
+
+function Tbody({...props}: ComponentPropsWithRef<"tbody">) {
+  return <tbody {...props}>{props.children}</tbody>;
+}
+
+function Td({...props}: ComponentPropsWithRef<"td">) {
+  return <td {...props}>{props.children}</td>;
+}
+
+function Template({...props}: ComponentPropsWithRef<"template">) {
+  return <template {...props}>{props.children}</template>;
+}
+
+function Textarea({...props}: ComponentPropsWithRef<"textarea">) {
+  return <textarea {...props}>{props.children}</textarea>;
+}
+
+function Tfoot({...props}: ComponentPropsWithRef<"tfoot">) {
+  return <tfoot {...props}>{props.children}</tfoot>;
+}
+
+function Th({...props}: ComponentPropsWithRef<"th">) {
+  return <th {...props}>{props.children}</th>;
+}
+
+function Thead({...props}: ComponentPropsWithRef<"thead">) {
+  return <thead {...props}>{props.children}</thead>;
+}
+
+function Time({...props}: ComponentPropsWithRef<"time">) {
+  return <time {...props}>{props.children}</time>;
+}
+
+function Title({...props}: ComponentPropsWithRef<"title">) {
+  return <title {...props}>{props.children}</title>;
+}
+
+function Tr({...props}: ComponentPropsWithRef<"tr">) {
+  return <tr {...props}>{props.children}</tr>;
+}
+
+function Track({...props}: ComponentPropsWithRef<"track">) {
+  return <track {...props}/>;
+}
+
+function U({...props}: ComponentPropsWithRef<"u">) {
+  return <u {...props}>{props.children}</u>;
+}
+
+function Ul({...props}: ComponentPropsWithRef<"ul">) {
+  return <ul {...props}>{props.children}</ul>;
+}
+
+function Var({...props}: ComponentPropsWithRef<"var">) {
+  return <var {...props}>{props.children}</var>;
+}
+
+function Video({...props}: ComponentPropsWithRef<"video">) {
+  return <video {...props}>{props.children}</video>;
+}
+
+function Wbr({...props}: ComponentPropsWithRef<"wbr">) {
+  return <wbr {...props}/>;
+}
+
 export {
   Text, A, Abbr, Address, Area, Article, Aside, Audio,
   B, Base, Bdi, Bdo, Blockquote, Body, Br, Button,
@@ -401,6 +473,11 @@ export {
   P, Picture, Pre, Progress,
   Q,
   Rp, Rt, Ruby,
-  S, Samp, Script, Search, Section, Select, Slot, Small, Source, Span, Strong, Style, Sub, Summary
+  S, Samp, Script, Search, Section, Select, Slot, Small, Source, Span, Strong, Style, Sub, Summary, Sup,
+  Table, Tbody, Td, Template, Textarea, Tfoot, Th, Thead, Time, Title, Tr, Track,
+  U, Ul,
+  Var, Video,
+  Wbr
+
 };
 
