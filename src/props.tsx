@@ -1,6 +1,10 @@
 const reservedProps: Record<string, string> = {
   key: "keyName",
-  ref: "refName"
+  ref: "refName",
+  if: "_if",
+  elseIf: "_elseIf",
+  else: "_else",
+  default: "_default"
 };
 
 function toUnreservedProps (props: Record<string, unknown>): Record<string, unknown> {

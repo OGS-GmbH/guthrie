@@ -57,6 +57,11 @@ function Stage({components, page}: StageProps) {
 }
 
 
+export {
+  Stage,
+  ContentRenderer
+}
 
-
-export {Stage}
+export type {
+  ElementProps
+}

@@ -1,6 +1,4 @@
 import {RawHtml} from "./components/raw-html.tsx";
-import {If} from "./components/if.tsx";
-import {Else} from "./components/else.tsx";
 import {type ElementType} from "react";
 import {For} from "./components/for.tsx";
 import {
@@ -91,10 +89,12 @@ import {
     Section,
     Select, Slot, Small, Source, Span, Strong, Style, Sub, Summary
 } from "./components/html-elements.tsx";
+import { Conditional } from "./components/conditional.tsx";
+import { Switch } from "./components/switch.tsx";
 
 const FLOW_CONTROL_COMPONENTS: Record<string, ElementType> = {
-    if: If,
-    else: Else,
+    conditional: Conditional,
+    switch: Switch,
     for: For,
 }
 
