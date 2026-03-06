@@ -232,3 +232,8 @@ const intrinsics: Elements = {
   video: Video,
   wbr: Wbr
 }
+
+export {
+  flowControls,
+  intrinsics
+}

@@ -1,25 +1,27 @@
 import { useEffect } from "react";
-import { useGuthrieElements } from "../hooks";
-import type { Components, Page } from "./type";
+import type { Elements, Page } from "./type";
 import { Renderer } from "./renderer";
+import { useGuthrieElements } from "../stores/elements";
 
 type GuthrieProps = {
-  components: Components,
+  elements: Elements,
   page: Page
 }
 
-function Guthrie({components, page}: GuthrieProps) {
+function Guthrie({elements, page}: GuthrieProps) {
     const setElements = useGuthrieElements((state) => state.setElements);
 
     useEffect(() => {
-      setElements(components);
-    }, [components])
+      setElements(elements);
+    }, [elements])
 
-    return <Renderer elementProps={page.content} />
+    return (
+      <Renderer elementProps={page.content} />
+    )
 }
 
 export type {
-  
+  GuthrieProps
 }
 
 export {
