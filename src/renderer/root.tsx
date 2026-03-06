@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import type { Elements, Page } from "./type";
 import { Renderer } from "./renderer";
 import { useGuthrieElements } from "../stores/elements";
