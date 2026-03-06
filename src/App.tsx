@@ -1,5 +1,5 @@
-import {Stage} from "./stage.tsx";
-import {withGuthriesEquipment} from "./options";
+import { Guthrie } from "./renderer/root"
+import { withElements } from "./options/config"
 
 const page = {
   "route": "/example",
@@ -92,8 +92,14 @@ const page = {
 
 function App() {
   return (
-    <Stage
-      components={withGuthriesEquipment({options: {elementMapping: (value) => `prefix_${value}`}})}
+    <Guthrie
+      elements={
+        withElements({
+          options: {
+            elementMapping: (value) => `prefix_${value}`
+          }
+        })
+      }
       page={page}
     />
   )

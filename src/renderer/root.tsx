@@ -9,15 +9,12 @@ type GuthrieProps = {
 }
 
 function Guthrie({elements, page}: GuthrieProps) {
-    const setElements = useGuthrieElements((state) => state.setElements);
+  const setElements = useGuthrieElements((state) => state.setElements);
+  setElements(elements);
 
-    useEffect(() => {
-      setElements(elements);
-    }, [elements])
-
-    return (
-      <Renderer elementProps={page.content} />
-    )
+  return (
+    <Renderer {...page.content} />
+  )
 }
 
 export type {

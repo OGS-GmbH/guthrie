@@ -1,22 +1,23 @@
-import { ContentRenderer, type ElementProps } from "../stage";
+import { type DynamicElementProps } from "../renderer/type";
+import { Renderer } from "../renderer/renderer";
 
 type Condition = {
   condition: boolean,
-  children: ElementProps[]
+  children: DynamicElementProps[]
 };
 
 type ConditionalProps = {
   _if: Condition,
   _elseIf?: Condition[],
   _else?: {
-    children: ElementProps[]
+    children: DynamicElementProps[]
   }
 };
 
 function Conditional({_if, _elseIf, _else}: ConditionalProps) {
   if (_if.condition) {
     return _if.children.map((child, index) => (
-      <ContentRenderer key={index} elementProps={child} />
+      <Renderer key={index} {...child} />
     ))
   }
 
@@ -26,13 +27,13 @@ function Conditional({_if, _elseIf, _else}: ConditionalProps) {
         continue;
 
       return condition.children.map((child, index) => (
-        <ContentRenderer key={index} elementProps={child} />
+        <Renderer key={index} {...child} />
       ))
     }
   }
   
   return _else?.children.map((child, index) => (
-    <ContentRenderer key={index} elementProps={child} />
+    <Renderer key={index} {...child} />
   ))
 }
 

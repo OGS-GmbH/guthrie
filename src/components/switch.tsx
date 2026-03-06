@@ -1,8 +1,9 @@
 import { useMemo } from "react"
-import { ContentRenderer, type ElementProps } from "../stage"
+import { type DynamicElementProps } from "../renderer/type"
+import { Renderer } from "../renderer/renderer";
 
 type InnerCase = {
-  children: ElementProps[]
+  children: DynamicElementProps[]
 };
 
 type Case = Record<string | number, InnerCase>;
@@ -17,7 +18,7 @@ function Switch ({condition, _default, cases}: SwitchProps) {
   const currentCase = useMemo(() => cases[condition] ?? _default, [cases, condition]);
   
   return currentCase.children.map((child, index) => (
-    <ContentRenderer key={index} elementProps={child} />
+    <Renderer key={index} {...child} />
   ))
 }
 
