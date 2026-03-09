@@ -1,13 +1,42 @@
 import { Guthrie } from "./renderer/root"
-import { withElements } from "./options/config"
+import { withElements, withFns } from "./options/config"
 
 const page = {
   "route": "/example",
+  "dataSources": [
+    {
+      "type": "fn",
+      "fn": "fetch",
+      "args": [
+        "https://jsonplaceholder.typicode.com/todos/1",
+        {
+          "method": "get"
+        }
+      ],
+      "as": "gehaltsliste"
+    }
+  ],
   "content": {
     "element": "prefix_raw-html",
     "ref": "html-ref",
     "content": "<h1>Guthrie</h1>",
     "children": [
+      {
+        "element": "operation",
+        "args": {
+          "name": "add",
+          "args": [
+            {
+              "name": "mul",
+              "args": ["gehaltsliste.simonkovtyk", "2"]
+            },
+            {
+              "name": "mul",
+              "args": ["gehaltsliste.simonkovtyk", "2"]
+            }
+          ]
+        }
+      },
       {
         "element": "prefix_switch",
         "condition": "case3",
@@ -96,7 +125,14 @@ function App() {
       elements={
         withElements({
           options: {
-            elementMapping: (value) => `prefix_${value}`
+            mapNames: (value) => `prefix_${value}`
+          }
+        })
+      }
+      fns={
+        withFns({
+          options: {
+            native: true
           }
         })
       }
