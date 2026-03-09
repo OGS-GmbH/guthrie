@@ -22,6 +22,22 @@ const page = {
     "content": "<h1>Guthrie</h1>",
     "children": [
       {
+        "element": "operation",
+        "args": {
+          "name": "add",
+          "args": [
+            {
+              "name": "mul",
+              "args": ["gehaltsliste.simonkovtyk", "2"]
+            },
+            {
+              "name": "mul",
+              "args": ["gehaltsliste.simonkovtyk", "2"]
+            }
+          ]
+        }
+      },
+      {
         "element": "prefix_switch",
         "condition": "case3",
         "cases": {
