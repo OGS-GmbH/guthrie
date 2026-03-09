@@ -1,8 +1,21 @@
 import { Guthrie } from "./renderer/root"
-import { withElements } from "./options/config"
+import { withElements, withFns } from "./options/config"
 
 const page = {
   "route": "/example",
+  "dataSources": [
+    {
+      "type": "fn",
+      "fn": "fetch",
+      "args": [
+        "https://jsonplaceholder.typicode.com/todos/1",
+        {
+          "method": "get"
+        }
+      ],
+      "as": "gehaltsliste"
+    }
+  ],
   "content": {
     "element": "prefix_raw-html",
     "ref": "html-ref",
@@ -96,7 +109,14 @@ function App() {
       elements={
         withElements({
           options: {
-            elementMapping: (value) => `prefix_${value}`
+            mapNames: (value) => `prefix_${value}`
+          }
+        })
+      }
+      fns={
+        withFns({
+          options: {
+            native: true
           }
         })
       }
