@@ -9,7 +9,6 @@ function getOperand (operators: Operators, arg: OperatorArg): PrimitiveOperatorA
 }
 
 function solveOperation (operators: Operators, operation: _Operation): OperatorReturn {
-  console.log(operation);
   const operatorFn: OperatorFn = operators[operation.name]!;
 
   return operatorFn(...operation.args.map((operatorArg: OperatorArg) => getOperand(operators, operatorArg)));
@@ -21,7 +20,12 @@ type OperationProps = {
 
 function Operation ({ operation }: OperationProps) {
   const operators = useGuthrieOperators((state) => state.operators);
-  const result = useMemo(() => operation === undefined ? solveOperation(operators, operation) : undefined, [operation, operators]);
+  const result = useMemo(
+    () => operation === undefined
+      ? undefined
+      : solveOperation(operators, operation),
+    [operation, operators]
+  );
 
   return result;
 }

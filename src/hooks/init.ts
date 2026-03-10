@@ -11,3 +11,7 @@ function useInitialze (
   initialized.current = true;
   callback();
 }
+
+export {
+  useInitialze
+}

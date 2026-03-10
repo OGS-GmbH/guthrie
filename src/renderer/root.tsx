@@ -5,7 +5,7 @@ import { getDataSourceValue } from "./util";
 import { Renderer } from "./renderer";
 import { useMountedEffect } from "../hooks/effect";
 import { useGuthrieOperators } from "../stores/operators";
-import { useEffect } from "react";
+import { useInitialze } from "../hooks/init";
 
 type GuthrieProps = {
   elements: Elements,
@@ -18,11 +18,11 @@ function Guthrie({elements, fns, page, operators}: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);
   const addVariable = useGuthrieVariables((state) => state.addVariable);
-  setElements(elements);
 
-  useEffect(() => {
+  useInitialze(() => {
+    setElements(elements);
     setOperators(operators);
-  }, [operators])
+  })
 
   useMountedEffect(() => {
     if (page.dataSources) {

@@ -24,11 +24,11 @@ const page = {
     "children": [
       {
         "element": "prefix_operation",
-        "args": {
-          "name": "add",
+        "operation": {
+          "name": "exp",
           "args": [
-            1,
-            2
+            2,
+            8
           ]
         }
       },
