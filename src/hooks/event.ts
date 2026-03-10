@@ -4,13 +4,13 @@ import {useGuthrieFns} from "../stores/fns.ts";
 import {type RefObject, useEffect} from "react";
 
 
-function useGuthrieEvents(target: HTMLElement | Window | RefObject<HTMLElement | null>, eventConfigs?: DynamicEvent[], apply?: boolean) {
+function useGuthrieEvents(target: HTMLElement | Window | RefObject<HTMLElement | null>, eventConfigs?: DynamicEvent[]) {
   const eventContext = useGuthrieEventsConfigStore((state) => state.config);
   const fns = useGuthrieFns((state) => state.fns);
-  const {events, addEvent} = useGuthrieEventsStore((state) => state)
+  const addEvent = useGuthrieEventsStore((state) => state.addEvent)
 
   useEffect(() => {
-    if (!eventContext.autoApply && !apply || !eventConfigs)
+    if (!eventContext.autoApply || !eventConfigs)
       return
 
     let domTarget: HTMLElement | Window;
@@ -18,7 +18,10 @@ function useGuthrieEvents(target: HTMLElement | Window | RefObject<HTMLElement |
     if (target instanceof HTMLElement || target instanceof Window)
       domTarget = target;
     else
-      domTarget = target.current!;
+      domTarget = target.current;
+
+    if (!domTarget)
+      return;
 
     eventConfigs?.forEach((eventConfig) => {
       const listener = (event: Event) =>
@@ -32,7 +35,6 @@ function useGuthrieEvents(target: HTMLElement | Window | RefObject<HTMLElement |
       if (eventConfig.as)
         addEvent(eventConfig.as, domTarget, listener);
     });
-
   }, []);
 }
 

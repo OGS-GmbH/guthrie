@@ -26,9 +26,17 @@ const page = {
     }
   ],
   "content": {
-    "element": "prefix_raw-html",
+    "element": "prefix_div",
     "ref": "html-ref",
     "content": "<h1>Guthrie</h1>",
+    "events": [{
+      "type": "mouseenter",
+      "as": "mouse-enter-listener",
+      "actions": [{
+        "fn": "log",
+        "args": ["mouse enter"]
+      }]
+    }],
     "children": [
       {
         "element": "prefix_operation",
@@ -141,9 +149,6 @@ function App() {
       }
       fns={
         withFns({
-          fns: {
-            "log": console.log
-          },
           options: {
             native: true
           }
