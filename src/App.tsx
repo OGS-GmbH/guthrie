@@ -23,6 +23,18 @@ const page = {
         }
       ],
       "as": "gehaltsliste"
+    },
+    {
+      "type": "constant",
+      "value": [
+        "test"
+      ],
+      "as": "test-const"
+    },
+    {
+      "type": "constant",
+      "value": 42,
+      "as": "cond-test-const"
     }
   ],
   "content": {
@@ -31,20 +43,89 @@ const page = {
     "content": "<h1>Guthrie</h1>",
     "children": [
       {
+        "element": "prefix_for",
+        "count": 5,
+        "iterator": {
+          "children": [
+            {
+              "element": "prefix_raw-html",
+              "content": "<p>Müsste 5 mal hier sein</p>"
+            }
+          ]
+        }
+      },
+      {
+        "element": "prefix_operation",
+        "operation": {
+          "name": "add",
+          "args": [
+            "cond-test-const",
+            12
+          ]
+        }
+      },
+      {
+        "element": "prefix_variable",
+        "name": "dataSource.test-const",
+        "access": "[0]"
+      },
+      {
+        "element": "prefix_conditional",
+        "if": {
+          "condition": "dataSource.cond-test-const",
+          "children": [
+            {
+              "element": "prefix_raw-html",
+              "content": "<h2>cond-test-const is true</h2>"
+            }
+          ]
+        }
+      },
+      {
+        "element": "prefix_conditional",
+        "if": {
+          "condition": {
+            "name": "lt",
+            "args": [
+              "dataSource.cond-test-const",
+              43
+            ]
+          },
+          "children": [
+            {
+              "element": "prefix_raw-html",
+              "content": "<h2>42 is less</h2>"
+            }
+          ]
+        }
+      },
+      {
         "element": "prefix_operation",
         "operation": {
           "name": "exp",
           "args": [
             2,
-            8
+            {
+              "name": "div",
+              "args": [
+                8,
+                {
+                  "name": "add",
+                  "args": [
+                    2,
+                    6
+                  ]
+                }
+              ]
+            }
           ]
         }
       },
       {
         "element": "prefix_switch",
-        "condition": "case3",
+        "condition": "dataSource.cond-test-const",
         "cases": {
-          "case1": {
+          41: {
             "children": [
               {
                 "element": "prefix_raw-html",
@@ -52,7 +133,7 @@ const page = {
               }
             ]
           },
-          "case2": {
+          42: {
             "children": [
               {
                 "element": "prefix_raw-html",
@@ -60,7 +141,7 @@ const page = {
               }
             ]
           },
-          "case3": {
+          43: {
             "children": [
               {
                 "element": "prefix_raw-html",

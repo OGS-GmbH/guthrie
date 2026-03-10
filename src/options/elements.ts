@@ -110,6 +110,7 @@ import {RawHtml} from "../components/raw-html.tsx";
 import {For} from "../components/for.tsx";
 import type { Elements } from "../renderer/type.ts";
 import { Operation } from "../components/operation.tsx";
+import { Variable } from "../components/variable.tsx";
 
 const flowControls: Elements = {
   conditional: Conditional,
@@ -119,7 +120,8 @@ const flowControls: Elements = {
 
 const additional: Elements = {
   operation: Operation,
-  "raw-html": RawHtml
+  "raw-html": RawHtml,
+  variable: Variable
 }
 
 const intrinsics: Elements = {

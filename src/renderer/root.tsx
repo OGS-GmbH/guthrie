@@ -4,26 +4,27 @@ import { useGuthrieVariables } from "../stores/variables";
 import { Renderer } from "./renderer";
 import { useMountedEffect } from "../hooks/effect";
 import { useGuthrieOperators } from "../stores/operators";
-import {type RefObject, useEffect} from "react";
+import {type RefObject} from "react";
 import {useInitialze} from "../hooks/init.ts";
 import {getDataSourceValue} from "./data-source.ts";
 import {useGuthrieEventsConfigStore} from "../stores/events.ts";
 import {useGuthrieFns} from "../stores/fns.ts";
 import {useGuthrieEvents} from "../hooks/event.ts";
+import type { Variables } from "../options/variables.ts";
 
 type GuthrieProps = {
   elements: Elements,
   fns: Fns,
   page: Page,
   operators: Operators,
+  variables?: Variables,
   event?: {
     rootRef?: RefObject<HTMLElement | null>,
     autoApply?: boolean
-
   }
 }
 
-function Guthrie({elements, fns, page, operators, event}: GuthrieProps) {
+function Guthrie({elements, fns, page, operators, variables, event}: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);
   const addVariable = useGuthrieVariables((state) => state.addVariable);
@@ -44,7 +45,11 @@ function Guthrie({elements, fns, page, operators, event}: GuthrieProps) {
       page.dataSources.forEach((dataSource) => {
         const value = getDataSourceValue(dataSource, fns)
 
-        addVariable(dataSource.as, value);
+        const variableName = variables?.mapping?.dataSource
+          ? variables.mapping.dataSource(dataSource.as)
+          : `dataSource.${dataSource.as}`;
+
+        addVariable(variableName, value);
       })
     }
   }, [])

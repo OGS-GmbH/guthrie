@@ -18,7 +18,7 @@ type DynamicElementProps = {
   [key: string]: unknown
 };
 
-type PrimitiveOperatorArg = string | number | boolean;
+type PrimitiveOperatorArg = number | boolean;
 
 type OperatorArg = PrimitiveOperatorArg | Operation;
 
@@ -41,7 +41,7 @@ type DataSourceFn = {
 
 type DataSourceConstant = {
   type: "constant",
-  value: string
+  value: unknown 
 }
 
 type DataSourceCommon = {

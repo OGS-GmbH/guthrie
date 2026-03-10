@@ -1,6 +1,13 @@
-import {createContext, Fragment, useContext, type ReactNode} from "react";
+import {createContext, Fragment, useContext} from "react";
+import type { DynamicElementProps } from "../renderer/type";
+import { Renderer } from "../renderer/renderer";
 
-type ForProps = { count: number, children: ReactNode }
+type ForProps = {
+  count: number,
+  iterator: {
+    children: DynamicElementProps[]
+  }
+}
 
 type ForContextValue = {
   index: number
@@ -12,12 +19,18 @@ function useForContext () {
   return useContext(ForContext);
 }
 
-function For({count, children}: ForProps) {
+function For({count, iterator}: ForProps) {
   // oxlint-disable-next-line no-unused-vars
   return new Array(count).fill(null).map((_, index) => (
-    <ForContext.Provider value={{index}}>
-      <Fragment key={index}>{children}</Fragment>
-    </ForContext.Provider> 
+    <Fragment key={index}>
+      <ForContext.Provider value={{index}}>
+        {
+          iterator.children.map((child, childIndex) => (
+            <Renderer key={childIndex} {...child} />
+          ))
+        }
+      </ForContext.Provider> 
+    </Fragment>
   ))
 }
 
