@@ -1,6 +1,7 @@
-import type { Fns } from "../renderer/type";
+import type {Fns} from "../renderer/type";
+import {type RegisteredEvent, useGuthrieEventStore} from "../stores/events.ts";
 
-  // oxlint-disable no-console
+// oxlint-disable no-console
 const CONSOLE_METHODS = {
   log: console.log,
   info: console.info,
@@ -29,13 +30,33 @@ const CONSOLE_METHODS = {
 
   clear: console.clear
 };
+
 // oxlint-enable no-console
 
+const eventStoreHack: Map<string, RegisteredEvent> = new Map<string, RegisteredEvent>();
+const fnStoreHack: Map<string, Function> = new Map<string, Function>();
+
+function removeEvents(...eventRefNames: string[]) {
+  eventRefNames.forEach((eventRefName) => {
+    const event = eventStoreHack.get(eventRefName);
+
+    if (!event)
+      return;
+
+    event.target.removeEventListener(event.listener.type, event.listener.fn);
+    eventStoreHack.delete(eventRefName);
+  });
+}
+
 const native: Fns = {
+  "removeEvents": removeEvents,
   "fetch": fetch,
   ...CONSOLE_METHODS
 }
 
 export {
-  native
+  native,
+  removeEvents,
+  eventStoreHack,
+  fnStoreHack
 }

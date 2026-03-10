@@ -1,14 +1,17 @@
-import { create } from "zustand"
-import type {Elements, Fns} from "../renderer/type"
+import {create} from "zustand"
+import type {Fns} from "../renderer/type"
+import {fnStoreHack} from "../options/fns.ts";
 
 type FunctionsStore = {
-  fns: Fns,
+  getFn: (name: string) => Function,
   setFns: (fns: Fns) => void
 }
 
-const useGuthrieFns = create<FunctionsStore>((set) => ({
-  fns: {},
-  setFns: (fns: Fns) => set({fns})
+const useGuthrieFns = create<FunctionsStore>(() => ({
+  getFn: (name: string) => fnStoreHack.get(name),
+  setFns: (fns: Fns) => Object.entries(fns).forEach(([key, value]) => {
+    fnStoreHack.set(key, value)
+  })
 }))
 
 export type {

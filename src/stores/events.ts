@@ -1,35 +1,38 @@
 import {create} from "zustand";
+import {eventStoreHack} from "../options/fns.ts";
+
+type RegisteredEvent = {
+  target: HTMLElement | Window,
+  listener: { type: string, fn: EventListener }
+};
 
 type EventsStore = {
-  events: Record<string, {
-    target: HTMLElement | Window,
-    listener: Function
-  }>,
-  addEvent: (name: string, target: HTMLElement | Window, listener: Function) => void
+  getEvent: (name) => RegisteredEvent,
+  addEvent: (name: string, registeredEvent: RegisteredEvent) => void,
+  removeEvent: (name: string) => void
 }
 
-const useGuthrieEventsStore = create<EventsStore>((set)=> ({
-  events: {},
-  addEvent: (name: string, target: HTMLElement | Window, listener: Function) => set((state) => ({
-    events: {
-      ...state.events,
-      [name]: {target, listener}
-    }
-  }))
+const useGuthrieEventStore = create<EventsStore>(() => ({
+  getEvent: (name: string) => eventStoreHack.get(name),
+  addEvent: (name: string, registeredEvent: RegisteredEvent) => eventStoreHack.set(name, registeredEvent),
+  removeEvent: (name: string) => eventStoreHack.delete(name)
 }));
 
 type EventsConfigStore = {
-  config: {autoApply: boolean};
-  setConfig: (config: {autoApply: boolean}) => void
+  config: { autoApply: boolean };
+  setConfig: (config: { autoApply: boolean }) => void
 }
 
 const useGuthrieEventsConfigStore = create<EventsConfigStore>((set) => ({
   config: {autoApply: true},
-  setConfig: (config: {autoApply: boolean}) => set({config})
+  setConfig: (config: { autoApply: boolean }) => set({config})
 }))
 
+export type {
+  RegisteredEvent
+}
 
 export {
-  useGuthrieEventsStore,
+  useGuthrieEventStore,
   useGuthrieEventsConfigStore
 }
