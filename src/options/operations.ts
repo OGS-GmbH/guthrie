@@ -154,7 +154,7 @@ const notEqual: OperatorFn = function (...args): OperatorReturn {
 
 const and: OperatorFn = function (...args): OperatorReturn {
   let result: boolean = false;
-  let previousOperand: number | boolean = args.at(0)!;
+  let previousOperand = args.at(0)!;
   const remainingArgs = args.slice(1);
 
   for (let i = 0; i < remainingArgs.length; i++) {

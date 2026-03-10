@@ -297,6 +297,7 @@ function Output({...props}: ComponentPropsWithRef<"output">) {
 }
 
 function P({...props}: ComponentPropsWithRef<"p">) {
+  /*geile hook wenn guthrieContext.autoRegisterEvents === false*/
   return <p {...props}>{props.children}</p>;
 }
 

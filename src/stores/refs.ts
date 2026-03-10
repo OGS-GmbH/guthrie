@@ -1,14 +1,14 @@
-import type { ComponentRef, ElementType } from "react";
+import type {RefObject} from "react";
 import { create } from "zustand";
 
 type RefsStore = {
-  refs: Record<string, ComponentRef<ElementType>>;
-  addRef: (refName: string, ref: ComponentRef<ElementType>) => void
+  refs: Record<string, RefObject<HTMLElement | null>>;
+  addRef: (refName: string, ref:  RefObject<HTMLElement | null>) => void
 };
 
 const useGuthrieRefs = create<RefsStore>((set) => ({
   refs: {},
-  addRef: (refName: string, ref: ComponentRef<ElementType>) => set((state) => ({
+  addRef: (refName: string, ref:  RefObject<HTMLElement | null>) => set((state) => ({
     refs: {
       ...state.refs,
       [refName]: ref

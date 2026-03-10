@@ -4,6 +4,14 @@ import type { Page } from "./renderer/type"
 
 const page = {
   "route": "/example",
+  "events": [{
+    "type": "click",
+    "as": "test-listener",
+    "actions": [{
+      "fn": "log",
+      "args": ["{event.target}"]
+    }]
+  }],
   "dataSources": [
     {
       "type": "fn",
@@ -133,6 +141,9 @@ function App() {
       }
       fns={
         withFns({
+          fns: {
+            "log": console.log
+          },
           options: {
             native: true
           }

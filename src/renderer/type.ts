@@ -1,9 +1,19 @@
 import type { ElementType } from "react";
 
+type DynamicEvent = {
+  type: keyof GlobalEventHandlersEventMap,
+  as?: string,
+  actions: Array<{
+    fn: string,
+    args: Array<unknown>
+  }>
+};
+
 type DynamicElementProps = {
   element: string;
   ref?: string,
   children?: DynamicElementProps[],
+  events?: DynamicEvent[]
   // Allow any additional props
   [key: string]: unknown
 };
@@ -47,12 +57,13 @@ type Fns = Record<string,  Function>;
 type Page = {
   route: string,
   dataSources?: DataSource[],
-  content: DynamicElementProps
-};
+  content: DynamicElementProps,
+} & { events?: DynamicEvent[] };
 
 type Elements = Record<string, ElementType>;
 
 export type {
+  DynamicEvent,
   DynamicElementProps,
   Elements,
   OperatorArg,

@@ -3,29 +3,35 @@ import { useGuthrieElements } from "../stores/elements";
 import { useGuthrieRefs } from "../stores/refs";
 import { type DynamicElementProps } from "./type";
 import { toUnreservedProps } from "./props";
+import {useGuthrieEvents} from "../hooks/event.ts";
 
 type RendererProps = DynamicElementProps;
 
-function Renderer ({element, ref: refName, children, ...props}: RendererProps) {
+function Renderer ({element, ref: refName, children, events, ...props}: RendererProps) {
   const elements = useGuthrieElements((state) => state.elements);
   const addRef = useGuthrieRefs((state) => state.addRef);
   const elementRef = useRef(null);
   const Element = elements[element as keyof typeof elements] as ElementType;
+  const guthrieContext = {
+    ...toUnreservedProps({
+      ...props,
+      ref: refName,
+      events
+    })
+  };
+
+  //useGuthrieEvents(elementRef, events, true);
 
   useEffect(() => {
     if (refName)
       addRef(refName, elementRef);
+
   }, []);
 
   return (
     <Element
       ref={elementRef}
-      {
-        ...toUnreservedProps({
-          ...props,
-          ref: refName
-        })
-      }>
+      {...guthrieContext}>
       {
         children?.map((child, index) => (
           <Renderer
