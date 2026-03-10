@@ -9,7 +9,20 @@ const page = {
     "as": "test-listener",
     "actions": [{
       "fn": "log",
-      "args": ["{event.target}"]
+      "args": ["click {event.target}"]
+    }]
+  },{
+    "type": "dblclick",
+    "as": "dblclick-listener",
+    "actions": [{
+      "fn": "log",
+      "args": ["dblclick"]
+    }, {
+      "fn": "addEvents",
+      "args": ["dblclick", "target", [{
+        "fn": "log",
+        "args": ["log mich am ..."]
+      }]]
     }]
   }],
   "dataSources": [
@@ -28,16 +41,18 @@ const page = {
   "content": {
     "element": "prefix_div",
     "ref": "html-ref",
-    "content": "<h1>Guthrie</h1>",
     "events": [{
-      "type": "mouseenter",
-      "as": "mouse-enter-listener",
+      "type": "click",
+      "as": "removeEvents-listener",
       "actions": [{
-        "fn": "log",
-        "args": ["mouse enter"]
+        "fn": "removeEvents",
+        "args": ["test-listener"]
       }]
     }],
-    "children": [
+    "children": [{
+        "element": "prefix_raw-html",
+        "content": "<h2>Guthrie</h2>"
+    },
       {
         "element": "prefix_operation",
         "operation": {
