@@ -1,15 +1,18 @@
-import type { Elements, Fns } from "../renderer/type";
-import { flowControls, intrinsics } from "./elements";
+import type { Elements, Fns, Operators } from "../renderer/type";
+import { additional, flowControls, intrinsics } from "./elements";
 import { native } from "./fns";
+import { universal, universalShort } from "./operations";
 
 type WithElementsOptions = Partial<{
   intrinsics: boolean,
+  additional: boolean,
   flowControls: boolean,
   mapNames: (value: string) => string
 }>;
 
 const defaultElementOptions: WithElementsOptions = {
   intrinsics: true,
+  additional: true,
   flowControls: true
 }
 
@@ -23,10 +26,14 @@ function withElements ({elements, options}: Partial<{
   const configuredFlowControls = (options?.flowControls ?? defaultElementOptions.flowControls)
     ? flowControls
     : {};
+  const configuredAdditional = (options?.additional ?? defaultElementOptions.additional)
+    ? additional
+    : {};
 
   const elementsResult: Elements = {
     ...elements,
     ...configuredIntrinsics,
+    ...configuredAdditional,
     ...configuredFlowControls
   };
 
@@ -68,12 +75,44 @@ function withFns ({fns, options}: Partial<{
   )
 }
 
+type WithOperatorOptions = Partial<{
+  universal: boolean,
+  /*
+   * Universal = long names
+   * Guthrie recommends short names
+   */
+  universalNames: "universal" | "guthrie",
+  mapNames: (value: string) => string
+}>;
+
+const defaultOperatorOptions: WithOperatorOptions = {
+  universal: true
+}
+
+function withOperators ({operators, options}: Partial<{
+  operators: Operators,
+  options: WithOperatorOptions
+}>) {
+  const configuredUniversal = (options?.universal ?? defaultOperatorOptions.universal)
+    ? options?.universalNames === "universal"
+      ? universal
+      : universalShort
+    : {};
+
+  return {
+    ...configuredUniversal,
+    ...operators
+  }
+}
+
 export type {
   WithElementsOptions,
-  WithFnsOptions
+  WithFnsOptions,
+  WithOperatorOptions
 }
 
 export {
   withElements,
-  withFns
+  withFns,
+  withOperators
 }

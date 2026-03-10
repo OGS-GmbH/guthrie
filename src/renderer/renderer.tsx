@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ElementType } from "react";
 import { useGuthrieElements } from "../stores/elements";
 import { useGuthrieRefs } from "../stores/refs";
-import type { DynamicElementProps } from "./type";
+import { type DynamicElementProps } from "./type";
 import { toUnreservedProps } from "./props";
 
 type RendererProps = DynamicElementProps;

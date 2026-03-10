@@ -1,5 +1,6 @@
 import { Guthrie } from "./renderer/root"
-import { withElements, withFns } from "./options/config"
+import { withElements, withFns, withOperators } from "./options/config"
+import type { Page } from "./renderer/type"
 
 const page = {
   "route": "/example",
@@ -22,18 +23,12 @@ const page = {
     "content": "<h1>Guthrie</h1>",
     "children": [
       {
-        "element": "operation",
+        "element": "prefix_operation",
         "args": {
           "name": "add",
           "args": [
-            {
-              "name": "mul",
-              "args": ["gehaltsliste.simonkovtyk", "2"]
-            },
-            {
-              "name": "mul",
-              "args": ["gehaltsliste.simonkovtyk", "2"]
-            }
+            1,
+            2
           ]
         }
       },
@@ -117,7 +112,7 @@ const page = {
       }
     ]
   }
-}
+} satisfies Page;
 
 function App() {
   return (
@@ -126,6 +121,13 @@ function App() {
         withElements({
           options: {
             mapNames: (value) => `prefix_${value}`
+          }
+        })
+      }
+      operators={
+        withOperators({
+          options: {
+            universal: true
           }
         })
       }

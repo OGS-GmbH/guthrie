@@ -109,11 +109,16 @@ import { Switch } from "../components/switch.tsx";
 import {RawHtml} from "../components/raw-html.tsx";
 import {For} from "../components/for.tsx";
 import type { Elements } from "../renderer/type.ts";
+import { Operation } from "../components/operation.tsx";
 
 const flowControls: Elements = {
   conditional: Conditional,
   switch: Switch,
   for: For,
+}
+
+const additional: Elements = {
+  operation: Operation,
   "raw-html": RawHtml
 }
 
@@ -235,5 +240,6 @@ const intrinsics: Elements = {
 
 export {
   flowControls,
+  additional,
   intrinsics
 }
