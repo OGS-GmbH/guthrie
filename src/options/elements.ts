@@ -110,6 +110,8 @@ import {RawHtml} from "../components/raw-html.tsx";
 import {For} from "../components/for.tsx";
 import type { Elements } from "../renderer/type.ts";
 import { Operation } from "../components/operation.tsx";
+import {SlotTemplate, SlotTemplateRenderer} from "../components/template.tsx";
+import {FnRenderer} from "../components/fn-renderer.tsx";
 
 const flowControls: Elements = {
   conditional: Conditional,
@@ -119,7 +121,10 @@ const flowControls: Elements = {
 
 const additional: Elements = {
   operation: Operation,
-  "raw-html": RawHtml
+  "raw-html": RawHtml,
+  "slot-template": SlotTemplate,
+  "slot-template-renderer": SlotTemplateRenderer,
+  "fn-renderer": FnRenderer
 }
 
 const intrinsics: Elements = {

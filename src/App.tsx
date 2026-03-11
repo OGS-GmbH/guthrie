@@ -50,6 +50,18 @@ const page = {
       }]
     }],
     "children": [{
+      "element": "prefix_fn-renderer"
+    },{
+      "element": "prefix_slot-template",
+      "ref": "templateRef",
+      "children": [{
+          "element": "prefix_raw-html",
+          "content": "<h6>Ich bin getemplatet</h6>"
+      }]
+    }, {
+      "element": "prefix_slot-template-renderer",
+      "templateRef": "templateRef"
+    },{
         "element": "prefix_raw-html",
         "content": "<h2>Guthrie</h2>"
     },

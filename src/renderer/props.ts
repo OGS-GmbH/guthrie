@@ -4,7 +4,8 @@ const reservedProps: Record<string, string> = {
   if: "_if",
   elseIf: "_elseIf",
   else: "_else",
-  default: "_default"
+  default: "_default",
+  children: "_children"
 };
 
 function toUnreservedProps (props: Record<string, unknown>): Record<string, unknown> {

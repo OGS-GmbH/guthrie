@@ -50,7 +50,7 @@ function Guthrie({elements, fns, page, operators, event}: GuthrieProps) {
   }, [])
 
   return (
-    <Renderer {...page.content} />
+      <Renderer {...page.content} />
   )
 }
 

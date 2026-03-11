@@ -16,7 +16,8 @@ function Renderer ({element, ref: refName, children, events, ...props}: Renderer
     ...toUnreservedProps({
       ...props,
       ref: refName,
-      events
+      events,
+      children
     })
   };
 

@@ -58,7 +58,9 @@ type Page = {
   route: string,
   dataSources?: DataSource[],
   content: DynamicElementProps,
-} & { events?: DynamicEvent[] };
+} & Partial<{
+  events: DynamicEvent[]
+}>;
 
 type Elements = Record<string, ElementType>;
 
