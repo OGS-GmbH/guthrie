@@ -1,16 +1,15 @@
 import type { Elements, Fns, Operators, Page } from "./type";
 import { useGuthrieElements } from "../stores/elements";
-import { useGuthrieVariables } from "../stores/variables";
 import { Renderer } from "./renderer";
 import { useMountedEffect } from "../hooks/effect";
 import { useGuthrieOperators } from "../stores/operators";
-import {type RefObject} from "react";
-import {useInitialze} from "../hooks/init.ts";
-import {getDataSourceValue} from "./data-source.ts";
+import {useEffect, type RefObject} from "react";
+import {useInitialize} from "../hooks/init.ts";
 import {useGuthrieEventsConfigStore} from "../stores/events.ts";
 import {useGuthrieFns} from "../stores/fns.ts";
 import {useGuthrieEvents} from "../hooks/event.ts";
 import type { Variables } from "../options/variables.ts";
+import { callFn } from "./fns.ts";
 
 type GuthrieProps = {
   elements: Elements,
@@ -27,11 +26,12 @@ type GuthrieProps = {
 function Guthrie({elements, fns, page, operators, variables, event}: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);
-  const addVariable = useGuthrieVariables((state) => state.addVariable);
   const setEventsConfig = useGuthrieEventsConfigStore((state) => state.setConfig)
   const setFns = useGuthrieFns((state) => state.setFns)
 
-  useInitialze(() => {
+  useInitialize(() => {
+    page.onInit?.forEach((onInitFn) => callFn(onInitFn, fns, variables));
+
     setFns(fns);
     setEventsConfig({autoApply: event?.autoApply ?? true});
     setElements(elements);
@@ -41,18 +41,13 @@ function Guthrie({elements, fns, page, operators, variables, event}: GuthrieProp
   useGuthrieEvents(event?.rootRef?.current ?? window, page.events);
 
   useMountedEffect(() => {
-    if (page.dataSources) {
-      page.dataSources.forEach((dataSource) => {
-        const value = getDataSourceValue(dataSource, fns)
+    page.onRender?.forEach((onRenderFn) => callFn(onRenderFn, fns, variables));
+  }, []);
 
-        const variableName = variables?.mapping?.dataSource
-          ? variables.mapping.dataSource(dataSource.as)
-          : `dataSource.${dataSource.as}`;
-
-        addVariable(variableName, value);
-      })
-    }
-  }, [])
+  useEffect(() =>
+    () => page.onDestroy?.forEach((onDestryFn) => callFn(onDestryFn, fns, variables)),
+    []
+  );
 
   return (
     <Renderer {...page.content} />

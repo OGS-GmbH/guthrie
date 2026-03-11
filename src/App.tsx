@@ -12,44 +12,61 @@ const page = {
       "args": ["{event.target}"]
     }]
   }],
-  "dataSources": [
+  "onInit": [
     {
-      "type": "fn",
-      "fn": "fetch",
+      "name": "fetch",
       "args": [
         "https://jsonplaceholder.typicode.com/todos/1",
         {
-          "method": "get"
+          "type": "fn",
+          "name": "concat",
+          "args": [
+            {
+              "type": "variable",
+              "name": "test-const"
+            },
+            "test"
+          ]
         }
       ],
       "as": "gehaltsliste"
-    },
-    {
-      "type": "constant",
-      "value": [
-        "test"
-      ],
-      "as": "test-const"
-    },
-    {
-      "type": "constant",
-      "value": 42,
-      "as": "cond-test-const"
     }
   ],
   "content": {
-    "element": "prefix_raw-html",
+    "element": "prefix_div",
     "ref": "html-ref",
     "content": "<h1>Guthrie</h1>",
+    "events": [{
+      "type": "mouseenter",
+      "as": "mouse-enter-listener",
+      "actions": [{
+        "fn": "log",
+        "args": ["mouse enter"]
+      }]
+    }],
     "children": [
+      {
+        "element": "prefix_p",
+        "children": [
+          {
+            "element": "prefix_text",
+            "content": "Hallo Guthrie"
+          }
+        ]
+      },
       {
         "element": "prefix_for",
         "count": 5,
         "iterator": {
           "children": [
             {
-              "element": "prefix_raw-html",
-              "content": "<p>Müsste 5 mal hier sein</p>"
+              "element": "prefix_p",
+              "children": [
+                {
+                  "element": "prefix_text",
+                  "content": "Hallo Guthrie 5x"
+                }
+              ]
             }
           ]
         }
@@ -59,15 +76,15 @@ const page = {
         "operation": {
           "name": "add",
           "args": [
-            "cond-test-const",
+            "dataSource.cond-test-const",
             12
           ]
         }
       },
       {
         "element": "prefix_variable",
-        "name": "dataSource.test-const",
-        "access": "[0]"
+        "name": "gehaltsliste",
+        "access": "[0].salary"
       },
       {
         "element": "prefix_conditional",
@@ -222,9 +239,6 @@ function App() {
       }
       fns={
         withFns({
-          fns: {
-            "log": console.log
-          },
           options: {
             native: true
           }

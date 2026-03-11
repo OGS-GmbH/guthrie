@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-function useInitialze (
+function useInitialize (
   callback: () => void
 ) {
   const initialized = useRef(false);
@@ -13,5 +13,5 @@ function useInitialze (
 }
 
 export {
-  useInitialze
+  useInitialize
 }

@@ -3,47 +3,6 @@ const templateChars = {
   end: "}"
 }
 
-const templateOperators = {
-  addition: "+",
-  subtraction: "-",
-  multiplication: "*",
-  exponentiation: "**",
-  division: "/",
-  modulus: "%",
-  increment: "++",
-  decrement: "--",
-
-  assign: "=",
-  addAssign: "+=",
-  subtractAssign: "-=",
-  multiplyAssign: "*=",
-  divideAssign: "/=",
-  modulusAssign: "%=",
-  exponentiationAssign: "**=",
-
-  equal: "==",
-  strictEqual: "===",
-  notEqual: "!=",
-  strictNotEqual: "!==",
-  greaterThan: ">",
-  lessThan: "<",
-  greaterThanOrEqual: ">=",
-  lessThanOrEqual: "<=",
-
-  logicalAnd: "&&",
-  logicalOr: "||",
-  logicalNot: "!",
-
-  bitwiseAnd: "&",
-  bitwiseOr: "|",
-  bitwiseXor: "^",
-  bitwiseNot: "~",
-
-  leftShift: "<<",
-  signedRightShift: ">>",
-  unsignedRightShift: ">>>"
-}
-
 function getVariables (value: string): string[] | null {
   let variableName: string | null = null;
   let variableNames: string[] | null = null;
@@ -55,10 +14,9 @@ function getVariables (value: string): string[] | null {
     }
 
     if (char === templateChars.end) {
-      if (variableName !== null)
-        variableNames === null
-          ? (variableNames = [variableName])
-          : variableNames.push(variableName)
+      variableNames === null
+        ? (variableNames = [variableName])
+        : variableNames.push(variableName)
 
       variableName = null;
 
@@ -72,4 +30,84 @@ function getVariables (value: string): string[] | null {
   }
   
   return variableNames;
+}
+
+const IS_DOT_MASK = 0b1;
+const IS_INDEX_MASK = 0b01;
+
+function tryFromNumber (value: string) {
+  const num = Number.parseInt(value, 10);
+
+  return Number.isNaN(num) ? value : num;
+}
+
+function getPath (value: string): Array<string | number> {
+  let state = 0b0;
+  let access = "";
+  const path = [];
+  
+  for (let i = 0; i <= value.length; i++) {
+    const char = value[i];
+
+    if (char === ".") {
+      if (state !== 0b0) {
+        path.push(tryFromNumber(access));
+        access = "";
+      }
+    
+      state = IS_DOT_MASK;
+      continue;
+    }
+
+    if (char === "[") {
+      if (state !== 0b0) {
+        path.push(tryFromNumber(access));
+        access = "";
+      }
+
+      state = IS_INDEX_MASK;
+      continue;
+    }
+
+    if (char === "]") {
+      if (state !== 0b0) {
+        path.push(tryFromNumber(access));
+        access = "";
+      }
+
+      state = 0b0;
+
+      continue;
+    }
+
+    if (state === IS_INDEX_MASK && (char === "\"" || char === "'"))
+      continue;
+
+    if (state === 0b0)
+      continue;
+
+    if (i === value.length && state === IS_DOT_MASK) {
+      path.push(access);
+      continue;
+    }
+
+    access += char;
+  }
+
+  return path;
+}
+
+function touchByPath (value: unknown, path: Array<string | number>): unknown {
+  let touchedValue: unknown = value;
+
+  for (const pathItem of path)
+    touchedValue = touchedValue[pathItem];
+
+  return touchedValue;
+}
+
+export {
+  getVariables,
+  getPath,
+  touchByPath
 }

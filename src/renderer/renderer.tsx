@@ -20,12 +20,11 @@ function Renderer ({element, ref: refName, children, events, ...props}: Renderer
     })
   };
 
-  //useGuthrieEvents(elementRef, events, true);
+  useGuthrieEvents(elementRef, events);
 
   useEffect(() => {
     if (refName)
       addRef(refName, elementRef);
-
   }, []);
 
   return (

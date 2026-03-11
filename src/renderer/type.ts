@@ -33,32 +33,44 @@ type Operation = {
   args: OperatorArg[]
 };
 
-type DataSourceFn = {
-  type: "fn",
-  fn: string,
-  args: Array<unknown>
+type PrimitiveFnArg = string | number | boolean;
+
+type VariableFnArg = {
+  type: "variable",
+  name: string
 }
 
-type DataSourceConstant = {
-  type: "constant",
-  value: unknown 
+type ObjectFnArg = {
+  type: "arg",
+  [key: string]: unknown
 }
 
-type DataSourceCommon = {
-  as: string
+type RecursiveFnArg = {
+  type: "fn"
+} & ExposableFn;
+
+type Fn = {
+  name: string,
+  args: Array<VariableFnArg | RecursiveFnArg | ObjectFnArg | PrimitiveFnArg>
 }
 
-type DataSource = DataSourceCommon & (
-  DataSourceConstant | DataSourceFn
-);
+type ExposableFn = Fn & {
+  as?: string
+}
 
 type Fns = Record<string,  Function>;
 
+type Lifecycle = Partial<{
+  onInit: ExposableFn[],
+  onRender: ExposableFn[],
+  onDestroy: ExposableFn[]
+}>;
+
 type Page = {
   route: string,
-  dataSources?: DataSource[],
   content: DynamicElementProps,
-} & { events?: DynamicEvent[] };
+  events?: DynamicEvent[]
+} & Lifecycle;
 
 type Elements = Record<string, ElementType>;
 
@@ -72,10 +84,8 @@ export type {
   OperatorFn,
   Operators,
   Operation,
+  ExposableFn,
+  PrimitiveFnArg,
   Fns,
-  DataSourceFn,
-  DataSourceConstant,
-  DataSourceCommon,
-  DataSource,
   Page
 }

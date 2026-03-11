@@ -1,8 +1,8 @@
 import { type DynamicElementProps, type Operation, type Operators } from "../renderer/type";
 import { Renderer } from "../renderer/renderer";
-import { solveOperation } from "./operation";
 import { useGuthrieOperators } from "../stores/operators";
 import { useGuthrieVariables } from "../stores/variables";
+import { solveOperation } from "../renderer/operations";
 
 type ConditionValue = boolean | number | string | Operation;
 

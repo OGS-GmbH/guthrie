@@ -28,8 +28,8 @@ importers:
         specifier: ^9.39.1
         version: 9.39.2
       '@ogs-gmbh/oxlint-presets':
-        specifier: ^1.0.1
-        version: 1.0.1(oxlint@1.51.0)
+        specifier: file:/home/simonkov/Projects/ogs/github/oxlint-presets/dist/main
+        version: file:../oxlint-presets/dist/main(oxlint@1.51.0)
       '@ogs-gmbh/react-hooks':
         specifier: file:/home/simonkov/Projects/ogs/github/react-hooks/dist/main
         version: file:../react-hooks/dist/main(axios@1.13.6)
@@ -393,8 +393,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@ogs-gmbh/oxlint-presets@1.0.1':
-    resolution: {integrity: sha512-4/2vJ+9InmmziJ81BuPHUM8WWP6rTp6RkfuQrU5vFfvTKVFX+nOaEEm/Brv6kfIWzHmlLzyuuJNHjpTyFYGq6w==}
+  '@ogs-gmbh/oxlint-presets@file:../oxlint-presets/dist/main':
+    resolution: {directory: ../oxlint-presets/dist/main, type: directory}
     peerDependencies:
       oxlint: ^1.50.0
 
@@ -1978,7 +1978,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@ogs-gmbh/oxlint-presets@1.0.1(oxlint@1.51.0)':
+  '@ogs-gmbh/oxlint-presets@file:../oxlint-presets/dist/main(oxlint@1.51.0)':
     dependencies:
       oxlint: 1.51.0
 
