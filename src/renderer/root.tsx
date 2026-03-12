@@ -3,13 +3,14 @@ import { useGuthrieElements } from "../stores/elements";
 import { Renderer } from "./renderer";
 import { useMountedEffect } from "../hooks/effect";
 import { useGuthrieOperators } from "../stores/operators";
-import {useEffect, type RefObject} from "react";
+import {useEffect, useRef, type RefObject} from "react";
 import {useInitialize} from "../hooks/init.ts";
-import {useGuthrieEventsConfigStore} from "../stores/events.ts";
+import {useGuthrieEventsConfig} from "../stores/events.ts";
 import {useGuthrieFns} from "../stores/fns.ts";
-import {useGuthrieEvents} from "../hooks/event.ts";
 import type { Variables } from "../options/variables.ts";
 import { callFn } from "./fns.ts";
+import { useGuthrieRefs } from "../stores/refs.ts";
+import { useGuthrieEventsApply } from "../hooks/event.ts";
 
 type GuthrieProps = {
   elements: Elements,
@@ -26,26 +27,34 @@ type GuthrieProps = {
 function Guthrie({elements, fns, page, operators, variables, event}: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);
-  const setEventsConfig = useGuthrieEventsConfigStore((state) => state.setConfig)
+  const setEventsConfig = useGuthrieEventsConfig((state) => state.setConfig)
   const setFns = useGuthrieFns((state) => state.setFns)
+  const addRefs = useGuthrieRefs((state) => state.addRef);
+  const windowRef = useRef(window);
+
+  useGuthrieEventsApply(
+    event?.rootRef ?? windowRef,
+    page.events
+  );
 
   useInitialize(() => {
-    page.onInit?.forEach((onInitFn) => callFn(onInitFn, fns, variables));
+    addRefs("window", event?.rootRef ?? windowRef)
+    page.onInit?.forEach((onInitFn) => callFn(onInitFn));
 
     setFns(fns);
-    setEventsConfig({autoApply: event?.autoApply ?? true});
+    setEventsConfig({
+      autoApply: event?.autoApply ?? true
+    });
     setElements(elements);
     setOperators(operators);
   });
 
-  useGuthrieEvents(event?.rootRef?.current ?? window, page.events);
-
   useMountedEffect(() => {
-    page.onRender?.forEach((onRenderFn) => callFn(onRenderFn, fns, variables));
-  }, []);
+    page.onRender?.forEach((onRenderFn) => callFn(onRenderFn));
+  });
 
   useEffect(() =>
-    () => page.onDestroy?.forEach((onDestryFn) => callFn(onDestryFn, fns, variables)),
+    () => page.onDestroy?.forEach((onDestryFn) => callFn(onDestryFn)),
     []
   );
 

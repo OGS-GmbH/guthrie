@@ -1,35 +1,38 @@
-import {create} from "zustand";
+import type { EventConfig, Events } from "../renderer/type";
+import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 
 type EventsStore = {
-  events: Record<string, {
-    target: HTMLElement | Window,
-    listener: Function
-  }>,
-  addEvent: (name: string, target: HTMLElement | Window, listener: Function) => void
+  events: Record<string, Events>,
+  addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => void,
+  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) => void
 }
 
-const useGuthrieEventsStore = create<EventsStore>((set)=> ({
-  events: {},
-  addEvent: (name: string, target: HTMLElement | Window, listener: Function) => set((state) => ({
-    events: {
-      ...state.events,
-      [name]: {target, listener}
-    }
+const useGuthrieEvents = create<EventsStore>()(
+  immer((set) => ({
+    events: {},
+    addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => set((state) => {
+      state.events[ref][name] = listener
+    }),
+    removeEvent: (ref: string, name: string) => set((state) => {
+      state.events[ref][name] = undefined;
+    })
   }))
-}));
+);
 
 type EventsConfigStore = {
-  config: {autoApply: boolean};
-  setConfig: (config: {autoApply: boolean}) => void
+  config: EventConfig;
+  setConfig: (config: EventConfig) => void
 }
 
-const useGuthrieEventsConfigStore = create<EventsConfigStore>((set) => ({
-  config: {autoApply: true},
-  setConfig: (config: {autoApply: boolean}) => set({config})
+const useGuthrieEventsConfig = create<EventsConfigStore>((set) => ({
+  config: {
+    autoApply: true
+  },
+  setConfig: (config: EventConfig) => set({config})
 }))
 
-
 export {
-  useGuthrieEventsStore,
-  useGuthrieEventsConfigStore
+  useGuthrieEvents,
+  useGuthrieEventsConfig
 }

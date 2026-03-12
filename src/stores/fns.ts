@@ -1,5 +1,5 @@
-import { create } from "zustand"
-import type {Elements, Fns} from "../renderer/type"
+import {create} from "zustand"
+import type {Fns} from "../renderer/type"
 
 type FunctionsStore = {
   fns: Fns,

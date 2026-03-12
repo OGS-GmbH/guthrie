@@ -37,7 +37,6 @@ function withElements ({elements, options}: Partial<{
     ...configuredFlowControls
   };
 
-  console.log(elementsResult)
   return Object.fromEntries(
     Object.entries(elementsResult).map(([key, value]) => [
       options?.mapNames ? options.mapNames(key) : key,

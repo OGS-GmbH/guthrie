@@ -1,22 +1,32 @@
 import type { ElementType } from "react";
 
-type DynamicEvent = {
-  type: keyof GlobalEventHandlersEventMap,
-  as?: string,
-  actions: Array<{
-    fn: string,
-    args: Array<unknown>
-  }>
+type EventConfig = {
+  autoApply: boolean
+}
+
+type Exposable = {
+  as?: string
+}
+
+type Event = {
+  name: keyof GlobalEventHandlersEventMap,
+  actions: ExposableFn[]
 };
+
+type ExposableEvent = Event & Exposable;
 
 type DynamicElementProps = {
   element: string;
   ref?: string,
   children?: DynamicElementProps[],
-  events?: DynamicEvent[]
+  events?: ExposableEvent[]
   // Allow any additional props
   [key: string]: unknown
 };
+
+type Events = Record<keyof GlobalEventHandlersEventMap, EventListener>;
+
+type Variables = Record<string, unknown>;
 
 type PrimitiveOperatorArg = number | boolean;
 
@@ -54,9 +64,7 @@ type Fn = {
   args: Array<VariableFnArg | RecursiveFnArg | ObjectFnArg | PrimitiveFnArg>
 }
 
-type ExposableFn = Fn & {
-  as?: string
-}
+type ExposableFn = Fn & Exposable;
 
 type Fns = Record<string,  Function>;
 
@@ -69,15 +77,20 @@ type Lifecycle = Partial<{
 type Page = {
   route: string,
   content: DynamicElementProps,
-  events?: DynamicEvent[]
+  events?: ExposableEvent[]
 } & Lifecycle;
 
 type Elements = Record<string, ElementType>;
 
 export type {
-  DynamicEvent,
+  EventConfig,
+  Event,
+  ExposableEvent,
+  Exposable,
   DynamicElementProps,
   Elements,
+  Variables,
+  Events,
   OperatorArg,
   PrimitiveOperatorArg,
   OperatorReturn,

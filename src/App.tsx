@@ -4,13 +4,36 @@ import type { Page } from "./renderer/type"
 
 const page = {
   "route": "/example",
-  "events": [{
-    "type": "click",
-    "as": "test-listener",
-    "actions": [{
-      "fn": "log",
-      "args": ["{event.target}"]
-    }]
+  "events": [
+    {
+      "name": "click",
+      "as": "test-listener",
+      "actions": [
+        {
+          "name": "log",
+          "args": ["click {event.target}"]
+        }
+      ]
+    }, {
+    "name": "dblclick",
+    "as": "dblclick-listener",
+    "actions": [
+      {
+        "name": "log",
+        "args": ["dblclick"]
+      }, {
+        "name": "addEvents",
+        "args": [
+          "dblclick",
+          "target",
+          {
+            "type": "arg",
+            "name": "log",
+            "args": ["log mich am ..."]
+          }
+        ]
+      }
+    ]
   }],
   "onInit": [
     {
@@ -18,15 +41,8 @@ const page = {
       "args": [
         "https://jsonplaceholder.typicode.com/todos/1",
         {
-          "type": "fn",
-          "name": "concat",
-          "args": [
-            {
-              "type": "variable",
-              "name": "test-const"
-            },
-            "test"
-          ]
+          "type": "arg",
+          "method": "get"
         }
       ],
       "as": "gehaltsliste"
@@ -35,16 +51,23 @@ const page = {
   "content": {
     "element": "prefix_div",
     "ref": "html-ref",
-    "content": "<h1>Guthrie</h1>",
-    "events": [{
-      "type": "mouseenter",
-      "as": "mouse-enter-listener",
-      "actions": [{
-        "fn": "log",
-        "args": ["mouse enter"]
-      }]
-    }],
+    "events": [
+      {
+        "name": "click",
+        "as": "removeEvents-listener",
+        "actions": [
+          {
+            "name": "removeListener",
+            "args": ["window", "click"]
+          }
+        ]
+      }
+    ],
     "children": [
+      {
+        "element": "prefix_raw-html",
+        "content": "<h2>Guthrie</h2>"
+      },
       {
         "element": "prefix_p",
         "children": [
