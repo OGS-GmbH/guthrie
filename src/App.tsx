@@ -63,7 +63,10 @@ const page = {
         ]
       }
     ],
-    "children": [
+    "children": [{
+      "element": "prefix_fn-renderer",
+      "args": [{type: "arg", "element": "prefix_text", "content": "coult be async"}]
+    },
       {
         "element": "prefix_raw-html",
         "content": "<h2>Guthrie</h2>"
