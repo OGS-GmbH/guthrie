@@ -112,6 +112,7 @@ import type { Elements } from "../renderer/type.ts";
 import { Operation } from "../components/operation.tsx";
 import {SlotTemplate, SlotTemplateRenderer} from "../components/template.tsx";
 import {FnRenderer} from "../components/fn-renderer.tsx";
+import { Variable } from "../components/variable.tsx";
 
 const flowControls: Elements = {
   conditional: Conditional,
@@ -120,11 +121,12 @@ const flowControls: Elements = {
 }
 
 const additional: Elements = {
-  operation: Operation,
+  "operation": Operation,
   "raw-html": RawHtml,
   "slot-template": SlotTemplate,
   "slot-template-renderer": SlotTemplateRenderer,
-  "fn-renderer": FnRenderer
+  "fn-renderer": FnRenderer,
+  "variable": Variable
 }
 
 const intrinsics: Elements = {

@@ -1,6 +1,6 @@
-import { useEffect, useRef, type DependencyList, type EffectCallback } from "react";
+import { useEffect, useRef, type EffectCallback } from "react";
 
-function useMountedEffect (effect: EffectCallback, deps?: DependencyList): void {
+function useMountedEffect (effect: EffectCallback): void {
   const isMounted = useRef(false);
 
   useEffect(() => {
@@ -9,7 +9,7 @@ function useMountedEffect (effect: EffectCallback, deps?: DependencyList): void 
 
     isMounted.current = true;
     return effect();
-  }, deps);
+  }, []);
 }
 
 export {

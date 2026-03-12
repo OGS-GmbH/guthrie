@@ -3,7 +3,7 @@ import { useGuthrieElements } from "../stores/elements";
 import { useGuthrieRefs } from "../stores/refs";
 import { type DynamicElementProps } from "./type";
 import { toUnreservedProps } from "./props";
-import {useGuthrieEvents} from "../hooks/event.ts";
+import { useGuthrieEventsApply } from "../hooks/event";
 
 type RendererProps = DynamicElementProps;
 
@@ -21,7 +21,10 @@ function Renderer ({element, ref: refName, children, events, ...props}: Renderer
     })
   };
 
-  useGuthrieEvents(elementRef, events);
+  useGuthrieEventsApply(
+    elementRef,
+    events
+  );
 
   useEffect(() => {
     if (refName)

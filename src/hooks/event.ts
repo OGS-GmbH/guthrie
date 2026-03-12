@@ -1,29 +1,26 @@
-import type {DynamicEvent} from "../renderer/type.ts";
-import {useGuthrieEventsConfigStore} from "../stores/events.ts";
-import {type RefObject} from "react";
-import {addEvent} from "../options/fns.ts";
+import type {ExposableEvent} from "../renderer/type.ts";
+import {useGuthrieEventsConfig} from "../stores/events.ts";
 import {useMountedEffect} from "./effect.ts";
+import { addListener } from "../options/fns.ts";
+import type { RefObject } from "react";
 
-
-function useGuthrieEvents(target: HTMLElement | Window | RefObject<HTMLElement | null>, eventConfigs?: DynamicEvent[]) {
-  const eventContext = useGuthrieEventsConfigStore((state) => state.config);
+function useGuthrieEventsApply (
+  target: RefObject<HTMLElement | Window | string>,
+  events: ExposableEvent[],
+) {
+  const eventsConfig = useGuthrieEventsConfig((state) => state.config);
 
   useMountedEffect(() => {
-    if (!eventContext.autoApply || !eventConfigs)
+    if (!eventsConfig.autoApply)
       return
 
-    let domTarget: HTMLElement | Window;
-
-    if (target instanceof HTMLElement || target instanceof Window)
-      domTarget = target;
-    else
-      domTarget = target.current;
-
-    if (!domTarget)
-      return;
-
-    eventConfigs?.forEach((eventConfig) => addEvent(eventConfig.type, domTarget, eventConfig.actions));
-  }, []);
+    events.forEach((event) => {
+      console.log(event);
+      addListener(target.current, event.name, event.actions);
+    });
+  });
 }
 
-export {useGuthrieEvents}
+export {
+  useGuthrieEventsApply
+}

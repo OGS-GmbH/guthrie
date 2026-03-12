@@ -1,38 +1,38 @@
-import {create} from "zustand";
-import {eventStoreHack} from "../options/fns.ts";
-
-type RegisteredEvent = {
-  target: HTMLElement | Window,
-  listener: { type: string, fn: EventListener }
-};
+import type { EventConfig, Events } from "../renderer/type";
+import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 
 type EventsStore = {
-  getEvent: (name) => RegisteredEvent,
-  addEvent: (name: string, registeredEvent: RegisteredEvent) => void,
-  removeEvent: (name: string) => void
+  events: Record<string, Events>,
+  addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => void,
+  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) => void
 }
 
-const useGuthrieEventStore = create<EventsStore>(() => ({
-  getEvent: (name: string) => eventStoreHack.get(name),
-  addEvent: (name: string, registeredEvent: RegisteredEvent) => eventStoreHack.set(name, registeredEvent),
-  removeEvent: (name: string) => eventStoreHack.delete(name)
-}));
+const useGuthrieEvents = create<EventsStore>()(
+  immer((set) => ({
+    events: {},
+    addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => set((state) => {
+      state.events[ref][name] = listener
+    }),
+    removeEvent: (ref: string, name: string) => set((state) => {
+      state.events[ref][name] = undefined;
+    })
+  }))
+);
 
 type EventsConfigStore = {
-  config: { autoApply: boolean };
-  setConfig: (config: { autoApply: boolean }) => void
+  config: EventConfig;
+  setConfig: (config: EventConfig) => void
 }
 
-const useGuthrieEventsConfigStore = create<EventsConfigStore>((set) => ({
-  config: {autoApply: true},
-  setConfig: (config: { autoApply: boolean }) => set({config})
+const useGuthrieEventsConfig = create<EventsConfigStore>((set) => ({
+  config: {
+    autoApply: true
+  },
+  setConfig: (config: EventConfig) => set({config})
 }))
 
-export type {
-  RegisteredEvent
-}
-
 export {
-  useGuthrieEventStore,
-  useGuthrieEventsConfigStore
+  useGuthrieEvents,
+  useGuthrieEventsConfig
 }

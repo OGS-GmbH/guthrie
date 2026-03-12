@@ -1,15 +1,21 @@
 import type {RefObject} from "react";
 import { create } from "zustand";
-import {refStoreHack} from "../options/fns.ts";
+import { produce } from "immer";
 
 type RefsStore = {
-  getRef: (name: string) => RefObject<HTMLElement | null>;
-  addRef: (name: string, ref:  RefObject<HTMLElement | null>) => void
+  refs: Record<string, RefObject<Window | HTMLElement | null>>;
+  getRef: (name: string) => RefObject<Window | HTMLElement | null>;
+  addRef: (name: string, ref:  RefObject<Window | HTMLElement | null>) => void
 };
 
-const useGuthrieRefs = create<RefsStore>(() => ({
-  getRef: (name: string) => refStoreHack.get(name),
-  addRef: (name: string, ref:  RefObject<HTMLElement | null>) =>  refStoreHack.set(name, ref)
+const useGuthrieRefs = create<RefsStore>((set, get) => ({
+  refs: {},
+  getRef: (name: string) => get().refs[name],
+  addRef: (name: string, ref: RefObject<Window| HTMLElement | null>) => set(
+    produce((state) => {
+      state.refs[name] = ref;
+    })
+  )
 }));
 
 export type {
