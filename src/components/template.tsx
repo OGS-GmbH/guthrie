@@ -1,7 +1,7 @@
 import type {DynamicElementProps} from "../renderer/type.ts";
 import {useGuthrieTemplateStore} from "../stores/templates.ts";
 import {Renderer} from "../renderer/renderer.tsx";
-import {useInitialze} from "../hooks/init.ts";
+import {useInitialize} from "../hooks/init.ts";
 
 type SlotTemplateProps = {
   refName: string,
@@ -11,7 +11,7 @@ type SlotTemplateProps = {
 function SlotTemplate ({refName, _children }: SlotTemplateProps) {
   const addTemplate = useGuthrieTemplateStore((state)=> state.addTemplate)
 
-  useInitialze(()=> {
+  useInitialize(()=> {
     if (refName)
       addTemplate(refName, _children);
   });
