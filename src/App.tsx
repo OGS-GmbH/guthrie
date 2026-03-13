@@ -52,10 +52,7 @@ const page = {
         ]
       }
     ],
-    "children": [{
-      "element": "prefix_fn-renderer",
-      "args": [{type: "arg", "element": "prefix_text", "content": "coult be async"}]
-    },
+    "children": [
       {
         "element": "prefix_raw-html",
         "content": "<h2>Guthrie</h2>"
