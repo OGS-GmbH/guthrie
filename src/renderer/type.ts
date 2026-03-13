@@ -41,12 +41,12 @@ type Operators = Record<string, OperatorFn>;
 type Operation = {
   name: string,
   args: OperatorArg[]
-};
+}
 
 type PrimitiveFnArg = string | number | boolean;
 
 type VariableFnArg = {
-  type: "variable",
+  type: "var",
   name: string
 }
 
@@ -55,9 +55,9 @@ type ObjectFnArg = {
   [key: string]: unknown
 }
 
-type RecursiveFnArg = {
+type RecursiveFnArg = ExposableFn & {
   type: "fn"
-} & ExposableFn;
+};
 
 type Fn = {
   name: string,
@@ -73,6 +73,13 @@ type Lifecycle = Partial<{
   onRender: ExposableFn[],
   onDestroy: ExposableFn[]
 }>;
+
+type ContextProps = {
+  refname: string,
+  events?: ExposableEvent[]
+  // Map children to elements since children is reserved by React
+  elements?: DynamicElementProps[]
+}
 
 type Page = {
   route: string,
@@ -99,6 +106,10 @@ export type {
   Operation,
   ExposableFn,
   PrimitiveFnArg,
+  ObjectFnArg,
+  VariableFnArg,
+  RecursiveFnArg,
+  ContextProps,
   Fns,
   Page
 }

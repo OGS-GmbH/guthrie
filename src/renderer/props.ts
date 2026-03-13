@@ -1,6 +1,6 @@
 const reservedProps: Record<string, string> = {
-  key: "keyName",
-  ref: "refName",
+  key: "keyname",
+  ref: "refname",
   if: "_if",
   elseIf: "_elseIf",
   else: "_else",

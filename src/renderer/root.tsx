@@ -4,13 +4,12 @@ import { Renderer } from "./renderer";
 import { useMountedEffect } from "../hooks/effect";
 import { useGuthrieOperators } from "../stores/operators";
 import {useEffect, useRef, type RefObject} from "react";
-import {useInitialize} from "../hooks/init.ts";
 import {useGuthrieEventsConfig} from "../stores/events.ts";
 import {useGuthrieFns} from "../stores/fns.ts";
 import type { Variables } from "../options/variables.ts";
 import { callFn } from "./fns.ts";
 import { useGuthrieRefs } from "../stores/refs.ts";
-import { useGuthrieEventsApply } from "../hooks/event.ts";
+import { useGuthrieEventsCallback } from "../hooks/event.ts";
 
 type GuthrieProps = {
   elements: Elements,
@@ -28,38 +27,48 @@ function Guthrie({elements, fns, page, operators, variables, event}: GuthrieProp
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);
   const setEventsConfig = useGuthrieEventsConfig((state) => state.setConfig)
+  const eventsConfig = useGuthrieEventsConfig((state) => state.config);
   const setFns = useGuthrieFns((state) => state.setFns)
-  const addRefs = useGuthrieRefs((state) => state.addRef);
+  const addRef = useGuthrieRefs((state) => state.addRef);
   const windowRef = useRef(window);
-
-  useGuthrieEventsApply(
+  const registerEvents = useGuthrieEventsCallback(
     event?.rootRef ?? windowRef,
     page.events
   );
 
-  useInitialize(() => {
-    addRefs("window", event?.rootRef ?? windowRef)
+  useEffect(() => {
+    setElements(elements);
+  }, [elements])
+
+  useEffect(() => {
+    setOperators(operators);
+  }, [operators])
+
+  useEffect(() => {
+    setFns(fns);
+  }, [fns])
+
+  useEffect(() => {
+    addRef("window", (event?.rootRef ?? windowRef).current);
+    setEventsConfig({
+      autoApply: event?.autoApply
+    });
+  }, [event])
+
+  useEffect(() => {
     page.onInit?.forEach((onInitFn) => callFn(onInitFn));
 
-    setFns(fns);
-    setEventsConfig({
-      autoApply: event?.autoApply ?? true
-    });
-    setElements(elements);
-    setOperators(operators);
-  });
+    eventsConfig.autoApply && registerEvents();
+
+    return () => page.onDestroy?.forEach((onDestryFn) => callFn(onDestryFn))
+  }, [])
 
   useMountedEffect(() => {
     page.onRender?.forEach((onRenderFn) => callFn(onRenderFn));
   });
 
-  useEffect(() =>
-    () => page.onDestroy?.forEach((onDestryFn) => callFn(onDestryFn)),
-    []
-  );
-
   return (
-      <Renderer {...page.content} />
+    <Renderer {...page.content} />
   )
 }
 

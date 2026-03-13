@@ -1,7 +1,7 @@
 import { useEffect, useRef, type EffectCallback } from "react";
 
 function useMountedEffect (effect: EffectCallback): void {
-  const isMounted = useRef(false);
+  const isMounted = useRef<boolean>(false);
 
   useEffect(() => {
     if (isMounted.current)

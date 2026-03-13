@@ -13,7 +13,7 @@ function getVariables (value: string): string[] | null {
       continue;
     }
 
-    if (char === templateChars.end) {
+    if (char === templateChars.end && variableName !== null) {
       variableNames === null
         ? (variableNames = [variableName])
         : variableNames.push(variableName)
@@ -97,11 +97,11 @@ function getPath (value: string): Array<string | number> {
   return path;
 }
 
-function touchByPath (value: unknown, path: Array<string | number>): unknown {
-  let touchedValue: unknown = value;
+function touchByPath <T> (value: unknown, path: Array<string | number>): T {
+  let touchedValue: T = value as T;
 
   for (const pathItem of path)
-    touchedValue = touchedValue[pathItem];
+    touchedValue = touchedValue[pathItem] as T;
 
   return touchedValue;
 }

@@ -1,4 +1,4 @@
-import { type DynamicElementProps, type Operation, type Operators } from "../renderer/type";
+import { type ContextProps, type DynamicElementProps, type Operation, type Operators } from "../renderer/type";
 import { Renderer } from "../renderer/renderer";
 import { useGuthrieOperators } from "../stores/operators";
 import { useGuthrieVariables } from "../stores/variables";
@@ -11,10 +11,10 @@ type Condition = {
   children: DynamicElementProps[]
 };
 
-type ConditionalProps = {
-  _if: Condition,
-  _elseIf?: Condition[],
-  _else?: {
+type ConditionalProps = ContextProps & {
+  if: Condition,
+  elseIf?: Condition[],
+  else?: {
     children: DynamicElementProps[]
   }
 };
@@ -46,18 +46,18 @@ function solveCondition (
   return Boolean(solveOperation(operators, condition, variables));
 }
 
-function Conditional({_if, _elseIf, _else}: ConditionalProps) {
+function Conditional(props: ConditionalProps) {
   const operators = useGuthrieOperators((state) => state.operators);
   const variables = useGuthrieVariables((state) => state.variables);
 
-  if (solveCondition(_if.condition, operators, variables)) {
-    return _if.children.map((child, index) => (
+  if (solveCondition(props["if"].condition, operators, variables)) {
+    return props["if"].children.map((child, index) => (
       <Renderer key={index} {...child} />
     ))
   }
 
-  if (_elseIf) {
-    for (const condition of _elseIf) {
+  if (props["elseIf"]) {
+    for (const condition of props["elseIf"]) {
       if (!solveCondition(condition.condition, operators, variables))
         continue;
 
@@ -67,7 +67,7 @@ function Conditional({_if, _elseIf, _else}: ConditionalProps) {
     }
   }
   
-  return _else?.children.map((child, index) => (
+  return props["else"]?.children.map((child, index) => (
     <Renderer key={index} {...child} />
   ))
 }

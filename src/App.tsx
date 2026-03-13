@@ -21,17 +21,6 @@ const page = {
       {
         "name": "log",
         "args": ["dblclick"]
-      }, {
-        "name": "addEvents",
-        "args": [
-          "dblclick",
-          "target",
-          {
-            "type": "arg",
-            "name": "log",
-            "args": ["log mich am ..."]
-          }
-        ]
       }
     ]
   }],

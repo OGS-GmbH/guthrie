@@ -9,18 +9,15 @@ async function callFn (
     if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string")
       return arg;
 
-    if (arg.type === "variable")
+    if (arg.type === "var")
       return useGuthrieVariables.getState().variables[arg.name];
 
-    if (arg.type === "arg") {
-      delete arg.type;
+    const {type, ...rest} = arg;
 
-      return arg;
-    }
+    if (type === "arg")
+      return rest;
 
-    delete arg.type;
-
-    return callFn(arg);
+    return callFn(rest as ExposableFn);
   }));
 
   const fnRef = useGuthrieFns.getState().fns[fn.name]; // oxlint-disable-line eslint-plugin-react-hooks(rules-of-hooks)

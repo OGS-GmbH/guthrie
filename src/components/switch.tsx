@@ -13,13 +13,13 @@ type SwitchProps = {
   // Condition can only be a variable (= string)
   condition: string,
   cases: Case,
-  _default: InnerCase
+  default: InnerCase
 };
 
-function Switch ({condition, _default, cases}: SwitchProps) {
+function Switch ({condition, cases, ...props}: SwitchProps) {
   const variable = useGuthrieVariables((state) => state.variables[condition]);
   const currentCase = useMemo(
-    () => cases[variable as string] ?? _default,
+    () => cases[variable as string] ?? props["default"],
     [cases, variable]
   );
   

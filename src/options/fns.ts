@@ -17,53 +17,45 @@ function removeListener(
   target: HTMLElement | Window | string,
   name: keyof GlobalEventHandlersEventMap
 ) {
-  console.log(useGuthrieRefs.getState().refs);
-  console.log(useGuthrieEvents.getState().events);
   const targetName = normalizeTargetName(target);
   let domTarget: HTMLElement | Window;
 
   if (typeof target === "string") 
-    domTarget = useGuthrieRefs.getState().refs[targetName].current;
+    domTarget = useGuthrieRefs.getState().refs[targetName];
   else
     domTarget = target;
 
-  console.log(targetName, name);
-
   const listener = useGuthrieEvents.getState().events[targetName][name];
 
-  console.log(useGuthrieEvents.getState().events);
-
   domTarget.removeEventListener(name, listener);
-
   useGuthrieEvents.getState().removeEvent(targetName, name);
 }
 
 function addListener(
-  target: HTMLElement | Window | string,
+  target: HTMLElement | Window | string | null,
   name: keyof GlobalEventHandlersEventMap,
   actions: ExposableFn[]
 ) {
+  if (target === null)
+    return;
+
   const targetName = normalizeTargetName(target);
-  const listener = (event: Event) => {
-    actions.forEach((fn) => void callFn(fn))
-  };
+  const listener = (event: Event) => actions.forEach((fn) => void callFn(fn));
 
   let domTarget: HTMLElement | Window;
 
   if (typeof target === "string")
-    domTarget = useGuthrieRefs.getState().getRef(targetName).current;
+    domTarget = useGuthrieRefs.getState().getRef(targetName);
   else
     domTarget = target;
 
+  if (domTarget === null)
+    return;
+
+  console.log(useGuthrieRefs.getState().refs, target, domTarget, name);
+
   domTarget.addEventListener(name, listener);
-  console.log(
-    useGuthrieEvents.getState().events
-  )
   useGuthrieEvents.getState().addEvent(targetName, name, listener);
-  console.log("added");
-  console.log(
-    useGuthrieEvents.getState().events
-  )
 }
 
 const native: Fns = {
