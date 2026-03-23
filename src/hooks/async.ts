@@ -15,17 +15,17 @@ function useMountedState(): () => boolean {
   return get;
 }
 
-export type UsePromise = <T>(promise: Promise<T>) => T | null;
+type UsePromise = <T>(promise: Promise<T>) => T | null;
 
 const usePromise: UsePromise = <T>(promise: Promise<T>) => {
   const isMounted = useMountedState();
   const [state, setState] = useState<T | null>(null);
-  const callback = useCallback((promise: Promise<T>) =>
+  const callback = useCallback((promise: Promise<T>) => // oxlint-disable-line eslint(no-shadow)
     new Promise<T>((resolve, reject) => {
-      const onValue = (value) => {
+      const onValue = (value: T) => {
         isMounted() && resolve(value);
       };
-      const onError = (error) => {
+      const onError = (error: T) => {
         isMounted() && reject(error);
       };
       promise.then(onValue, onError);
@@ -35,6 +35,10 @@ const usePromise: UsePromise = <T>(promise: Promise<T>) => {
 
   return state;
 };
+
+export type {
+  UsePromise
+}
 
 export {
   useMountedState,

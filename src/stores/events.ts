@@ -1,6 +1,5 @@
 import type { EventConfig, Events } from "../renderer/type";
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 type EventsStore = {
@@ -30,14 +29,12 @@ type EventsConfigStore = {
 }
 
 const useGuthrieEventsConfig = create<EventsConfigStore>()(
-  devtools(
-    (set) => ({
-      config: {
-        autoApply: true
-      },
-      setConfig: (config: EventConfig) => set({config})
-    })
-  )
+  immer((set) => ({
+    config: {
+      autoApply: true
+    },
+    setConfig: (config: EventConfig) => set({config})
+  }))
 )
 
 export {

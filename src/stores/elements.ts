@@ -8,12 +8,10 @@ type ElementsStore = {
 }
 
 const useGuthrieElements = create<ElementsStore>()(
-  immer(
-    (set) => ({
-      elements: {},
-      setElements: (elements: Elements) => set({elements})
-    })
-  )
+  immer((set) => ({
+    elements: {},
+    setElements: (elements: Elements) => set({elements})
+  }))
 );
 
 export type {

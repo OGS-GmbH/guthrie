@@ -52,8 +52,6 @@ function addListener(
   if (domTarget === null)
     return;
 
-  console.log(useGuthrieRefs.getState().refs, target, domTarget, name);
-
   domTarget.addEventListener(name, listener);
   useGuthrieEvents.getState().addEvent(targetName, name, listener);
 }

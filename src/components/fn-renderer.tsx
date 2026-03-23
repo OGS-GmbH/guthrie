@@ -7,7 +7,7 @@ import {usePromise} from "../hooks/async.ts";
 type FnRendererProps = ExposableFn
 
 function FnRenderer(props: FnRendererProps) {
-  const promise = useMemo(() => callFn(props), [props]) as Promise<DynamicElementProps>;
+  const promise = useMemo(() => callFn(props) as Promise<DynamicElementProps>, [props]);
   const content = usePromise<DynamicElementProps>(promise);
 
   return content && (<Renderer {...content}/>)

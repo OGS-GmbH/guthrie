@@ -22,4 +22,6 @@ function For({count, iterator}: ForProps) {
   ))
 }
 
-export {For}
+export {
+  For
+}
