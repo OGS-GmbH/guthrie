@@ -2,7 +2,7 @@ import {useMemo} from "react";
 import type {DynamicElementProps, ExposableFn} from "../renderer/type.ts";
 import {Renderer} from "../renderer/renderer.tsx";
 import {callFn} from "../renderer/fns.ts";
-import {usePromise} from "../hooks/async.ts";
+import { usePromise } from "@ogs-gmbh/react-hooks";
 
 type FnRendererProps = ExposableFn
 

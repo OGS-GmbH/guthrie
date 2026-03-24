@@ -1,7 +1,6 @@
 import type { Elements, Fns, Operators, Page } from "./type";
 import { useGuthrieElements } from "../stores/elements";
 import { Renderer } from "./renderer";
-import { useMountedEffect } from "../hooks/effect";
 import { useGuthrieOperators } from "../stores/operators";
 import {useEffect, useRef, type RefObject} from "react";
 import {useGuthrieEventsConfig} from "../stores/events.ts";
@@ -10,6 +9,7 @@ import type { Variables } from "../options/variables.ts";
 import { callFn } from "./fns.ts";
 import { useGuthrieRefs } from "../stores/refs.ts";
 import { useGuthrieEventsCallback } from "../hooks/event.ts";
+import { useMountedEffect } from "@ogs-gmbh/react-hooks";
 
 type GuthrieProps = {
   elements: Elements,

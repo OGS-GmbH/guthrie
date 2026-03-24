@@ -37,8 +37,8 @@ function Renderer ({element, ref: refName, children, events, ...props}: Renderer
 
   return (
     <Element
-      ref={elementRef}
       {...elementProps}
+      ref={elementRef}
     >
       {
         children?.map((child, index) => (
