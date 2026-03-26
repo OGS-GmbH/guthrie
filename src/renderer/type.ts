@@ -1,5 +1,7 @@
 import type { ElementType } from "react";
 
+type MaybePromise<T> = T | Promise<T>;
+
 type EventConfig = {
   autoApply: boolean
 }
@@ -90,6 +92,7 @@ type Page = {
 type Elements = Record<string, ElementType>;
 
 export type {
+  MaybePromise,
   EventConfig,
   Event,
   ExposableEvent,

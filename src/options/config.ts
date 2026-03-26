@@ -16,33 +16,64 @@ const defaultElementOptions: WithElementsOptions = {
   flowControls: true
 }
 
-function withElements ({elements, options}: Partial<{
+function withElements (config?: Partial<{
   elements: Elements,
-  options: Partial<WithElementsOptions>
+  options: WithElementsOptions
 }>): Elements {
-  const configuredIntrinsics = (options?.intrinsics ?? defaultElementOptions.intrinsics)
+  let currentElements = {};
+
+  if (config.elements !== undefined) {
+    if (config.options?.mapNames === undefined)
+      currentElements = config.elements;
+    else {
+      for (const key in config.elements) {
+        const currentKey = config.options?.mapNames
+          ? config.options.mapNames(key)
+          : key;
+
+        currentElements[currentKey] = config.elements[key];
+      }
+    }
+  }
+
+
+  const configuredIntrinsics = (config.options?.intrinsics ?? defaultElementOptions.intrinsics)
     ? intrinsics
     : {};
-  const configuredFlowControls = (options?.flowControls ?? defaultElementOptions.flowControls)
+
+  for (const key in configuredIntrinsics) {
+    const currentKey = config.options?.mapNames
+      ? config.options.mapNames(key)
+      : key;
+
+    currentElements[currentKey] = configuredIntrinsics[key];
+  }
+
+  const configuredFlowControls = (config.options?.flowControls ?? defaultElementOptions.flowControls)
     ? flowControls
     : {};
-  const configuredAdditional = (options?.additional ?? defaultElementOptions.additional)
+
+  for (const key in configuredFlowControls) {
+    const currentKey = config.options?.mapNames
+      ? config.options.mapNames(key)
+      : key;
+
+    currentElements[currentKey] = configuredFlowControls[key];
+  }
+
+  const configuredAdditional = (config.options?.additional ?? defaultElementOptions.additional)
     ? additional
     : {};
 
-  const elementsResult: Elements = {
-    ...elements,
-    ...configuredIntrinsics,
-    ...configuredAdditional,
-    ...configuredFlowControls
-  };
+  for (const key in configuredAdditional) {
+    const currentKey = config.options?.mapNames
+      ? config.options.mapNames(key)
+      : key;
 
-  return Object.fromEntries(
-    Object.entries(elementsResult).map(([key, value]) => [
-      options?.mapNames ? options.mapNames(key) : key,
-      value
-    ])
-  )
+    currentElements[currentKey] = configuredAdditional[key];
+  }
+
+  return currentElements;
 }
 
 type WithFnsOptions = Partial<{

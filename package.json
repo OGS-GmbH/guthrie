@@ -17,7 +17,12 @@
     "immer": "^11.1.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "zustand": "^5.0.11"
+    "zustand": "^5.0.11",
+    "@ogs-gmbh/guthrie-mui-bindings": "file:/home/simonkov/Projects/ogs/github/guthrie-mui-bindings/dist/main",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/material": "^7.3.9",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1"
   },
   "devDependencies": {
     "@ogs-gmbh/oxlint-presets": "^1",

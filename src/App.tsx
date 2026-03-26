@@ -1,6 +1,7 @@
 import { Guthrie } from "./renderer/root"
 import { withElements, withFns, withOperators } from "./options/config"
 import type { Page } from "./renderer/type"
+import { getMuiComponentBindings } from "@ogs-gmbh/guthrie-mui-bindings";
 
 const page = {
   "route": "/example",
@@ -38,7 +39,7 @@ const page = {
     }
   ],
   "content": {
-    "element": "prefix_div",
+    "element": "div",
     "ref": "html-ref",
     "events": [
       {
@@ -54,28 +55,48 @@ const page = {
     ],
     "children": [
       {
-        "element": "prefix_raw-html",
+        "element": "mui-button",
+        "variant": "contained",
+        "children": [
+          {
+            "element": "text",
+            "content": "Click me to do nothing"
+          }
+        ]
+      },
+      {
+        "element": "mui-alert",
+        "severity": "error",
+        "children": [
+          {
+            "element": "text",
+            "content": "This is an alert with severity = error"
+          }
+        ]
+      },
+      {
+        "element": "raw-html",
         "content": "<h2>Guthrie</h2>"
       },
       {
-        "element": "prefix_p",
+        "element": "p",
         "children": [
           {
-            "element": "prefix_text",
+            "element": "text",
             "content": "Hallo Guthrie"
           }
         ]
       },
       {
-        "element": "prefix_for",
+        "element": "for",
         "count": 5,
         "iterator": {
           "children": [
             {
-              "element": "prefix_p",
+              "element": "p",
               "children": [
                 {
-                  "element": "prefix_text",
+                  "element": "text",
                   "content": "Hallo Guthrie 5x"
                 }
               ]
@@ -84,7 +105,7 @@ const page = {
         }
       },
       {
-        "element": "prefix_operation",
+        "element": "operation",
         "operation": {
           "name": "add",
           "args": [
@@ -94,24 +115,24 @@ const page = {
         }
       },
       {
-        "element": "prefix_variable",
+        "element": "variable",
         "name": "gehaltsliste",
         "access": "[0].salary"
       },
       {
-        "element": "prefix_conditional",
+        "element": "conditional",
         "if": {
           "condition": "dataSource.cond-test-const",
           "children": [
             {
-              "element": "prefix_raw-html",
+              "element": "raw-html",
               "content": "<h2>cond-test-const is true</h2>"
             }
           ]
         }
       },
       {
-        "element": "prefix_conditional",
+        "element": "conditional",
         "if": {
           "condition": {
             "name": "lt",
@@ -122,14 +143,14 @@ const page = {
           },
           "children": [
             {
-              "element": "prefix_raw-html",
+              "element": "raw-html",
               "content": "<h2>42 is less</h2>"
             }
           ]
         }
       },
       {
-        "element": "prefix_operation",
+        "element": "operation",
         "operation": {
           "name": "exp",
           "args": [
@@ -151,13 +172,13 @@ const page = {
         }
       },
       {
-        "element": "prefix_switch",
+        "element": "switch",
         "condition": "dataSource.cond-test-const",
         "cases": {
           41: {
             "children": [
               {
-                "element": "prefix_raw-html",
+                "element": "raw-html",
                 "content": "<h2>case1</h2>"
               }
             ]
@@ -165,7 +186,7 @@ const page = {
           42: {
             "children": [
               {
-                "element": "prefix_raw-html",
+                "element": "raw-html",
                 "content": "<h2>case2</h2>"
               }
             ]
@@ -173,7 +194,7 @@ const page = {
           43: {
             "children": [
               {
-                "element": "prefix_raw-html",
+                "element": "raw-html",
                 "content": "<h2>case3</h2>"
               }
             ]
@@ -182,19 +203,19 @@ const page = {
         "default": {
           "children": [
             {
-              "element": "prefix_raw-html",
+              "element": "raw-html",
               "content": "<h2>default case</h2>"
             }
           ]
         }
       },
       {
-        "element": "prefix_conditional",
+        "element": "conditional",
         "if": {
           "condition": true,
           "children": [
             {
-              "element": "prefix_raw-html",
+              "element": "raw-html",
               "content": "<h2>Govan</h2>"
             }
           ]
@@ -204,7 +225,7 @@ const page = {
             "condition": false,
             "children": [
               {
-                "element": "prefix_raw-html",
+                "element": "raw-html",
                 "content": "<h2>(aufjedenfall)</h2>"
               }
             ]
@@ -213,7 +234,7 @@ const page = {
             "condition": false,
             "children": [
               {
-                "element": "prefix_raw-html",
+                "element": "raw-html",
                 "content": "<h2>(nicht aufjedenfall)</h2>"
               }
             ]
@@ -222,7 +243,7 @@ const page = {
         "else": {
           "children": [
             {
-              "element": "prefix_raw-html",
+              "element": "raw-html",
               "content": "<h2>Best guitarist ever</h2>"
             }
           ]
@@ -235,13 +256,11 @@ const page = {
 function App() {
   return (
     <Guthrie
-      elements={
-        withElements({
-          options: {
-            mapNames: (value) => `prefix_${value}`
-          }
+      elements={withElements({
+        elements: getMuiComponentBindings({
+          mapNames: (value) => `mui-${value}`
         })
-      }
+      })}
       operators={
         withOperators({
           options: {
