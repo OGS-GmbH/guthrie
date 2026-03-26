@@ -1,9 +1,11 @@
+import type {Access} from "./type.ts";
+
 const templateChars = {
   start: "{",
   end: "}"
 }
 
-function getVariables (value: string): string[] | null {
+function getVariables(value: string): string[] | null {
   let variableName: string | null = null;
   let variableNames: string[] | null = null;
 
@@ -28,24 +30,24 @@ function getVariables (value: string): string[] | null {
 
     variableName += char;
   }
-  
+
   return variableNames;
 }
 
 const IS_DOT_MASK = 0b1;
 const IS_INDEX_MASK = 0b01;
 
-function tryFromNumber (value: string) {
+function tryFromNumber(value: string) {
   const num = Number.parseInt(value, 10);
 
   return Number.isNaN(num) ? value : num;
 }
 
-function getPath (value: string): Array<string | number> {
+function getPath(value: string): Array<string | number> {
   let state = 0b0;
   let access = "";
   const path = [];
-  
+
   for (let i = 0; i <= value.length; i++) {
     const char = value[i];
 
@@ -54,7 +56,7 @@ function getPath (value: string): Array<string | number> {
         path.push(tryFromNumber(access));
         access = "";
       }
-    
+
       state = IS_DOT_MASK;
       continue;
     }
@@ -97,11 +99,19 @@ function getPath (value: string): Array<string | number> {
   return path;
 }
 
-function touchByPath <T> (value: unknown, path: Array<string | number>): T {
+async function touchByAccess<T>(value: unknown, access: Access): Promise<T> {
   let touchedValue: T = value as T;
 
-  for (const pathItem of path)
-    touchedValue = touchedValue[pathItem] as T;
+  for (const accessItem of access) {
+    switch (accessItem.type) {
+      case "prototype":
+        touchedValue = await touchedValue[accessItem.read]() as T;
+        break;
+
+     default:
+        touchedValue = touchedValue[accessItem.read] as T;
+    }
+  }
 
   return touchedValue;
 }
@@ -109,5 +119,5 @@ function touchByPath <T> (value: unknown, path: Array<string | number>): T {
 export {
   getVariables,
   getPath,
-  touchByPath
+  touchByAccess
 }

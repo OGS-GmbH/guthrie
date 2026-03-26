@@ -15,14 +15,20 @@ type Event = {
 
 type ExposableEvent = Event & Exposable;
 
+type DynamicValue =
+  {type: "static", value: unknown}
+  | {type: "variable"} & VariableWithAccess
+  | {type: "child"} & DynamicElementProps
+  | {type: "fn"} & ExposableFn
+
 type DynamicElementProps = {
   element: string;
   ref?: string,
   children?: DynamicElementProps[],
-  events?: ExposableEvent[]
-  // Allow any additional props
+  events?: ExposableEvent[],
+  properties?: Record<string, DynamicValue>,
   [key: string]: unknown
-};
+}
 
 type Events = Record<keyof GlobalEventHandlersEventMap, EventListener>;
 
@@ -45,9 +51,31 @@ type Operation = {
 
 type PrimitiveFnArg = string | number | boolean;
 
-type VariableFnArg = {
+type Access = Array<PrototypeAccess | PropertyAccess | IndexAccess>
+
+type Accessible = {
+  access?: Access
+}
+
+type VariableWithAccess = Accessible & {
+  name: string,
+}
+
+type PropertyAccess = {
+  type: "property"
+  read: string
+};
+type PrototypeAccess = {
+  type: "prototype"
+  read: string
+};
+type IndexAccess = {
+  type: "index"
+  read: number
+};
+
+type VariableFnArg = VariableWithAccess & {
   type: "var",
-  name: string
 }
 
 type ObjectFnArg = {
@@ -59,10 +87,12 @@ type RecursiveFnArg = ExposableFn & {
   type: "fn"
 };
 
+type EventFnArg = Accessible & {type: "event"}
+
 type Fn = {
   name: string,
-  args: Array<VariableFnArg | RecursiveFnArg | ObjectFnArg | PrimitiveFnArg>
-}
+  args?: Array<VariableFnArg | RecursiveFnArg | ObjectFnArg | PrimitiveFnArg  | EventFnArg>
+} & Accessible
 
 type ExposableFn = Fn & Exposable;
 
@@ -95,8 +125,11 @@ export type {
   ExposableEvent,
   Exposable,
   DynamicElementProps,
+  DynamicValue,
   Elements,
   Variables,
+  Access,
+  VariableWithAccess,
   Events,
   OperatorArg,
   PrimitiveOperatorArg,

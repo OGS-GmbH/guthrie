@@ -10,7 +10,9 @@ const useGuthrieVariables = create<VariablesStore>()(
   immer((set) => ({
     variables: {},
     addVariable: (name: string, value: unknown) => set(
-      (state) => state.variables[name] = value
+      (state) => {
+        state.variables[name] = value
+      }
     )
   })
 ))

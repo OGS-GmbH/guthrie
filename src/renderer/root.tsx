@@ -23,13 +23,13 @@ type GuthrieProps = {
   }
 }
 
-function Guthrie({elements, fns, page, operators, variables, event}: GuthrieProps) {
+function Guthrie({elements, fns, page, operators, event}: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);
   const setEventsConfig = useGuthrieEventsConfig((state) => state.setConfig)
-  const eventsConfig = useGuthrieEventsConfig((state) => state.config);
   const setFns = useGuthrieFns((state) => state.setFns)
   const addRef = useGuthrieRefs((state) => state.addRef);
+  const eventsConfig = useGuthrieEventsConfig((state) => state.config);
   const windowRef = useRef(window);
   const registerEvents = useGuthrieEventsCallback(
     event?.rootRef ?? windowRef,
@@ -51,7 +51,7 @@ function Guthrie({elements, fns, page, operators, variables, event}: GuthrieProp
   useEffect(() => {
     addRef("window", (event?.rootRef ?? windowRef).current);
     setEventsConfig({
-      autoApply: event?.autoApply
+      autoApply: event?.autoApply ?? true
     });
   }, [event])
 
