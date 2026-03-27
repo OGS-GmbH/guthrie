@@ -10,7 +10,7 @@ type ForEachProps = {
 }
 
 function ForEach ({ items, iterator }: ForEachProps) {
-  return items.map((item, index) => ( // TODO: Expose item
+  return items.map((_, index) => ( // TODO: Expose item
     <Fragment key={index}>
       {
         iterator.children.map((child, childIndex) => (

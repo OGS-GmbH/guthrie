@@ -1,6 +1,5 @@
-import type { EventConfig, Events } from "../renderer/type";
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
+import type { Events } from "../renderer/type";
+import { create, StateCreator } from "zustand";
 
 type EventsStore = {
   events: Record<string, Events>,
@@ -8,37 +7,37 @@ type EventsStore = {
   removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) => void
 }
 
-const useGuthrieEvents = create<EventsStore>()(
-  immer((set) => ({
-    events: {},
-    addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => set((state) => {
-      if (!state.events[ref])
-        state.events[ref] = {} as Events;
-
-      state.events[ref][name] = listener
-    }),
-    removeEvent: (ref: string, name: string) => set((state) => {
-      // @ts-ignore Events are indexable
-      state.events[ref] && delete state.events[ref][name]
-    })
+const stateCreator: StateCreator<EventsStore> = (set) => ({
+  events: {},
+  addEvent: (
+    ref: string,
+    name: keyof GlobalEventHandlersEventMap,
+    listener: EventListener
+  ) => set((state) => ({
+    events: {
+      ...state.events,
+      [ref]: {
+        ...state.events[ref]!,
+        [name]: listener
+      }
+    }
+  })),
+  removeEvent: (ref: string, name: string) => set((state) => ({
+    events: {
+      ...state.events,
+      [ref]: {
+        ...state.events[ref]!,
+        [name]: undefined
+      }
+    }
   }))
+})
+
+const useGuthrieEvents = create(
+  stateCreator
 );
 
-type EventsConfigStore = {
-  config: EventConfig;
-  setConfig: (config: EventConfig) => void
-}
-
-const useGuthrieEventsConfig = create<EventsConfigStore>()(
-  immer((set) => ({
-    config: {
-      autoApply: true
-    },
-    setConfig: (config: EventConfig) => set({config})
-  }))
-)
 
 export {
   useGuthrieEvents,
-  useGuthrieEventsConfig
 }

@@ -55,7 +55,7 @@ function addListener(
   let domTarget: HTMLElement | Window;
 
   if (typeof target === "string")
-    domTarget = useGuthrieRefs.getState().getRef(targetName);
+    domTarget = useGuthrieRefs.getState().refs[targetName]!;
   else
     domTarget = target;
 

@@ -1,24 +1,23 @@
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
+import { create, StateCreator } from "zustand";
 
 type RefsStore = {
   refs: Record<string, Window | HTMLElement>;
-  getRef: (name: string) => Window | HTMLElement;
   addRef: (name: string, ref: Window | HTMLElement) => void
 };
 
-const useGuthrieRefs = create<RefsStore>(
-  (set, get) => ({
-    refs: {},
-    getRef: (name: string) => get().refs[name]!,
-    addRef: (name: string, ref: Window | HTMLElement | null): void =>
-      set((state) => ({
-        refs: {
-          ...state.refs,
-          [name]: ref!
-        }
-      }))
-  })
+const stateCreator: StateCreator<RefsStore> = (set) => ({
+  refs: {},
+  addRef: (name: string, ref: Window | HTMLElement | null): void =>
+    set((state) => ({
+      refs: {
+        ...state.refs,
+        [name]: ref!
+      }
+    }))
+})
+
+const useGuthrieRefs = create(
+  stateCreator
 );
 
 export type {

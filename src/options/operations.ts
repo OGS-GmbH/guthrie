@@ -73,10 +73,12 @@ const greaterThan: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) > Number(currentOperand);
+      previousOperand = currentOperand!;
       continue;
     }
 
     result &&= Number(previousOperand) > Number(currentOperand);
+    previousOperand = currentOperand!;
 
     if (!result)
       break;
@@ -96,10 +98,12 @@ const lessThan: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) < Number(currentOperand);
+      previousOperand = currentOperand!;
       continue;
     }
 
     result &&= Number(previousOperand) < Number(currentOperand);
+    previousOperand = currentOperand!;
     if (!result)
       break;
   }
@@ -118,10 +122,12 @@ const equal: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) === Number(currentOperand);
+      previousOperand = currentOperand!;
       continue;
     }
 
     result &&= Number(previousOperand) === Number(currentOperand);
+    previousOperand = currentOperand!;
     if (!result)
       break;
   }
@@ -140,10 +146,12 @@ const notEqual: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) !== Number(currentOperand);
+      previousOperand = currentOperand!;
       continue;
     }
 
     result &&= Number(previousOperand) !== Number(currentOperand);
+    previousOperand = currentOperand!;
 
     if (!result)
       break;
@@ -163,10 +171,12 @@ const and: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Boolean(previousOperand) && Boolean(currentOperand);
+      previousOperand = currentOperand!;
       continue;
     }
 
     result &&= Boolean(previousOperand) && Boolean(currentOperand);
+    previousOperand = currentOperand!;
 
     if (!result)
       break;
@@ -186,10 +196,12 @@ const or: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Boolean(previousOperand) || Boolean(currentOperand);
+      previousOperand = currentOperand!;
       continue;
     }
 
     result &&= Boolean(previousOperand) || Boolean(currentOperand);
+    previousOperand = currentOperand!;
 
     if (!result)
       break;
@@ -229,10 +241,13 @@ const greaterThanOrEqual: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) >= Number(currentOperand);
+      previousOperand = currentOperand!;
       continue;
     }
 
     result &&= Number(previousOperand) >= Number(currentOperand);
+    previousOperand = currentOperand!;
+
 
     if (!result)
       break;

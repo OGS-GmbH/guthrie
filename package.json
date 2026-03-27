@@ -64,7 +64,6 @@
     "@ogs-gmbh/react-hooks": "^1.0.0",
     "axios": "^1.13.6",
     "html-react-parser": "^5.2.17",
-    "immer": "^11.1.4",
     "react": "^19.2.4",
     "zustand": "^5.0.12"
   },
@@ -75,7 +74,7 @@
     "@eslint/json": "^0.14.0",
     "@eslint/markdown": "^7.5.1",
     "@ogs-gmbh/linter": "^2.0.4",
-    "@ogs-gmbh/oxlint-presets": "^1.0.3",
+    "@ogs-gmbh/oxlint-presets": "^1.0.4",
     "@ogs-gmbh/vitepress-plugin-sidebar": "^1.0.3",
     "@ogs-gmbh/vitepress-theme": "^1.1.0",
     "@testing-library/react": "^16.3.2",

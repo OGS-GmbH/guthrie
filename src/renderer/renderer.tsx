@@ -3,7 +3,7 @@ import {useGuthrieElements} from "../stores/elements";
 import {useGuthrieRefs} from "../stores/refs";
 import {type DynamicElementProps} from "./type";
 import {useGuthrieEventsCallback} from "../hooks/event";
-import {useGuthrieEventsConfig} from "../stores/events";
+import {useGuthrieEventsConfig} from "../stores/events-config";
 import {useGuthrieProperties} from "../hooks/properties";
 
 type RendererProps = DynamicElementProps;
