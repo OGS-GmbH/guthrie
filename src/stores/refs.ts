@@ -7,17 +7,18 @@ type RefsStore = {
   addRef: (name: string, ref: Window | HTMLElement) => void
 };
 
-const useGuthrieRefs = create<RefsStore>()(
-  immer((set, get) => ({
+const useGuthrieRefs = create<RefsStore>(
+  (set, get) => ({
     refs: {},
-    getRef: (name: string) => get().refs[name],
-    addRef: (name: string, ref: Window| HTMLElement | null) => set((state) => ({
-      refs: {
-        ...state.refs,
-        [name]: ref
-      }
-    }))
-  }))
+    getRef: (name: string) => get().refs[name]!,
+    addRef: (name: string, ref: Window | HTMLElement | null): void =>
+      set((state) => ({
+        refs: {
+          ...state.refs,
+          [name]: ref!
+        }
+      }))
+  })
 );
 
 export type {

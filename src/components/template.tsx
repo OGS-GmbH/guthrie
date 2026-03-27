@@ -1,6 +1,6 @@
-import type {DynamicElementProps} from "../renderer/type.ts";
-import {useGuthrieTemplateStore} from "../stores/templates.ts";
-import {Renderer} from "../renderer/renderer.tsx";
+import type {DynamicElementProps} from "../renderer/type";
+import {useGuthrieTemplateStore} from "../stores/templates";
+import {Renderer} from "../renderer/renderer";
 import { useInitialize } from "@ogs-gmbh/react-hooks";
 
 type SlotTemplateProps = {
@@ -27,7 +27,7 @@ type TemplateRendererProps = {
 function SlotTemplateRenderer ({templateRef}: TemplateRendererProps) {
   const templates = useGuthrieTemplateStore((state)=> state.templates[templateRef]);
 
-  return templates.map((dynamicElementProps, index) => <Renderer key={index} {...dynamicElementProps}/>)
+  return templates?.map((dynamicElementProps, index) => <Renderer key={index} {...dynamicElementProps}/>)
 }
 
 export {

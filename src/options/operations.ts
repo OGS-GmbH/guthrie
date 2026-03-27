@@ -252,12 +252,12 @@ const lessThanOrEqual: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) <= Number(currentOperand);
-      previousOperand = currentOperand;
+      previousOperand = currentOperand!;
       continue;
     }
 
     result &&= Number(previousOperand) <= Number(currentOperand);
-    previousOperand = currentOperand;
+    previousOperand = currentOperand!;
 
     if (!result)
       break;
@@ -277,12 +277,12 @@ const bitwiseOr: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) | Number(currentOperand);
-      previousOperand = currentOperand;
+      previousOperand = currentOperand!;
       continue;
     }
 
     result = result | Number(previousOperand) | Number(currentOperand);
-    previousOperand = currentOperand;
+    previousOperand = currentOperand!;
   }
 
   return result;
@@ -299,12 +299,12 @@ const bitwiseAnd: OperatorFn = function (...args): OperatorReturn{
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) & Number(currentOperand);
-      previousOperand = currentOperand;
+      previousOperand = currentOperand!;
       continue;
     }
 
     result = result & Number(previousOperand) & Number(currentOperand);
-    previousOperand = currentOperand;
+    previousOperand = currentOperand!;
   }
 
   return result;
@@ -321,12 +321,12 @@ const bitwiseXor: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = Number(previousOperand) ^ Number(currentOperand);
-      previousOperand = currentOperand;
+      previousOperand = currentOperand!;
       continue;
     }
 
     result = result & Number(previousOperand) ^ Number(currentOperand);
-    previousOperand = currentOperand;
+    previousOperand = currentOperand!;
   }
 
   return result;
@@ -343,12 +343,12 @@ const bitwiseNot: OperatorFn = function (...args): OperatorReturn {
     // Skip first result evalulation, since we need to compare the first operand with the second one first
     if (i === 0) {
       result = ~Number(previousOperand) + ~Number(currentOperand);
-      previousOperand = currentOperand;
+      previousOperand = currentOperand!;
       continue;
     }
 
     result = result + ~Number(previousOperand) + ~Number(currentOperand);
-    previousOperand = currentOperand;
+    previousOperand = currentOperand!;
   }
 
   return result;

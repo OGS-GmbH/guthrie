@@ -1,5 +1,5 @@
-import type {ExposableEvent} from "../renderer/type.ts";
-import { addListener } from "../options/fns.ts";
+import type {ExposableEvent} from "../renderer/type";
+import { addListener } from "../options/fns";
 import { type RefObject } from "react";
 
 type UseGuthrieEventsCallbackReturn = () => void;

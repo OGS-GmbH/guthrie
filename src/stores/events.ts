@@ -18,6 +18,7 @@ const useGuthrieEvents = create<EventsStore>()(
       state.events[ref][name] = listener
     }),
     removeEvent: (ref: string, name: string) => set((state) => {
+      // @ts-ignore Events are indexable
       state.events[ref] && delete state.events[ref][name]
     })
   }))

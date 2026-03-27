@@ -1,5 +1,4 @@
 import {
-  Text,
   A,
   Abbr,
   Address,
@@ -99,20 +98,29 @@ import {
   Tbody,
   Td,
   Template,
+  Text,
   Textarea,
   Tfoot,
   Th,
-  Thead, Time, Title, Tr, Track, U, Ul, Var, Video, Wbr
-} from "../components/intrinsics.tsx";
-import { Conditional } from "../components/conditional.tsx";
-import { Switch } from "../components/switch.tsx";
-import {RawHtml} from "../components/raw-html.tsx";
-import {For} from "../components/for.tsx";
-import type { Elements } from "../renderer/type.ts";
-import { Operation } from "../components/operation.tsx";
-import {SlotTemplate, SlotTemplateRenderer} from "../components/template.tsx";
-import {FnRenderer} from "../components/fn-renderer.tsx";
-import { Variable } from "../components/variable.tsx";
+  Thead,
+  Time,
+  Title,
+  Tr,
+  Track,
+  U,
+  Ul,
+  Var,
+  Video,
+  Wbr
+} from "../components/intrinsics";
+import {Conditional} from "../components/conditional";
+import {Switch} from "../components/switch";
+import {RawHtml} from "../components/raw-html";
+import {For} from "../components/for";
+import type {Elements} from "../renderer/type";
+import {Operation} from "../components/operation";
+import {SlotTemplate, SlotTemplateRenderer} from "../components/template";
+import {Fn, FnRenderer} from "../components/fn";
 
 const flowControls: Elements = {
   conditional: Conditional,
@@ -125,8 +133,8 @@ const additional: Elements = {
   "raw-html": RawHtml,
   "slot-template": SlotTemplate,
   "slot-template-renderer": SlotTemplateRenderer,
-  "fn-renderer": FnRenderer,
-  "variable": Variable
+  "fn": Fn,
+  "fn-renderer": FnRenderer
 }
 
 const intrinsics: Elements = {

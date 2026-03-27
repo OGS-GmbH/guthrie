@@ -1,9 +1,0 @@
-{
-  "$schema": "https://dsl.example.com/schema/page.schema.json",
-  "route": "/example",
-  "content": {
-    "html": {
-      "content": "<h1>Guthrie</h1>"
-    }
-  }
-}

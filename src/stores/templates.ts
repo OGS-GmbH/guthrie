@@ -1,4 +1,4 @@
-import {create} from "zustand";
+import { create, StateCreator } from "zustand";
 import type {DynamicElementProps} from "../renderer/type.ts";
 import { immer } from "zustand/middleware/immer";
 
@@ -7,16 +7,20 @@ type TemplateStore = {
   addTemplate: (name: string, dynamicElementProps: DynamicElementProps[]) => void
 }
 
+const stateCreator: StateCreator<TemplateStore, [['zustand/immer', never]]> = 
+    (set) => ({
+      templates: {},
+      addTemplate: (name, dynamicElementProps) => set(
+        (state) => {
+          state.templates[name] = dynamicElementProps
+        }
+      )
+    }) 
+
 const useGuthrieTemplateStore = create<TemplateStore>()(
-  immer((set) => ({
-    templates: {},
-    addTemplate: (name, dynamicElementProps) => set((state) => ({
-      templates: {
-        ...state.templates,
-        [name]: dynamicElementProps
-      }
-    }))
-  }))
+  immer(
+    stateCreator
+  )
 )
 
 export {useGuthrieTemplateStore}

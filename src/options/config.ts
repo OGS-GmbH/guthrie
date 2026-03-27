@@ -1,3 +1,4 @@
+import { ElementType } from "react";
 import type { Elements, Fns, Operators } from "../renderer/type";
 import { additional, flowControls, intrinsics } from "./elements";
 import { native } from "./fns";
@@ -20,9 +21,9 @@ function withElements (config?: Partial<{
   elements: Elements,
   options: WithElementsOptions
 }>): Elements {
-  let currentElements = {};
+  let currentElements: Elements = {};
 
-  if (config.elements !== undefined) {
+  if (config?.elements !== undefined) {
     if (config.options?.mapNames === undefined)
       currentElements = config.elements;
     else {
@@ -31,46 +32,46 @@ function withElements (config?: Partial<{
           ? config.options.mapNames(key)
           : key;
 
-        currentElements[currentKey] = config.elements[key];
+        currentElements[currentKey] = config.elements[key] as ElementType;
       }
     }
   }
 
 
-  const configuredIntrinsics = (config.options?.intrinsics ?? defaultElementOptions.intrinsics)
+  const configuredIntrinsics = (config?.options?.intrinsics ?? defaultElementOptions.intrinsics)
     ? intrinsics
     : {};
 
   for (const key in configuredIntrinsics) {
-    const currentKey = config.options?.mapNames
+    const currentKey = config?.options?.mapNames
       ? config.options.mapNames(key)
       : key;
 
-    currentElements[currentKey] = configuredIntrinsics[key];
+    currentElements[currentKey] = configuredIntrinsics[key] as ElementType;
   }
 
-  const configuredFlowControls = (config.options?.flowControls ?? defaultElementOptions.flowControls)
+  const configuredFlowControls = (config?.options?.flowControls ?? defaultElementOptions.flowControls)
     ? flowControls
     : {};
 
   for (const key in configuredFlowControls) {
-    const currentKey = config.options?.mapNames
+    const currentKey = config?.options?.mapNames
       ? config.options.mapNames(key)
       : key;
 
-    currentElements[currentKey] = configuredFlowControls[key];
+    currentElements[currentKey] = configuredFlowControls[key] as ElementType;
   }
 
-  const configuredAdditional = (config.options?.additional ?? defaultElementOptions.additional)
+  const configuredAdditional = (config?.options?.additional ?? defaultElementOptions.additional)
     ? additional
     : {};
 
   for (const key in configuredAdditional) {
-    const currentKey = config.options?.mapNames
+    const currentKey = config?.options?.mapNames
       ? config.options.mapNames(key)
       : key;
 
-    currentElements[currentKey] = configuredAdditional[key];
+    currentElements[currentKey] = configuredAdditional[key] as ElementType;
   }
 
   return currentElements;

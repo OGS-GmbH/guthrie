@@ -1,7 +1,7 @@
-import {callFn} from "../renderer/fns.ts";
+import {callFn} from "../renderer/fns";
 import type {ExposableFn, Fns} from "../renderer/type";
-import { useGuthrieEvents } from "../stores/events.ts";
-import { useGuthrieRefs } from "../stores/refs.ts";
+import {useGuthrieEvents} from "../stores/events";
+import {useGuthrieRefs} from "../stores/refs";
 
 function normalizeTargetName (target: HTMLElement | Window | string): string {
   if (typeof target === "string")
@@ -20,14 +20,12 @@ function removeListener(
   const targetName = normalizeTargetName(target);
   let domTarget: HTMLElement | Window;
 
-  if (typeof target === "string") 
-    domTarget = useGuthrieRefs.getState().refs[targetName];
+  if (typeof target === "string")
+    domTarget = useGuthrieRefs.getState().refs[targetName]!;
   else
     domTarget = target;
 
-  const listener = useGuthrieEvents.getState().events[targetName][name];
-
-  domTarget.removeEventListener(name, listener);
+  domTarget.removeEventListener(name, useGuthrieEvents.getState().events[targetName]![name]);
   useGuthrieEvents.getState().removeEvent(targetName, name);
 }
 
@@ -40,7 +38,19 @@ function addListener(
     return;
 
   const targetName = normalizeTargetName(target);
-  const listener = (event: Event) => actions.forEach((fn) => void callFn(fn));
+  const listener = (event: Event) => actions.forEach((fn) => {
+      const argSubs: Record<number, Event> = {};
+
+      fn.args?.forEach((arg, index) => {
+        if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string")
+          return;
+
+        if(arg.type === "event")
+          argSubs[index] = event;
+      });
+
+      void callFn(fn, argSubs);
+    });
 
   let domTarget: HTMLElement | Window;
 
@@ -51,6 +61,11 @@ function addListener(
 
   if (domTarget === null)
     return;
+
+  const oldListener = useGuthrieEvents.getState().events[targetName]?.[name];
+
+  if (oldListener)
+    domTarget.removeEventListener(name, oldListener);
 
   domTarget.addEventListener(name, listener);
   useGuthrieEvents.getState().addEvent(targetName, name, listener);
