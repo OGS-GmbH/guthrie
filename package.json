@@ -40,14 +40,32 @@
     }
   ],
   "exports": {
-    ".": {
-      "types": "./public-api.d.ts",
-      "default": "./public-api.mjs"
-    }
+    "./hooks/event": "./dist/main/hooks/event.mjs",
+    "./options/config": "./dist/main/options/config.mjs",
+    "./options/elements": "./dist/main/options/elements.mjs",
+    "./options/fns": "./dist/main/options/fns.mjs",
+    "./options/operations": "./dist/main/options/operations.mjs",
+    "./options/variables": "./dist/main/options/variables.mjs",
+    "./public-api": "./dist/main/public-api.mjs",
+    "./renderer/fns": "./dist/main/renderer/fns.mjs",
+    "./renderer/operations": "./dist/main/renderer/operations.mjs",
+    "./renderer/props": "./dist/main/renderer/props.mjs",
+    "./renderer/type": "./dist/main/renderer/type.mjs",
+    "./renderer/variables": "./dist/main/renderer/variables.mjs",
+    "./stores/elements": "./dist/main/stores/elements.mjs",
+    "./stores/events": "./dist/main/stores/events.mjs",
+    "./stores/events-config": "./dist/main/stores/events-config.mjs",
+    "./stores/fns": "./dist/main/stores/fns.mjs",
+    "./stores/operators": "./dist/main/stores/operators.mjs",
+    "./stores/refs": "./dist/main/stores/refs.mjs",
+    "./stores/templates": "./dist/main/stores/templates.mjs",
+    "./stores/variables": "./dist/main/stores/variables.mjs",
+    "./package.json": "./package.json"
   },
   "repository": "https://github.com/OGS-GmbH/guthrie",
   "type": "module",
   "scripts": {
+    "build": "tsdown",
     "ci:build:main:production": "node .esbuild/build.mjs",
     "ci:docs:extract:typedoc": "typedoc",
     "ci:docs:main:vitepress": "bash ./.vitepress/scripts/pre-vitepress.sh && vitepress build .vitepress",
@@ -95,6 +113,7 @@
     "oxlint": "^1.57.0",
     "react-dom": "^19.2.4",
     "sass-embedded": "^1.98.0",
+    "tsdown": "^0.21.6",
     "typedoc": "^0.28.18",
     "typedoc-plugin-frontmatter": "^1.3.1",
     "typedoc-plugin-markdown": "^4.11.0",

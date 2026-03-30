@@ -1,4 +1,4 @@
-import { create, StateCreator } from "zustand";
+import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 import type {DynamicElementProps} from "../renderer/type.ts";
 
 type TemplateStore = {
@@ -18,7 +18,7 @@ const stateCreator: StateCreator<TemplateStore> = (set) => ({
   )
 }) 
 
-const useGuthrieTemplateStore = create(
+const useGuthrieTemplateStore: UseBoundStore<StoreApi<TemplateStore>> = create(
   stateCreator
 )
 

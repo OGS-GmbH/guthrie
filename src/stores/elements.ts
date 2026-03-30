@@ -1,4 +1,4 @@
-import { create, StateCreator } from "zustand"
+import { create, StateCreator, StoreApi, type UseBoundStore } from "zustand"
 import type { Elements } from "../renderer/type"
 
 type ElementsStore = {
@@ -11,7 +11,7 @@ const stateCreator: StateCreator<ElementsStore> = (set) => ({
   setElements: (elements: Elements) => set({elements})
 })
 
-const useGuthrieElements = create(
+const useGuthrieElements: UseBoundStore<StoreApi<ElementsStore>> = create(
   stateCreator
 );
 

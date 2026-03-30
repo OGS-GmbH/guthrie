@@ -1,5 +1,5 @@
 import type { Events } from "../renderer/type";
-import { create, StateCreator } from "zustand";
+import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 
 type EventsStore = {
   events: Record<string, Events>,
@@ -33,7 +33,7 @@ const stateCreator: StateCreator<EventsStore> = (set) => ({
   }))
 })
 
-const useGuthrieEvents = create(
+const useGuthrieEvents: UseBoundStore<StoreApi<EventsStore>> = create(
   stateCreator
 );
 

@@ -1,5 +1,5 @@
 import { EventConfig } from "src/renderer/type";
-import { StateCreator, create } from "zustand";
+import { StateCreator, create, StoreApi, UseBoundStore } from "zustand";
 
 type EventsConfigStore = {
   config: EventConfig;
@@ -13,7 +13,7 @@ const stateCreator: StateCreator<EventsConfigStore> = (set) => ({
   setConfig: (config: EventConfig) => set({config})
 })
 
-const useGuthrieEventsConfig = create(stateCreator);
+const useGuthrieEventsConfig: UseBoundStore<StoreApi<EventsConfigStore>> = create(stateCreator);
 
 export {
   useGuthrieEventsConfig

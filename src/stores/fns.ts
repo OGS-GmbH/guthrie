@@ -1,4 +1,4 @@
-import {create, StateCreator} from "zustand"
+import {create, StateCreator, StoreApi, UseBoundStore} from "zustand"
 import type {Fns} from "../renderer/type"
 
 type FunctionsStore = {
@@ -11,7 +11,7 @@ const stateCreator: StateCreator<FunctionsStore> = (set) => ({
   setFns: (fns: Fns) => set({fns})
 })
 
-const useGuthrieFns = create(
+const useGuthrieFns: UseBoundStore<StoreApi<FunctionsStore>> = create(
   stateCreator
 )
 

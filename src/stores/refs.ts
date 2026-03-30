@@ -1,4 +1,4 @@
-import { create, StateCreator } from "zustand";
+import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 
 type RefsStore = {
   refs: Record<string, Window | HTMLElement>;
@@ -16,7 +16,7 @@ const stateCreator: StateCreator<RefsStore> = (set) => ({
     }))
 })
 
-const useGuthrieRefs = create(
+const useGuthrieRefs: UseBoundStore<StoreApi<RefsStore>> = create(
   stateCreator
 );
 

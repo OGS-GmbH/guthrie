@@ -1,4 +1,4 @@
-import { create, StateCreator } from "zustand";
+import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 
 type VariablesStore = {
   variables: Record<string, unknown>;
@@ -17,7 +17,7 @@ const stateCreator: StateCreator<VariablesStore> = (set) => ({
   )
 })
 
-const useGuthrieVariables = create(
+const useGuthrieVariables: UseBoundStore<StoreApi<VariablesStore>> = create(
   stateCreator
 );
 
