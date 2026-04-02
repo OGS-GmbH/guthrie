@@ -1,79 +1,37 @@
-import {callFn} from "../renderer/fns";
-import type {ExposableFn, Fns} from "../renderer/type";
-import {useGuthrieEvents} from "../stores/events";
-import {useGuthrieRefs} from "../stores/refs";
+import type {Fns} from "../renderer/type";
+import {addListener, removeListener} from "../functions/internals";
 
-function normalizeTargetName (target: HTMLElement | Window | string): string {
-  if (typeof target === "string")
-    return target;
-
-  if (target instanceof Window)
-    return "window"
-
-  return target.toString();
-}
-
-function removeListener(
-  target: HTMLElement | Window | string,
-  name: keyof GlobalEventHandlersEventMap
-) {
-  const targetName = normalizeTargetName(target);
-  let domTarget: HTMLElement | Window;
-
-  if (typeof target === "string")
-    domTarget = useGuthrieRefs.getState().refs[targetName]!;
-  else
-    domTarget = target;
-
-  domTarget.removeEventListener(name, useGuthrieEvents.getState().events[targetName]![name]);
-  useGuthrieEvents.getState().removeEvent(targetName, name);
-}
-
-function addListener(
-  target: HTMLElement | Window | string | null,
-  name: keyof GlobalEventHandlersEventMap,
-  actions: ExposableFn[]
-) {
-  if (target === null)
-    return;
-
-  const targetName = normalizeTargetName(target);
-  const listener = (event: Event) => actions.forEach((fn) => {
-      const argSubs: Record<number, Event> = {};
-
-      fn.args?.forEach((arg, index) => {
-        if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string")
-          return;
-
-        if(arg.type === "event")
-          argSubs[index] = event;
-      });
-
-      void callFn(fn, argSubs);
-    });
-
-  let domTarget: HTMLElement | Window;
-
-  if (typeof target === "string")
-    domTarget = useGuthrieRefs.getState().refs[targetName]!;
-  else
-    domTarget = target;
-
-  if (domTarget === null)
-    return;
-
-  const oldListener = useGuthrieEvents.getState().events[targetName]?.[name];
-
-  if (oldListener)
-    domTarget.removeEventListener(name, oldListener);
-
-  domTarget.addEventListener(name, listener);
-  useGuthrieEvents.getState().addEvent(targetName, name, listener);
-}
-
-const native: Fns = {
+/**
+ * Internal functions provided by the system.
+ *
+ * These functions are part of the internal runtime and are typically
+ * not intended for direct use in user-defined configurations.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
+const internal: Fns = {
   "removeListener": removeListener,
   "addListener": addListener,
+}
+
+/**
+ * Native functions available within the runtime.
+ *
+ * Includes browser APIs utilities that can be used
+ * inside function definitions.
+ *
+ * @remarks
+ * - Wraps native browser functionality
+ * - Useful for debugging and side effects
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ * @todo To be completed
+ */
+const native: Fns = {
   "fetch": fetch,
   // oxlint-disable no-console
   log: console.log,
@@ -100,6 +58,5 @@ const native: Fns = {
 
 export {
   native,
-  addListener,
-  removeListener
+  internal,
 }

@@ -1,9 +1,9 @@
 import parse from 'html-react-parser';
 import  {type ReactNode} from "react";
 
-type HtmlProps = { content: string, children: ReactNode[] };
+type RawHtmlProps = { content: string, children: ReactNode[] };
 
-function RawHtml({content, children}: HtmlProps) {
+function RawHtml({content, children}: RawHtmlProps) {
     /*TODO: templateinterpolation"*/
 
     return (<>
@@ -12,4 +12,10 @@ function RawHtml({content, children}: HtmlProps) {
     </>)
 }
 
-export {RawHtml}
+export type {
+    RawHtmlProps
+}
+
+export {
+    RawHtml
+}

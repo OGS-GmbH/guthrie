@@ -1,9 +1,16 @@
 import { ElementType } from "react";
 import type { Elements, Fns, Operators } from "../renderer/type";
 import { additional, flowControls, intrinsics } from "./elements";
-import { native } from "./fns";
+import {internal, native} from "./fns";
 import { universal, universalShort } from "./operations";
 
+/**
+ * Options for {@link withElements}.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author your name
+ */
 type WithElementsOptions = Partial<{
   intrinsics: boolean,
   additional: boolean,
@@ -17,6 +24,20 @@ const defaultElementOptions: WithElementsOptions = {
   flowControls: true
 }
 
+/**
+ * Builds the final elements registry.
+ *
+ * Merges user-provided elements with configured intrinsic, flow control,
+ * and additional elements. Optionally applies name mapping.
+ *
+ * @param config - Configuration for elements and options
+ *
+ * @returns Combined elements registry
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 function withElements (config?: Partial<{
   elements: Elements,
   options: WithElementsOptions
@@ -36,7 +57,6 @@ function withElements (config?: Partial<{
       }
     }
   }
-
 
   const configuredIntrinsics = (config?.options?.intrinsics ?? defaultElementOptions.intrinsics)
     ? intrinsics
@@ -77,26 +97,64 @@ function withElements (config?: Partial<{
   return currentElements;
 }
 
+/**
+ * Options for {@link withFns}.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 type WithFnsOptions = Partial<{
+  /** Include natives functions {@link native} */
   native: boolean,
+  /** Include internal functions {@link internal} */
+  internal: boolean,
   mapNames: (value: string) => string
 }>;
 
 const defaultFnsOptions: WithFnsOptions = {
-  native: true
+  native: true,
+  internal: true
 }
 
-function withFns ({fns, options}: Partial<{
+/**
+ * Config for {@link withFns}.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
+type WithFnsConfig = Partial<{
   fns: Fns,
   options: WithFnsOptions
-}>): Fns {
+}>;
+
+/**
+ * Builds the final functions registry.
+ *
+ * Merges user-provided functions with optional native functions
+ * and applies name mapping if configured.
+ *
+ * @param config - Functions and configuration options {@link WithFnsConfig}
+ *
+ * @returns Combined functions registry {@link Fns}
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
+function withFns ({fns, options}: WithFnsConfig): Fns {
   const configuredNatives = (options?.native ?? defaultFnsOptions.native)
     ? native
+    : {};
+  const configuredInternals = (options?.internal ?? defaultFnsOptions.internal)
+    ? internal
     : {};
 
   const fnsResult: Fns = {
     ...fns,
-    ...configuredNatives
+    ...configuredNatives,
+    ...configuredInternals
   }
 
   return Object.fromEntries(
@@ -107,11 +165,22 @@ function withFns ({fns, options}: Partial<{
   )
 }
 
+/**
+ * Options for {@link withOperators}.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 type WithOperatorOptions = Partial<{
+  /** Include universal operators {@link universal} */
   universal: boolean,
-  /*
-   * Universal = long names
-   * Guthrie recommends short names
+
+  /**
+   * Naming style for universal operators
+   *
+   * - "universal" → long names {@link universal}
+   * - "guthrie" → short names (recommended) {@link universalShort}
    */
   universalNames: "universal" | "guthrie",
   mapNames: (value: string) => string
@@ -121,10 +190,32 @@ const defaultOperatorOptions: WithOperatorOptions = {
   universal: true
 }
 
-function withOperators ({operators, options}: Partial<{
+/**
+ * Config for {@link withOperators}.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
+type WithOperatorConfig = Partial<{
   operators: Operators,
   options: WithOperatorOptions
-}>) {
+}>;
+
+/**
+ * Builds the final operators registry.
+ *
+ * Merges user-provided operators with optional universal operators.
+ *
+ * @param config - Operators and configuration options {@link WithOperatorConfig}
+ *
+ * @returns Combined operators registry {@link Operators}
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author MIMI
+ */
+function withOperators ({operators, options}: WithOperatorConfig): Operators {
   const configuredUniversal = (options?.universal ?? defaultOperatorOptions.universal)
     ? options?.universalNames === "universal"
       ? universal
@@ -140,11 +231,16 @@ function withOperators ({operators, options}: Partial<{
 export type {
   WithElementsOptions,
   WithFnsOptions,
-  WithOperatorOptions
+  WithFnsConfig,
+  WithOperatorOptions,
+  WithOperatorConfig
 }
 
 export {
   withElements,
   withFns,
-  withOperators
+  withOperators,
+  defaultElementOptions,
+  defaultFnsOptions,
+  defaultOperatorOptions
 }

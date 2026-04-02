@@ -80,6 +80,7 @@
   },
   "dependencies": {
     "@ogs-gmbh/react-hooks": "^1.0.0",
+    "@vitejs/plugin-react": "^6.0.1",
     "axios": "^1.13.6",
     "html-react-parser": "^5.2.17",
     "react": "^19.2.4",

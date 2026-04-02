@@ -3,6 +3,36 @@ import {useGuthrieVariables} from "../stores/variables";
 import type {ExposableFn} from "./type";
 import {touchByAccess} from "./variables";
 
+/**
+ * Executes an exposable function and resolves its arguments.
+ *
+ * This is the core function execution mechanism of the runtime.
+ * It resolves arguments, supports nested function calls, variable access,
+ * and optional result assignment.
+ *
+ * @remarks
+ * Argument resolution supports:
+ * - primitive values (string, number, boolean)
+ * - variables (`var`)
+ * - nested functions (`fn`)
+ * - argument injection (`arg`)
+ * - event overrides via `argsSubs`
+ *
+ * Additional features:
+ * - Access resolution via {@link touchByAccess}
+ * - Result assignment via `fn.as`
+ * - Nested execution with variable injection
+ *
+ * @param fn - Function definition to execute
+ * @param argsSubs - Optional argument overrides (e.g. event injection)
+ *
+ * @returns Promise resolving to the computed result
+ *
+ * @since 1.0.0
+ * @category Function
+ * @author Simon Kovtyk
+ * @author David Schummer
+ */
 async function callFn(
   fn: ExposableFn, argsSubs?: Record<number, unknown>
 ): Promise<unknown> {

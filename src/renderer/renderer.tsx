@@ -6,8 +6,38 @@ import {useGuthrieEventsCallback} from "../hooks/event";
 import {useGuthrieEventsConfig} from "../stores/events-config";
 import {useGuthrieProperties} from "../hooks/properties";
 
+/**
+ * Props for the {@link Renderer} component.
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ */
 type RendererProps = DynamicElementProps;
 
+/**
+ * Core rendering engine for dynamic elements.
+ *
+ * This component resolves and renders elements defined by
+ * {@link DynamicElementProps}. It connects the DSL layer with React
+ * by dynamically selecting components, resolving properties,
+ * handling refs, and applying events.
+ *
+ * @remarks
+ * Responsibilities:
+ * - Resolves element type via element registry
+ * - Applies dynamic and static properties
+ * - Handles recursive rendering of children
+ * - Registers refs in the global store
+ * - Attaches event listeners via {@link useGuthrieEventsCallback}
+ *
+ * @returns React Component
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ * @author David Schummer
+ */
 function Renderer ({element, ref: refName, children, events, properties, ...props}: RendererProps) {
   const elements = useGuthrieElements((state) => state.elements);
   const Element = useMemo(()=> elements[element], [elements]);
@@ -19,8 +49,8 @@ function Renderer ({element, ref: refName, children, events, properties, ...prop
 
   const elementProps = useMemo(() => ({
     ...props,
-    ...resolvedProperties?.ready,
-    ...(resolvedProperties?.recursive ? Object.fromEntries(Object.entries(resolvedProperties?.recursive).map(([key, dynamicElementProps])=> [key, <Renderer key={key} {...dynamicElementProps}/>] )) : {}),
+    ...resolvedProperties?.static,
+    ...(resolvedProperties?.dynamic ? Object.fromEntries(Object.entries(resolvedProperties?.dynamic).map(([key, dynamicElementProps])=> [key, <Renderer key={key} {...dynamicElementProps}/>] )) : {}),
     ref: elementRef,
     events,
     refname: refName,

@@ -4,18 +4,59 @@ import {Renderer} from "../renderer/renderer";
 import {useGuthrieVariables} from "../stores/variables";
 import {touchByAccess} from "../renderer/variables";
 
+/**
+ * Internal structure describing a single case branch.
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ */
 type InnerCase = {
+  /** Elements rendered when the case matches */
   children: DynamicElementProps[]
 };
 
+/**
+ * Mapping of possible values to their corresponding case branches.
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ */
 type Case = Record<string | number, InnerCase>;
 
+/**
+ * Props for the {@link Switch} component.
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ * @author David Schummer
+ */
 type SwitchProps = {
   condition: string | number | boolean | VariableWithAccess,
   cases: Case,
   default: InnerCase
 };
 
+/**
+ * Renders content based on a matching case.
+ *
+ * This component behaves similarly to a switch-case statement.
+ * It resolves the given condition and renders the corresponding case.
+ *
+ * @remarks
+ * - Supports primitive values (string, number, boolean)
+ * - Supports variable-based conditions via {@link VariableWithAccess}
+ * - Async resolution is handled via {@link touchByAccess}
+ * - Falls back to `default` if no case matches
+ *
+ * @returns React Component
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author your name
+ */
 function Switch({ condition, cases, ...props }: SwitchProps) {
   const isPrimitive =
     typeof condition === "string" ||
@@ -68,6 +109,12 @@ function Switch({ condition, cases, ...props }: SwitchProps) {
       ))}
     </>
   );
+}
+
+export type {
+  InnerCase as InnerSwitchCase,
+  Case as SwitchCase,
+  SwitchProps
 }
 
 export {

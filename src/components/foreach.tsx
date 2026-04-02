@@ -1,6 +1,7 @@
 import { Fragment } from "react/jsx-runtime"
 import type { DynamicElementProps } from "../renderer/type"
 import { Renderer } from "../renderer/renderer"
+import {FnRenderer} from "./fn";
 
 type ForEachProps = {
   items: unknown[],
@@ -19,6 +20,10 @@ function ForEach ({ items, iterator }: ForEachProps) {
       }
     </Fragment>
   ))
+}
+
+export type {
+  ForEachProps
 }
 
 export {

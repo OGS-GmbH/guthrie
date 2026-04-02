@@ -4,13 +4,35 @@ import {useEffect, useState} from "react";
 import {touchByAccess} from "../renderer/variables";
 import {callFn} from "../renderer/fns";
 
+/**
+ * Resolves dynamic properties into usable values.
+ *
+ * This hook processes a record of {@link DynamicValue} entries and separates them into:
+ * - `static`: resolved values (static, variables, function results)
+ * - `dynamic`: child elements that need to be rendered later
+ *
+ * @remarks
+ * Supported dynamic value types:
+ * - `static` → returned as-is
+ * - `variable` → resolved via {@link touchByAccess}
+ * - `child` → stored for recursive rendering
+ * - `fn` → resolved via {@link callFn}
+ *
+ * @param properties - Record of dynamic properties to resolve
+ *
+ * @returns Object containing resolved (`ready`) and recursive (`recursive`) properties, or `null` if no properties are provided
+ *
+ * @since 1.0.0
+ * @category Hooks
+ * @author David Schummer
+ * @author Simon Kovtyk
+ */
 function useGuthrieProperties(properties?: Record<string, DynamicValue>) {
   const [props, setProps] = useState<{
-    ready: Record<string, unknown>,
-    recursive: Record<string, DynamicElementProps>
+    static: Record<string, unknown>,
+    dynamic: Record<string, DynamicElementProps>
   } | null>(null);
   const variables = useGuthrieVariables((state) => state.variables);
-
 
   useEffect(() => {
     if (!properties) {
@@ -62,7 +84,7 @@ function useGuthrieProperties(properties?: Record<string, DynamicValue>) {
         })
       );
 
-      setProps({ ready, recursive });
+      setProps({ static: ready, dynamic: recursive });
     };
 
     void run();

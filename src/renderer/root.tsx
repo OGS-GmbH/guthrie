@@ -1,28 +1,61 @@
-import type { Elements, Fns, Operators, Page } from "./type";
-import { useGuthrieElements } from "../stores/elements";
-import { Renderer } from "./renderer";
-import { useGuthrieOperators } from "../stores/operators";
-import {useEffect, useRef, type RefObject} from "react";
-import {useGuthrieEventsConfig} from "../stores/events.ts";
-import {useGuthrieFns} from "../stores/fns.ts";
-import type { Variables } from "../options/variables.ts";
-import { callFn } from "./fns.ts";
-import { useGuthrieRefs } from "../stores/refs.ts";
-import { useGuthrieEventsCallback } from "../hooks/event.ts";
-import { useMountedEffect } from "@ogs-gmbh/react-hooks";
+import type {Elements, EventConfig, Fns, Operators, Page, VariablesConfig} from "./type";
+import {useGuthrieElements} from "../stores/elements";
+import {Renderer} from "./renderer";
+import {useGuthrieOperators} from "../stores/operators";
+import {type RefObject, useEffect, useRef} from "react";
+import {useMountedEffect} from "@ogs-gmbh/react-hooks";
+import {useGuthrieEventsConfig} from "../stores/events-config";
+import {useGuthrieFns} from "../stores/fns";
+import {useGuthrieRefs} from "../stores/refs";
+import {useGuthrieEventsCallback} from "../hooks/event";
+import {callFn} from "./fns";
 
+/**
+ * Props for the {@link Guthrie} component.
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ * @author David Schummer
+ */
 type GuthrieProps = {
   elements: Elements,
   fns: Fns,
   page: Page,
   operators: Operators,
-  variables?: Variables,
+  variables?: VariablesConfig,
   event?: {
     rootRef?: RefObject<HTMLElement | null>,
-    autoApply?: boolean
-  }
+  } & Partial<EventConfig>
 }
 
+/**
+ * Root component of the Guthrie runtime.
+ *
+ * Initializes the runtime environment and renders the provided page.
+ * This component wires together all core systems including elements,
+ * functions, operators, events, and lifecycle execution.
+ *
+ * @remarks
+ * Responsibilities:
+ * - Registers element, function, and operator registries
+ * - Configures global event handling
+ * - Initializes references (e.g. "window")
+ * - Executes lifecycle hooks (`onInit`, `onRender`, `onDestroy`)
+ * - Delegates rendering to {@link Renderer}
+ *
+ * Lifecycle:
+ * - `onInit` → executed on mount
+ * - `onRender` → executed after render
+ * - `onDestroy` → executed on unmount
+ *
+ * @returns React Component
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ * @author David Schummer
+ */
 function Guthrie({elements, fns, page, operators, event}: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);

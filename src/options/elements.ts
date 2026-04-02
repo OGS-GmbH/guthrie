@@ -122,12 +122,26 @@ import {Operation} from "../components/operation";
 import {SlotTemplate, SlotTemplateRenderer} from "../components/template";
 import {Fn, FnRenderer} from "../components/fn";
 
+/**
+ * Built-in flow control components.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 const flowControls: Elements = {
   conditional: Conditional,
   switch: Switch,
   for: For,
 }
 
+/**
+ * Additional non-intrinsic components.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 const additional: Elements = {
   "operation": Operation,
   "raw-html": RawHtml,
@@ -137,6 +151,15 @@ const additional: Elements = {
   "fn-renderer": FnRenderer
 }
 
+/**
+ * Intrinsic HTML element mappings.
+ *
+ * Maps string keys to their corresponding intrinsic component implementations.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 const intrinsics: Elements = {
   text: Text,
   a: A,
