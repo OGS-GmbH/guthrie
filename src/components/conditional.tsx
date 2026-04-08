@@ -1,13 +1,13 @@
-import { solveOperation } from "../renderer/operations";
-import { Renderer } from "../renderer/renderer";
+import { solveOperation } from "../renderer/operations.js";
+import { Renderer } from "../renderer/renderer.js";
 import {
   type ContextProps,
   type DynamicElementProps,
   type OperationDefinition,
   type Operators
-} from "../renderer/type";
-import { useGuthrieOperators } from "../stores/operators";
-import { useGuthrieVariables } from "../stores/variables";
+} from "../renderer/type.js";
+import { useGuthrieOperators } from "../stores/operators.js";
+import { useGuthrieVariables } from "../stores/variables.js";
 
 /**
  * Represents all possible values that can be used in a condition.

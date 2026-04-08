@@ -1,5 +1,5 @@
 import { create, StateCreator, StoreApi, type UseBoundStore } from "zustand";
-import type { Elements } from "../renderer/type";
+import type { Elements } from "../renderer/type.js";
 
 /**
  * Store for managing the element registry.

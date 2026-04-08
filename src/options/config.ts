@@ -1,8 +1,8 @@
 import { ElementType } from "react";
-import type { Elements, Fns, Operators } from "../renderer/type";
-import { additional, flowControls, intrinsics } from "./elements";
-import { internal, native } from "./fns";
-import { universal, universalShort } from "./operations";
+import type { Elements, Fns, Operators } from "../renderer/type.js";
+import { additional, flowControls, intrinsics } from "./elements.js";
+import { internal, native } from "./fns.js";
+import { universal, universalShort } from "./operations.js";
 
 /**
  * Options for {@link withElements}.

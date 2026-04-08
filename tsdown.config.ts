@@ -14,7 +14,7 @@ const copyrightBanner = `
 
 export default defineConfig({
   platform: "neutral",
-  entry: "src/**/*.ts",
+  entry: ["src/**/*.ts", "src/**/*.tsx", "!src/**/*.test.ts", "!src/**/*.test.tsx"],
   dts: {
     enabled: true,
     sourcemap: true

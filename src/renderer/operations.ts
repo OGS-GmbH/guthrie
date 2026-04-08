@@ -5,7 +5,7 @@ import type {
   OperatorReturn,
   Operators,
   PrimitiveOperatorArg
-} from "./type";
+} from "./type.js";
 
 /**
  * Resolves an operator argument into a primitive value.

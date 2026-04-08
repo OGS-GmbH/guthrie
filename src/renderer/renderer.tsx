@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useScopedVariables } from "src/hooks/scoped-variables";
-import { useGuthrieEventsCallback } from "../hooks/event";
-import { useGuthrieProperties } from "../hooks/properties";
-import { useGuthrieElements } from "../stores/elements";
-import { useGuthrieEventsConfig } from "../stores/events-config";
-import { useGuthrieRefs } from "../stores/refs";
-import { type DynamicElementProps } from "./type";
+import { useScopedVariables } from "src/hooks/scoped-variables.js";
+import { useGuthrieEventsCallback } from "../hooks/event.js";
+import { useGuthrieProperties } from "../hooks/properties.js";
+import { useGuthrieElements } from "../stores/elements.js";
+import { useGuthrieEventsConfig } from "../stores/events-config.js";
+import { useGuthrieRefs } from "../stores/refs.js";
+import { type DynamicElementProps } from "./type.js";
 
 /**
  * Props for the {@link Renderer} component.

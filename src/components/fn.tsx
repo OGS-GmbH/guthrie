@@ -1,8 +1,8 @@
 import { usePromise } from "@ogs-gmbh/react-hooks";
 import { useEffect, useMemo } from "react";
-import { callFn } from "../renderer/fns";
-import { Renderer } from "../renderer/renderer";
-import type { DynamicElementProps, ExposableFn } from "../renderer/type";
+import { callFn } from "../renderer/fns.js";
+import { Renderer } from "../renderer/renderer.js";
+import type { DynamicElementProps, ExposableFn } from "../renderer/type.js";
 
 /**
  * Props for the {@link Fn} component.

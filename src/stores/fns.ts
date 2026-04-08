@@ -1,5 +1,5 @@
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
-import type { Fns } from "../renderer/type";
+import type { Fns } from "../renderer/type.js";
 
 /**
  * Store for managing the function registry.

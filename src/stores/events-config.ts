@@ -1,5 +1,5 @@
-import { EventConfig } from "src/renderer/type";
 import { StateCreator, create, StoreApi, UseBoundStore } from "zustand";
+import { EventConfig } from "../renderer/type.js";
 
 /**
  * Store for managing event system configuration.

@@ -1,14 +1,14 @@
 import { useMountedEffect } from "@ogs-gmbh/react-hooks";
 import { type RefObject, useEffect, useRef } from "react";
-import { useGuthrieEventsCallback } from "../hooks/event";
-import { useGuthrieElements } from "../stores/elements";
-import { useGuthrieEventsConfig } from "../stores/events-config";
-import { useGuthrieFns } from "../stores/fns";
-import { useGuthrieOperators } from "../stores/operators";
-import { useGuthrieRefs } from "../stores/refs";
-import { callFn } from "./fns";
-import { Renderer } from "./renderer";
-import type { Elements, EventConfig, Fns, Operators, Page, VariablesConfig } from "./type";
+import { useGuthrieEventsCallback } from "../hooks/event.js";
+import { useGuthrieElements } from "../stores/elements.js";
+import { useGuthrieEventsConfig } from "../stores/events-config.js";
+import { useGuthrieFns } from "../stores/fns.js";
+import { useGuthrieOperators } from "../stores/operators.js";
+import { useGuthrieRefs } from "../stores/refs.js";
+import { callFn } from "./fns.js";
+import { Renderer } from "./renderer.js";
+import type { Elements, EventConfig, Fns, Operators, Page, VariablesConfig } from "./type.js";
 
 /**
  * Props for the {@link Guthrie} component.

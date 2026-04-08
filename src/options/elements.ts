@@ -1,6 +1,6 @@
-import { Conditional } from "../components/conditional";
-import { Fn, FnRenderer } from "../components/fn";
-import { For } from "../components/for";
+import { Conditional } from "../components/conditional.js";
+import { Fn, FnRenderer } from "../components/fn.js";
+import { For } from "../components/for.js";
 import {
   A,
   Abbr,
@@ -115,12 +115,12 @@ import {
   Var,
   Video,
   Wbr
-} from "../components/intrinsics";
-import { Operation } from "../components/operation";
-import { RawHtml } from "../components/raw-html";
-import { Switch } from "../components/switch";
-import { SlotTemplate, SlotTemplateRenderer } from "../components/template";
-import type { Elements } from "../renderer/type";
+} from "../components/intrinsics.js";
+import { Operation } from "../components/operation.js";
+import { RawHtml } from "../components/raw-html.js";
+import { Switch } from "../components/switch.js";
+import { SlotTemplate, SlotTemplateRenderer } from "../components/template.js";
+import type { Elements } from "../renderer/type.js";
 
 /**
  * Built-in flow control components.

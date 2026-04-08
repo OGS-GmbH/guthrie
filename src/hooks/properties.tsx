@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { callFn } from "../renderer/fns";
-import type { DynamicElementProps, DynamicValue, Variables } from "../renderer/type";
-import { touchByAccess } from "../renderer/variables";
-import { useGuthrieVariables } from "../stores/variables";
+import { callFn } from "../renderer/fns.js";
+import type { DynamicElementProps, DynamicValue, Variables } from "../renderer/type.js";
+import { touchByAccess } from "../renderer/variables.js";
+import { useGuthrieVariables } from "../stores/variables.js";
 
 /**
  * Result type of {@link useGuthrieProperties} Hook.

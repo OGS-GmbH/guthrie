@@ -1,5 +1,5 @@
-import { addListener, removeListener } from "../functions/internals";
-import type { Fns } from "../renderer/type";
+import { addListener, removeListener } from "../functions/internals.js";
+import type { Fns } from "../renderer/type.js";
 
 /**
  * Internal functions provided by the system.

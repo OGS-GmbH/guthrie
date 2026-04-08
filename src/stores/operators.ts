@@ -1,5 +1,5 @@
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
-import type { Operators } from "../renderer/type";
+import type { Operators } from "../renderer/type.js";
 
 /**
  * Store for managing the operator registry.

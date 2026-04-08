@@ -1,4 +1,4 @@
-import type { OperatorFn, OperatorReturn } from "./renderer/type";
+import type { OperatorFn, OperatorReturn } from "./renderer/type.js";
 
 /**
  * Adds all arguments.

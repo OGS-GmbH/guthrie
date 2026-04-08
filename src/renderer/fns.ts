@@ -1,7 +1,7 @@
-import { useGuthrieFns } from "../stores/fns";
-import { useGuthrieVariables } from "../stores/variables";
-import type { ExposableFn, Variables } from "./type";
-import { touchByAccess } from "./variables";
+import { useGuthrieFns } from "../stores/fns.js";
+import { useGuthrieVariables } from "../stores/variables.js";
+import type { ExposableFn, Variables } from "./type.js";
+import { touchByAccess } from "./variables.js";
 
 /**
  * Executes an exposable function and resolves its arguments.

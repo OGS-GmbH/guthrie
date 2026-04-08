@@ -1,8 +1,8 @@
-import { callFn } from "../renderer/fns";
-import { ExposableFn } from "../renderer/type";
-import { useGuthrieEvents } from "../stores/events";
-import { useGuthrieRefs } from "../stores/refs";
-import { normalizeTargetName } from "./utils";
+import { callFn } from "../renderer/fns.js";
+import { ExposableFn } from "../renderer/type.js";
+import { useGuthrieEvents } from "../stores/events.js";
+import { useGuthrieRefs } from "../stores/refs.js";
+import { normalizeTargetName } from "./utils.js";
 
 /**
  * Removes a previously registered event listener.

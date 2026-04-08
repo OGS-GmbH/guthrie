@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { Fragment } from "react/jsx-runtime";
-import { Renderer } from "../renderer/renderer";
-import type { DynamicElementProps, Exposable } from "../renderer/type";
-import { ScopedVariables } from "./scoped-variables";
+import { Renderer } from "../renderer/renderer.js";
+import type { DynamicElementProps, Exposable } from "../renderer/type.js";
+import { ScopedVariables } from "./scoped-variables.js";
 
 /**
  * Props for the {@link ForEach} component.

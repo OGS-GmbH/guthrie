@@ -1,5 +1,5 @@
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
-import { Variables } from "../renderer/type";
+import { Variables } from "../renderer/type.js";
 
 /**
  * Store for managing runtime variables.

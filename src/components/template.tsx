@@ -1,7 +1,7 @@
 import { useInitialize } from "@ogs-gmbh/react-hooks";
-import { Renderer } from "../renderer/renderer";
-import type { DynamicElementProps } from "../renderer/type";
-import { useGuthrieTemplateStore } from "../stores/templates";
+import { Renderer } from "../renderer/renderer.js";
+import type { DynamicElementProps } from "../renderer/type.js";
+import { useGuthrieTemplateStore } from "../stores/templates.js";
 
 /**
  * Props for the {@link SlotTemplate} component.

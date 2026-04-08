@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Renderer } from "../renderer/renderer";
-import { type DynamicElementProps, type VariableWithAccess } from "../renderer/type";
-import { touchByAccess } from "../renderer/variables";
-import { useGuthrieVariables } from "../stores/variables";
+import { Renderer } from "../renderer/renderer.js";
+import { type DynamicElementProps, type VariableWithAccess } from "../renderer/type.js";
+import { touchByAccess } from "../renderer/variables.js";
+import { useGuthrieVariables } from "../stores/variables.js";
 
 /**
  * Internal structure describing a single case branch.

@@ -1,5 +1,5 @@
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
-import type { Events } from "../renderer/type";
+import type { Events } from "../renderer/type.js";
 
 /**
  * Store for managing registered event listeners.

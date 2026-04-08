@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { solveOperation } from "../renderer/operations";
-import type { OperationDefinition as _Operation } from "../renderer/type";
-import { useGuthrieOperators } from "../stores/operators";
-import { useGuthrieVariables } from "../stores/variables";
+import { solveOperation } from "../renderer/operations.js";
+import type { OperationDefinition as _Operation } from "../renderer/type.js";
+import { useGuthrieOperators } from "../stores/operators.js";
+import { useGuthrieVariables } from "../stores/variables.js";
 
 /**
  * Props for the {@link Operation} component.

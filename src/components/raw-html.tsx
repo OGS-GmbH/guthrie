@@ -1,17 +1,11 @@
-import parse from "html-react-parser";
-import { type ReactNode } from "react";
+import { htmlToDOM } from "html-react-parser";
 
-type RawHtmlProps = { content: string; children: ReactNode[] };
+type RawHtmlProps = {
+  content: string;
+};
 
-function RawHtml({ content, children }: RawHtmlProps) {
-  /*TODO: templateinterpolation"*/
-
-  return (
-    <>
-      {parse(content)}
-      {children}
-    </>
-  );
+function RawHtml({ content }: RawHtmlProps) {
+  return <>{htmlToDOM(content)}</>;
 }
 
 export type { RawHtmlProps };

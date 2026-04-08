@@ -25,8 +25,8 @@ import {
   pairwiseNotEqual,
   substraction,
   xor
-} from "../operations";
-import type { Operators } from "../renderer/type";
+} from "../operations.js";
+import type { Operators } from "../renderer/type.js";
 
 const universal: Operators = {
   addition,

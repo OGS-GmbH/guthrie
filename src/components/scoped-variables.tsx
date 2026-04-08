@@ -1,7 +1,7 @@
 import { ReactNode, useMemo } from "react";
-import { ScopedVariablesContext } from "../context/variables";
-import { useScopedVariables } from "../hooks/scoped-variables";
-import { Exposable, Variables } from "../renderer/type";
+import { ScopedVariablesContext } from "../context/variables.js";
+import { useScopedVariables } from "../hooks/scoped-variables.js";
+import { Exposable, Variables } from "../renderer/type.js";
 
 /**
  * Props for the {@link ScopedVariables} component.

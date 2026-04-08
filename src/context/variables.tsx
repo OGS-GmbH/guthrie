@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { Variables } from "../renderer/type";
+import { Variables } from "../renderer/type.js";
 
 const ScopedVariablesContext = createContext<Variables>({});
 
