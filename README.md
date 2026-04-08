@@ -93,14 +93,7 @@ const page = {
 } satisfies Page;
 
 export function ExampleComponent() {
-  return (
-    <Guthrie
-      page={page}
-      elements={{}}
-      fns={{}}
-      operators={{}}
-    />
-  )
+  return <Guthrie page={page} elements={{}} fns={{}} operators={{}} />;
 }
 ```
 
