@@ -1,3 +1,6 @@
+import { Conditional } from "../components/conditional";
+import { Fn, FnRenderer } from "../components/fn";
+import { For } from "../components/for";
 import {
   A,
   Abbr,
@@ -113,30 +116,50 @@ import {
   Video,
   Wbr
 } from "../components/intrinsics";
-import {Conditional} from "../components/conditional";
-import {Switch} from "../components/switch";
-import {RawHtml} from "../components/raw-html";
-import {For} from "../components/for";
-import type {Elements} from "../renderer/type";
-import {Operation} from "../components/operation";
-import {SlotTemplate, SlotTemplateRenderer} from "../components/template";
-import {Fn, FnRenderer} from "../components/fn";
+import { Operation } from "../components/operation";
+import { RawHtml } from "../components/raw-html";
+import { Switch } from "../components/switch";
+import { SlotTemplate, SlotTemplateRenderer } from "../components/template";
+import type { Elements } from "../renderer/type";
 
+/**
+ * Built-in flow control components.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 const flowControls: Elements = {
   conditional: Conditional,
   switch: Switch,
-  for: For,
-}
+  for: For
+};
 
+/**
+ * Additional non-intrinsic components.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 const additional: Elements = {
-  "operation": Operation,
+  operation: Operation,
   "raw-html": RawHtml,
   "slot-template": SlotTemplate,
   "slot-template-renderer": SlotTemplateRenderer,
-  "fn": Fn,
+  fn: Fn,
   "fn-renderer": FnRenderer
-}
+};
 
+/**
+ * Intrinsic HTML element mappings.
+ *
+ * Maps string keys to their corresponding intrinsic component implementations.
+ *
+ * @since 1.0.0
+ * @category Configuration
+ * @author Simon Kovtyk
+ */
 const intrinsics: Elements = {
   text: Text,
   a: A,
@@ -248,13 +271,9 @@ const intrinsics: Elements = {
   track: Track,
   u: U,
   ul: Ul,
-  "var": Var,
+  var: Var,
   video: Video,
   wbr: Wbr
-}
+};
 
-export {
-  flowControls,
-  additional,
-  intrinsics
-}
+export { flowControls, additional, intrinsics };

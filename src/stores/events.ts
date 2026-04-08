@@ -1,44 +1,58 @@
-import type { EventConfig, Events } from "../renderer/type";
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
+import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
+import type { Events } from "../renderer/type";
 
+/**
+ * Store for managing registered event listeners.
+ *
+ * Events are stored per reference and event name, allowing dynamic
+ * registration and removal of listeners.
+ *
+ * @since 1.0.0
+ * @category Stores
+ * @author Simon Kovtyk
+ */
 type EventsStore = {
-  events: Record<string, Events>,
-  addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => void,
-  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) => void
-}
+  events: Record<string, Events>;
+  addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => void;
+  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) => void;
+};
 
-const useGuthrieEvents = create<EventsStore>()(
-  immer((set) => ({
-    events: {},
-    addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => set((state) => {
-      if (!state.events[ref])
-        state.events[ref] = {} as Events;
+const stateCreator: StateCreator<EventsStore> = (set) => ({
+  events: {},
+  addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) =>
+    set((state) => ({
+      events: {
+        ...state.events,
+        [ref]: {
+          ...state.events[ref]!,
+          [name]: listener
+        }
+      }
+    })),
+  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) =>
+    set((state) => ({
+      events: {
+        ...state.events,
+        [ref]: {
+          ...state.events[ref]!,
+          [name]: undefined
+        }
+      }
+    }))
+});
 
-      state.events[ref][name] = listener
-    }),
-    removeEvent: (ref: string, name: string) => set((state) => {
-      // @ts-ignore Events are indexable
-      state.events[ref] && delete state.events[ref][name]
-    })
-  }))
-);
+/**
+ * Zustand store for accessing and managing event listeners.
+ *
+ * @remarks
+ * Used internally by {@link callFn} to track and replace listeners.
+ *
+ * @since 1.0.0
+ * @category Stores
+ * @author Simon Kovtyk
+ */
+const useGuthrieEvents: UseBoundStore<StoreApi<EventsStore>> = create(stateCreator);
 
-type EventsConfigStore = {
-  config: EventConfig;
-  setConfig: (config: EventConfig) => void
-}
+export type { EventsStore };
 
-const useGuthrieEventsConfig = create<EventsConfigStore>()(
-  immer((set) => ({
-    config: {
-      autoApply: true
-    },
-    setConfig: (config: EventConfig) => set({config})
-  }))
-)
-
-export {
-  useGuthrieEvents,
-  useGuthrieEventsConfig
-}
+export { useGuthrieEvents };

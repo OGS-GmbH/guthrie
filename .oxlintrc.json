@@ -1,11 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "react",
-    "jsdoc",
-    "import",
-    "promise"
-  ],
+  "plugins": ["react", "jsdoc", "import", "promise"],
   "extends": [
     "./node_modules/@ogs-gmbh/oxlint-presets/react-recommended.json",
     "./node_modules/@ogs-gmbh/oxlint-presets/typescript-recommended.json",

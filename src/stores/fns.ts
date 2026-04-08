@@ -1,23 +1,37 @@
-import {create} from "zustand"
-import type {Fns} from "../renderer/type"
-import { immer } from "zustand/middleware/immer"
+import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
+import type { Fns } from "../renderer/type";
 
+/**
+ * Store for managing the function registry.
+ *
+ * Holds all available functions that can be executed via {@link callFn}.
+ *
+ * @since 1.0.0
+ * @category Stores
+ * @author Simon Kovtyk
+ */
 type FunctionsStore = {
-  fns: Fns,
-  setFns: (fns: Fns) => void
-}
+  fns: Fns;
+  setFns: (fns: Fns) => void;
+};
 
-const useGuthrieFns = create<FunctionsStore>()(
-  immer((set) => ({
-    fns: {},
-    setFns: (fns: Fns) => set({fns})
-  }))
-)
+const stateCreator: StateCreator<FunctionsStore> = (set) => ({
+  fns: {},
+  setFns: (fns: Fns) => set({ fns })
+});
 
-export type {
-  FunctionsStore
-}
+/**
+ * Zustand store for accessing and updating available functions.
+ *
+ * @remarks
+ * Used by {@link callFn} to resolve and execute functions by name.
+ *
+ * @since 1.0.0
+ * @category Stores
+ * @author Simon Kovtyk
+ */
+const useGuthrieFns: UseBoundStore<StoreApi<FunctionsStore>> = create(stateCreator);
 
-export {
-  useGuthrieFns
-}
+export type { FunctionsStore };
+
+export { useGuthrieFns };

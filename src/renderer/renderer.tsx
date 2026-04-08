@@ -1,70 +1,99 @@
-import {useEffect, useMemo, useRef} from "react";
-import {useGuthrieElements} from "../stores/elements";
-import {useGuthrieRefs} from "../stores/refs";
-import {type DynamicElementProps} from "./type";
-import {useGuthrieEventsCallback} from "../hooks/event";
-import {useGuthrieEventsConfig} from "../stores/events";
-import {useGuthrieProperties} from "../hooks/properties";
+import { useEffect, useMemo, useRef } from "react";
+import { useScopedVariables } from "src/hooks/scoped-variables";
+import { useGuthrieEventsCallback } from "../hooks/event";
+import { useGuthrieProperties } from "../hooks/properties";
+import { useGuthrieElements } from "../stores/elements";
+import { useGuthrieEventsConfig } from "../stores/events-config";
+import { useGuthrieRefs } from "../stores/refs";
+import { type DynamicElementProps } from "./type";
 
+/**
+ * Props for the {@link Renderer} component.
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ */
 type RendererProps = DynamicElementProps;
 
-function Renderer ({element, ref: refName, children, events, properties, ...props}: RendererProps) {
+/**
+ * Core rendering engine for dynamic elements.
+ *
+ * This component resolves and renders elements defined by
+ * {@link DynamicElementProps}. It connects the DSL layer with React
+ * by dynamically selecting components, resolving properties,
+ * handling refs, and applying events.
+ *
+ * @remarks
+ * Responsibilities:
+ * - Resolves element type via element registry
+ * - Applies dynamic and static properties
+ * - Handles recursive rendering of children
+ * - Registers refs in the global store
+ * - Attaches event listeners via {@link useGuthrieEventsCallback}
+ *
+ * @returns React Component
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ * @author David Schummer
+ */
+function Renderer({
+  element,
+  ref: refName,
+  children,
+  events,
+  properties,
+  ...props
+}: RendererProps) {
   const elements = useGuthrieElements((state) => state.elements);
-  const Element = useMemo(()=> elements[element], [elements]);
+  const Element = useMemo(() => elements[element], [elements]);
   const addRef = useGuthrieRefs((state) => state.addRef);
-  const elementRef = useRef<HTMLElement| null>(null);
+  const elementRef = useRef<HTMLElement | null>(null);
   const refNameAsRef = useRef(refName ?? null);
   const eventsConfig = useGuthrieEventsConfig((state) => state.config);
-  const resolvedProperties = useGuthrieProperties(properties);
+  const scopedVariables = useScopedVariables();
+  const resolvedProperties = useGuthrieProperties(properties, scopedVariables);
 
-  const elementProps = useMemo(() => ({
-    ...props,
-    ...resolvedProperties?.ready,
-    ...(resolvedProperties?.recursive ? Object.fromEntries(Object.entries(resolvedProperties?.recursive).map(([key, dynamicElementProps])=> [key, <Renderer key={key} {...dynamicElementProps}/>] )) : {}),
-    ref: elementRef,
-    events,
-    refname: refName,
-    elements: children
-  }), [props, refName, events, children, resolvedProperties])
-  const registerEvents = useGuthrieEventsCallback(
-    refNameAsRef,
-    events
+  const elementProps = useMemo(
+    () => ({
+      ...props,
+      ...resolvedProperties?.static,
+      ...(resolvedProperties?.dynamic
+        ? Object.fromEntries(
+            Object.entries(resolvedProperties?.dynamic).map(([key, dynamicElementProps]) => [
+              key,
+              <Renderer key={key} {...dynamicElementProps} />
+            ])
+          )
+        : {}),
+      ref: elementRef,
+      events,
+      refname: refName,
+      elements: children
+    }),
+    [props, refName, events, children, resolvedProperties]
   );
+  const registerEvents = useGuthrieEventsCallback(refNameAsRef, events);
 
   useEffect(() => {
-    if (refName && elementRef.current)
-      addRef(refName, elementRef.current);
+    if (refName && elementRef.current) addRef(refName, elementRef.current);
 
-    if (elementRef.current && eventsConfig.autoApply)
-      registerEvents();
-
+    if (elementRef.current && eventsConfig.autoApply) registerEvents();
   }, [Element]);
 
-
-  if (!Element)
-    return null;
+  if (!Element) return null;
 
   return (
-    <Element
-      {...elementProps}
-      ref={elementRef}
-    >
-      {
-        children?.map((child, index) => (
-          <Renderer
-            key={index}
-            {...child}
-          />
-        ))
-      }
+    <Element {...elementProps} ref={elementRef}>
+      {children?.map((child, index) => (
+        <Renderer key={index} {...child} />
+      ))}
     </Element>
   );
 }
 
-export type {
-  RendererProps
-}
+export type { RendererProps };
 
-export {
-  Renderer
-}
+export { Renderer };

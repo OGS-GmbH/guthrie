@@ -1,104 +1,24 @@
-import type {Access} from "./type.ts";
+import type { Access } from "./type.js";
 
-const templateChars = {
-  start: "{",
-  end: "}"
-}
-
-function getVariables(value: string): string[] | null {
-  let variableName: string | null = null;
-  let variableNames: string[] | null = null;
-
-  for (const char of value) {
-    if (char === templateChars.start) {
-      variableName = "";
-      continue;
-    }
-
-    if (char === templateChars.end && variableName !== null) {
-      variableNames === null
-        ? (variableNames = [variableName])
-        : variableNames.push(variableName)
-
-      variableName = null;
-
-      continue;
-    }
-
-    if (variableName === null)
-      continue;
-
-    variableName += char;
-  }
-
-  return variableNames;
-}
-
-const IS_DOT_MASK = 0b1;
-const IS_INDEX_MASK = 0b01;
-
-function tryFromNumber(value: string) {
-  const num = Number.parseInt(value, 10);
-
-  return Number.isNaN(num) ? value : num;
-}
-
-function getPath(value: string): Array<string | number> {
-  let state = 0b0;
-  let access = "";
-  const path = [];
-
-  for (let i = 0; i <= value.length; i++) {
-    const char = value[i];
-
-    if (char === ".") {
-      if (state !== 0b0) {
-        path.push(tryFromNumber(access));
-        access = "";
-      }
-
-      state = IS_DOT_MASK;
-      continue;
-    }
-
-    if (char === "[") {
-      if (state !== 0b0) {
-        path.push(tryFromNumber(access));
-        access = "";
-      }
-
-      state = IS_INDEX_MASK;
-      continue;
-    }
-
-    if (char === "]") {
-      if (state !== 0b0) {
-        path.push(tryFromNumber(access));
-        access = "";
-      }
-
-      state = 0b0;
-
-      continue;
-    }
-
-    if (state === IS_INDEX_MASK && (char === "\"" || char === "'"))
-      continue;
-
-    if (state === 0b0)
-      continue;
-
-    if (i === value.length && state === IS_DOT_MASK) {
-      path.push(access);
-      continue;
-    }
-
-    access += char;
-  }
-
-  return path;
-}
-
+/**
+ * Resolves a value by applying an access chain {@link Access}.
+ *
+ * Iteratively applies each access descriptor to the given value,
+ * allowing traversal of nested properties, indices, and prototype methods.
+ *
+ * Prototype access is executed as a function call and may be asynchronous.
+ *
+ * @param value - Initial value to resolve from
+ * @param access - Access chain describing how to traverse the value
+ *
+ * @returns Promise resolving to the final accessed value
+ *
+ * @since 1.0.0
+ * @category Internal
+ * @internal
+ * @author Simon Kovtyk
+ * @author David Schummer
+ */
 async function touchByAccess<T>(value: unknown, access: Access): Promise<T> {
   let touchedValue: T = value as T;
 
@@ -108,7 +28,7 @@ async function touchByAccess<T>(value: unknown, access: Access): Promise<T> {
         touchedValue = await (touchedValue as Record<string, () => T>)[accessItem.read]!();
         break;
 
-     default:
+      default:
         touchedValue = (touchedValue as Record<string, T>)[accessItem.read]!;
     }
   }
@@ -116,8 +36,4 @@ async function touchByAccess<T>(value: unknown, access: Access): Promise<T> {
   return touchedValue;
 }
 
-export {
-  getVariables,
-  getPath,
-  touchByAccess
-}
+export { touchByAccess };

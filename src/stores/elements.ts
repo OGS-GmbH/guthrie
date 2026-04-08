@@ -1,23 +1,38 @@
-import { create } from "zustand"
-import type { Elements } from "../renderer/type"
-import { immer } from "zustand/middleware/immer"
+import { create, StateCreator, StoreApi, type UseBoundStore } from "zustand";
+import type { Elements } from "../renderer/type";
 
+/**
+ * Store for managing the element registry.
+ *
+ * Holds all available elements used by the renderer and provides
+ * a method to update them.
+ *
+ * @since 1.0.0
+ * @category Stores
+ * @author Simon Kovtyk
+ */
 type ElementsStore = {
-  elements: Elements,
-  setElements: (elements: Elements) => void
-}
+  elements: Elements;
+  setElements: (elements: Elements) => void;
+};
 
-const useGuthrieElements = create<ElementsStore>()(
-  immer((set) => ({
-    elements: {},
-    setElements: (elements: Elements) => set({elements})
-  }))
-);
+const stateCreator: StateCreator<ElementsStore> = (set) => ({
+  elements: {},
+  setElements: (elements: Elements) => set({ elements })
+});
 
-export type {
-  ElementsStore
-}
+/**
+ * Zustand store for accessing and updating elements.
+ *
+ * @remarks
+ * Used by the {@link Renderer} to resolve components dynamically.
+ *
+ * @since 1.0.0
+ * @category Stores
+ * @author Simon Kovtyk
+ */
+const useGuthrieElements: UseBoundStore<StoreApi<ElementsStore>> = create(stateCreator);
 
-export {
-  useGuthrieElements
-}
+export type { ElementsStore };
+
+export { useGuthrieElements };
