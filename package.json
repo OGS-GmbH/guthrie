@@ -1,6 +1,6 @@
 {
   "name": "@ogs-gmbh/guthrie",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A Decarative UI Runtime Engine powered by React.",
   "keywords": [
     "component-rendering",
