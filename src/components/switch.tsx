@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react"
-import {type DynamicElementProps, type VariableWithAccess} from "../renderer/type"
-import {Renderer} from "../renderer/renderer";
-import {useGuthrieVariables} from "../stores/variables";
-import {touchByAccess} from "../renderer/variables";
+import { useEffect, useState } from "react";
+import { Renderer } from "../renderer/renderer";
+import { type DynamicElementProps, type VariableWithAccess } from "../renderer/type";
+import { touchByAccess } from "../renderer/variables";
+import { useGuthrieVariables } from "../stores/variables";
 
 /**
  * Internal structure describing a single case branch.
@@ -13,7 +13,7 @@ import {touchByAccess} from "../renderer/variables";
  */
 type InnerCase = {
   /** Elements rendered when the case matches */
-  children: DynamicElementProps[]
+  children: DynamicElementProps[];
 };
 
 /**
@@ -34,9 +34,9 @@ type Case = Record<string | number, InnerCase>;
  * @author David Schummer
  */
 type SwitchProps = {
-  condition: string | number | boolean | VariableWithAccess,
-  cases: Case,
-  default: InnerCase
+  condition: string | number | boolean | VariableWithAccess;
+  cases: Case;
+  default: InnerCase;
 };
 
 /**
@@ -76,8 +76,7 @@ function Switch({ condition, cases, ...props }: SwitchProps) {
 
     let cancelled = false;
 
-    if (access === undefined)
-      return;
+    if (access === undefined) return;
 
     touchByAccess(variable, access).then((result) => {
       if (cancelled) return;
@@ -91,11 +90,7 @@ function Switch({ condition, cases, ...props }: SwitchProps) {
   }, [variable, access, cases, props, isPrimitive]);
 
   const primitiveCase = isPrimitive
-    ? cases[
-    typeof condition === "number"
-      ? condition
-      : condition.toString()
-    ] ?? props["default"]
+    ? (cases[typeof condition === "number" ? condition : condition.toString()] ?? props["default"])
     : undefined;
 
   const resolvedCase = isPrimitive ? primitiveCase : activeCase;
@@ -111,12 +106,6 @@ function Switch({ condition, cases, ...props }: SwitchProps) {
   );
 }
 
-export type {
-  InnerCase as InnerSwitchCase,
-  Case as SwitchCase,
-  SwitchProps
-}
+export type { InnerCase as InnerSwitchCase, Case as SwitchCase, SwitchProps };
 
-export {
-  Switch
-}
+export { Switch };

@@ -1,4 +1,11 @@
-import type { OperationDefinition as _Operation, OperatorArg, OperatorFn, OperatorReturn, Operators, PrimitiveOperatorArg } from "./type";
+import type {
+  OperationDefinition as _Operation,
+  OperatorArg,
+  OperatorFn,
+  OperatorReturn,
+  Operators,
+  PrimitiveOperatorArg
+} from "./type";
 
 /**
  * Resolves an operator argument into a primitive value.
@@ -15,19 +22,17 @@ import type { OperationDefinition as _Operation, OperatorArg, OperatorFn, Operat
  * @returns Resolved primitive value
  *
  * @since 1.0.0
- * @category Operation
+ * @category Utilities
  * @author Simon Kovtyk
  */
-function getOperand (
+function getOperand(
   operators: Operators,
   arg: OperatorArg,
   variables: Record<string, unknown>
 ): PrimitiveOperatorArg {
-  if (typeof arg === "number" || typeof arg === "boolean")
-    return arg;
+  if (typeof arg === "number" || typeof arg === "boolean") return arg;
 
-  if (typeof arg === "string")
-    return variables[arg] as PrimitiveOperatorArg;
+  if (typeof arg === "string") return variables[arg] as PrimitiveOperatorArg;
 
   return solveOperation(operators, arg, variables); // oxlint-disable-line eslint(no-use-before-define)
 }
@@ -49,20 +54,21 @@ function getOperand (
  * @returns Result of the evaluated operation
  *
  * @since 1.0.0
- * @category Operation
+ * @category Utilities
  * @author Simon Kovtyk
  */
-function solveOperation (
+function solveOperation(
   operators: Operators,
   operation: _Operation,
   variables: Record<string, unknown>
 ): OperatorReturn {
   const operatorFn: OperatorFn = operators[operation.name]!;
 
-  return operatorFn(...operation.args.map((operatorArg: OperatorArg) => getOperand(operators, operatorArg, variables)));
+  return operatorFn(
+    ...operation.args.map((operatorArg: OperatorArg) =>
+      getOperand(operators, operatorArg, variables)
+    )
+  );
 }
 
-export {
-  getOperand,
-  solveOperation
-}
+export { getOperand, solveOperation };

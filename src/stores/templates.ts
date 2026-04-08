@@ -1,5 +1,5 @@
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
-import type {DynamicElementProps} from "../renderer/type.ts";
+import type { DynamicElementProps } from "../renderer/type.js";
 
 /**
  * Store for managing reusable templates.
@@ -12,21 +12,20 @@ import type {DynamicElementProps} from "../renderer/type.ts";
  * @author Simon Kovtyk
  */
 type TemplateStore = {
-  templates: Record<string, DynamicElementProps[]>
-  addTemplate: (name: string, dynamicElementProps: DynamicElementProps[]) => void
-}
+  templates: Record<string, DynamicElementProps[]>;
+  addTemplate: (name: string, dynamicElementProps: DynamicElementProps[]) => void;
+};
 
 const stateCreator: StateCreator<TemplateStore> = (set) => ({
   templates: {},
-  addTemplate: (name, dynamicElementProps) => set(
-    (state) => ({
+  addTemplate: (name, dynamicElementProps) =>
+    set((state) => ({
       templates: {
         ...state.templates,
         [name]: dynamicElementProps
       }
-    })
-  )
-})
+    }))
+});
 
 /**
  * Zustand store for accessing and managing templates.
@@ -39,14 +38,8 @@ const stateCreator: StateCreator<TemplateStore> = (set) => ({
  * @category Stores
  * @author Simon Kovtyk
  */
-const useGuthrieTemplateStore: UseBoundStore<StoreApi<TemplateStore>> = create(
-  stateCreator
-)
+const useGuthrieTemplateStore: UseBoundStore<StoreApi<TemplateStore>> = create(stateCreator);
 
-export type {
-  TemplateStore
-}
+export type { TemplateStore };
 
-export {
-  useGuthrieTemplateStore
-}
+export { useGuthrieTemplateStore };

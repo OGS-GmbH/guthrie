@@ -45,23 +45,20 @@ export function ExampleApp() {
     route: "exapmle-route",
     content: {
       element: "main",
-      children: [{
-        element: "h1",
-        children: [{
-          element: "text",
-          content: "Hello to Guthries Stage"
-        }]
-      }]
+      children: [
+        {
+          element: "h1",
+          children: [
+            {
+              element: "text",
+              content: "Hello to Guthries Stage"
+            }
+          ]
+        }
+      ]
     }
   } satisfies Page;
 
-  return (
-    <Guthrie
-      page={page}
-      elements={{}}
-      fns={{}}
-      operators={{}}
-    />
-  )
-};
+  return <Guthrie page={page} elements={{}} fns={{}} operators={{}} />;
+}
 ```

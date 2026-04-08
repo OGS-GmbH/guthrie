@@ -1,4 +1,4 @@
-import type {OperatorFn, OperatorReturn} from "./renderer/type";
+import type { OperatorFn, OperatorReturn } from "./renderer/type";
 
 /**
  * Adds all arguments.
@@ -12,11 +12,10 @@ import type {OperatorFn, OperatorReturn} from "./renderer/type";
 const addition: OperatorFn = function (...args): OperatorReturn {
   let result = 0;
 
-  for (const arg of args)
-    result += Number(arg);
+  for (const arg of args) result += Number(arg);
 
   return result;
-}
+};
 
 /**
  * Subtracts all arguments.
@@ -32,11 +31,10 @@ const addition: OperatorFn = function (...args): OperatorReturn {
 const substraction: OperatorFn = function (...args): OperatorReturn {
   let result: number = Number(args.at(0)!);
 
-  for (const arg of args.slice(1))
-    result -= Number(arg);
+  for (const arg of args.slice(1)) result -= Number(arg);
 
   return result;
-}
+};
 
 /**
  * Multiplies all arguments.
@@ -52,11 +50,10 @@ const substraction: OperatorFn = function (...args): OperatorReturn {
 const multiplication: OperatorFn = function (...args): OperatorReturn {
   let result = 1;
 
-  for (const arg of args)
-    result *= Number(arg);
+  for (const arg of args) result *= Number(arg);
 
   return result;
-}
+};
 
 /**
  * Divides all arguments.
@@ -72,11 +69,10 @@ const multiplication: OperatorFn = function (...args): OperatorReturn {
 const division: OperatorFn = function (...args): OperatorReturn {
   let result: number = Number(args.at(0)!);
 
-  for (const arg of args.slice(1))
-    result /= Number(arg);
+  for (const arg of args.slice(1)) result /= Number(arg);
 
   return result;
-}
+};
 
 /**
  * Raises the first argument to the power of the subsequent arguments.
@@ -96,11 +92,10 @@ const division: OperatorFn = function (...args): OperatorReturn {
 const exponentation: OperatorFn = function (...args): OperatorReturn {
   let result: number = Number(args.at(0)!);
 
-  for (const arg of args)
-    result **= Number(arg);
+  for (const arg of args) result **= Number(arg);
 
   return result;
-}
+};
 
 /**
  * Applies the modulus operation sequentially across all arguments.
@@ -120,11 +115,10 @@ const exponentation: OperatorFn = function (...args): OperatorReturn {
 const modulus: OperatorFn = function (...args): OperatorReturn {
   let result: number = Number(args.at(0)!);
 
-  for (const arg of args)
-    result %= Number(arg);
+  for (const arg of args) result %= Number(arg);
 
   return result;
-}
+};
 
 /**
  * Increments the first argument by 1.
@@ -142,7 +136,7 @@ const modulus: OperatorFn = function (...args): OperatorReturn {
  */
 const increment: OperatorFn = function (...args): OperatorReturn {
   return Number(args.at(0)!) + 1;
-}
+};
 
 /**
  * Decrements the first argument by 1.
@@ -160,7 +154,7 @@ const increment: OperatorFn = function (...args): OperatorReturn {
  */
 const decrement: OperatorFn = function (...args): OperatorReturn {
   return Number(args.at(0)!) - 1;
-}
+};
 
 /**
  * Checks if each argument is greater than the next.
@@ -178,12 +172,11 @@ const decrement: OperatorFn = function (...args): OperatorReturn {
  * @author Simon Kovtyk
  */
 const greaterThan: OperatorFn = function (...args): OperatorReturn {
-  for (let i = 0; i < args.length - 1; i++) {
-    if (!(Number(args[i]) > Number(args[i + 1])))
-      return false;
-  }
+  for (let i = 0; i < args.length - 1; i++)
+    if (!(Number(args[i]) > Number(args[i + 1]))) return false;
+
   return true;
-}
+};
 
 /**
  * Checks if each argument is greater than or equal to the next.
@@ -201,12 +194,11 @@ const greaterThan: OperatorFn = function (...args): OperatorReturn {
  * @author Simon Kovtyk
  */
 const greaterThanOrEqual: OperatorFn = function (...args): OperatorReturn {
-  for (let i = 0; i < args.length - 1; i++) {
-    if (Number(args[i]) <= Number(args[i + 1]))
-      return false;
-  }
+  for (let i = 0; i < args.length - 1; i++)
+    if (Number(args[i]) <= Number(args[i + 1])) return false;
+
   return true;
-}
+};
 
 /**
  * Checks if each argument is less than the next.
@@ -224,20 +216,18 @@ const greaterThanOrEqual: OperatorFn = function (...args): OperatorReturn {
  * @author Simon Kovtyk
  */
 const lessThan: OperatorFn = function (...args): OperatorReturn {
-  for (let i = 0; i < args.length - 1; i++) {
-    if (!(Number(args[i]) < Number(args[i + 1])))
-      return false;
-  }
+  for (let i = 0; i < args.length - 1; i++)
+    if (!(Number(args[i]) < Number(args[i + 1]))) return false;
+
   return true;
-}
+};
 
 const lessThanOrEqual: OperatorFn = function (...args): OperatorReturn {
-  for (let i = 0; i < args.length - 1; i++) {
-    if (Number(args[i]) >= Number(args[i + 1]))
-      return false;
-  }
+  for (let i = 0; i < args.length - 1; i++)
+    if (Number(args[i]) >= Number(args[i + 1])) return false;
+
   return true;
-}
+};
 
 /**
  * Checks if all argument are equal.
@@ -255,12 +245,10 @@ const lessThanOrEqual: OperatorFn = function (...args): OperatorReturn {
  * @author Simon Kovtyk
  */
 const equal: OperatorFn = function (...args): OperatorReturn {
-  for (let i = 0; i < args.length - 1; i++) {
-    if (args[i] !== args[i + 1])
-      return false;
-  }
+  for (let i = 0; i < args.length - 1; i++) if (args[i] !== args[i + 1]) return false;
+
   return true;
-}
+};
 
 /**
  * Checks if each argument is not equal to the next.
@@ -278,12 +266,10 @@ const equal: OperatorFn = function (...args): OperatorReturn {
  * @author Simon Kovtyk
  */
 const pairwiseNotEqual: OperatorFn = function (...args): OperatorReturn {
-  for (let i = 0; i < args.length - 1; i++) {
-    if (args[i] === args[i + 1])
-      return false;
-  }
+  for (let i = 0; i < args.length - 1; i++) if (args[i] === args[i + 1]) return false;
+
   return true;
-}
+};
 
 /**
  * Checks if all arguments are mutually different.
@@ -301,12 +287,8 @@ const pairwiseNotEqual: OperatorFn = function (...args): OperatorReturn {
  * @author David Schummer
  */
 const notEqual: OperatorFn = function (...args): OperatorReturn {
-  for (let i = 0; i < args.length; i++) {
-    for (let j = i + 1; j < args.length; j++) {
-      if (args[i] === args[j])
-        return false;
-    }
-  }
+  for (let i = 0; i < args.length; i++)
+    for (let j = i + 1; j < args.length; j++) if (args[i] === args[j]) return false;
 
   return true;
 };
@@ -331,7 +313,7 @@ const notEqual: OperatorFn = function (...args): OperatorReturn {
  */
 const and: OperatorFn = function (...args): OperatorReturn {
   return !args.some((arg) => !arg);
-}
+};
 
 /**
  * Performs a logical OR across all arguments.
@@ -343,9 +325,9 @@ const and: OperatorFn = function (...args): OperatorReturn {
  * @author Simon Kovtyk
  * @author David Schummer
  */
-const or: OperatorFn = function(...args): OperatorReturn {
+const or: OperatorFn = function (...args): OperatorReturn {
   return args.some((arg) => Boolean(arg));
-}
+};
 
 /**
  * Performs a logical exclusive OR across all arguments.
@@ -373,9 +355,9 @@ const xor: OperatorFn = (...args): OperatorReturn => args.filter(Boolean).length
  *
  * @returns Logical negation of the first argument
  */
-const not: OperatorFn = function(...args): OperatorReturn {
+const not: OperatorFn = function (...args): OperatorReturn {
   return !args[0];
-}
+};
 
 /**
  * Applies a bitwise OR across all arguments.
@@ -398,8 +380,7 @@ const not: OperatorFn = function(...args): OperatorReturn {
 const bitwiseOr: OperatorFn = function (...args): OperatorReturn {
   let result = 0;
 
-  for (const arg of args)
-    result |= Number(arg);
+  for (const arg of args) result |= Number(arg);
 
   return result;
 };
@@ -425,8 +406,7 @@ const bitwiseOr: OperatorFn = function (...args): OperatorReturn {
 const bitwiseAnd: OperatorFn = function (...args): OperatorReturn {
   let result = Number(args[0]!);
 
-  for (const arg of args.slice(1))
-    result &= Number(arg);
+  for (const arg of args.slice(1)) result &= Number(arg);
 
   return result;
 };
@@ -452,8 +432,7 @@ const bitwiseAnd: OperatorFn = function (...args): OperatorReturn {
 const bitwiseXor: OperatorFn = function (...args): OperatorReturn {
   let result = 0;
 
-  for (const arg of args)
-    result ^= Number(arg);
+  for (const arg of args) result ^= Number(arg);
 
   return result;
 };
@@ -496,7 +475,7 @@ const bitwiseNot: OperatorFn = function (...args): OperatorReturn {
  */
 const bitwiseLeftShift: OperatorFn = function (...args): OperatorReturn {
   return Number(args.at(0)!) << Number(args.at(1)!);
-}
+};
 
 /**
  * Applies a bitwise left right to the first argument by the second argument.
@@ -516,7 +495,7 @@ const bitwiseLeftShift: OperatorFn = function (...args): OperatorReturn {
  */
 const bitwiseRightShift: OperatorFn = function (...args): OperatorReturn {
   return Number(args.at(0)!) >> Number(args.at(1)!);
-}
+};
 
 /**
  * Applies a zero-fill right shift to the first argument by the second argument.
@@ -538,7 +517,7 @@ const bitwiseRightShift: OperatorFn = function (...args): OperatorReturn {
  */
 const bitwiseRightShiftZero: OperatorFn = function (...args): OperatorReturn {
   return Number(args.at(0)!) >>> Number(args.at(1)!);
-}
+};
 
 export {
   addition,
@@ -566,5 +545,5 @@ export {
   bitwiseNot,
   bitwiseLeftShift,
   bitwiseRightShift,
-  bitwiseRightShiftZero,
-}
+  bitwiseRightShiftZero
+};

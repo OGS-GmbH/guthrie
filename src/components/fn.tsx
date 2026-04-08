@@ -1,8 +1,8 @@
-import {useEffect, useMemo} from "react";
-import type {DynamicElementProps, ExposableFn} from "../renderer/type";
-import {callFn} from "../renderer/fns";
-import {usePromise} from "@ogs-gmbh/react-hooks";
-import {Renderer} from "../renderer/renderer";
+import { usePromise } from "@ogs-gmbh/react-hooks";
+import { useEffect, useMemo } from "react";
+import { callFn } from "../renderer/fns";
+import { Renderer } from "../renderer/renderer";
+import type { DynamicElementProps, ExposableFn } from "../renderer/type";
 
 /**
  * Props for the {@link Fn} component.
@@ -32,13 +32,13 @@ type FnProps = ExposableFn;
  * @category Components
  * @author Simon Kovtyk
  */
-function Fn ({ ...props }: FnProps) {
+function Fn({ ...props }: FnProps) {
   useEffect(() => void callFn(props), [props]);
 
   return <></>; // oxlint-disable-line eslint-plugin-react(jsx-no-useless-fragment)
 }
 
-type FnRendererProps = ExposableFn
+type FnRendererProps = ExposableFn;
 
 /**
  * Executes a function and renders its result.
@@ -60,16 +60,9 @@ function FnRenderer(props: FnRendererProps) {
   const promise = useMemo(() => callFn(props) as Promise<DynamicElementProps>, [props]);
   const content = usePromise<DynamicElementProps>(promise);
 
-  return content && (<Renderer {...content}/>)
+  return content && <Renderer {...content} />;
 }
 
+export type { FnProps, FnRendererProps };
 
-export type {
-  FnProps,
-  FnRendererProps
-}
-
-export {
-  Fn,
-  FnRenderer
-}
+export { Fn, FnRenderer };

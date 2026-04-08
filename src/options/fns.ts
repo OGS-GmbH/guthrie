@@ -1,5 +1,5 @@
-import type {Fns} from "../renderer/type";
-import {addListener, removeListener} from "../functions/internals";
+import { addListener, removeListener } from "../functions/internals";
+import type { Fns } from "../renderer/type";
 
 /**
  * Internal functions provided by the system.
@@ -12,9 +12,9 @@ import {addListener, removeListener} from "../functions/internals";
  * @author Simon Kovtyk
  */
 const internal: Fns = {
-  "removeListener": removeListener,
-  "addListener": addListener,
-}
+  removeListener: removeListener,
+  addListener: addListener
+};
 
 /**
  * Native functions available within the runtime.
@@ -32,7 +32,7 @@ const internal: Fns = {
  * @todo To be completed
  */
 const native: Fns = {
-  "fetch": fetch,
+  fetch: fetch,
   // oxlint-disable no-console
   log: console.log,
   info: console.info,
@@ -54,9 +54,6 @@ const native: Fns = {
   assert: console.assert,
   clear: console.clear
   // oxlint-enable no-console
-}
+};
 
-export {
-  native,
-  internal,
-}
+export { native, internal };

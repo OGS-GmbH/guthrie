@@ -1,7 +1,7 @@
-import type {DynamicElementProps} from "../renderer/type";
-import {useGuthrieTemplateStore} from "../stores/templates";
-import {Renderer} from "../renderer/renderer";
 import { useInitialize } from "@ogs-gmbh/react-hooks";
+import { Renderer } from "../renderer/renderer";
+import type { DynamicElementProps } from "../renderer/type";
+import { useGuthrieTemplateStore } from "../stores/templates";
 
 /**
  * Props for the {@link SlotTemplate} component.
@@ -13,10 +13,10 @@ import { useInitialize } from "@ogs-gmbh/react-hooks";
  */
 type SlotTemplateProps = {
   /** Unique reference name for the template */
-  refName: string,
+  refName: string;
   /** Template content */
-  _children: DynamicElementProps[]
-}
+  _children: DynamicElementProps[];
+};
 
 /**
  * Registers a template under a given reference name.
@@ -35,15 +35,14 @@ type SlotTemplateProps = {
  * @category Components
  * @author your name
  */
-function SlotTemplate ({refName, _children }: SlotTemplateProps) {
-  const addTemplate = useGuthrieTemplateStore((state)=> state.addTemplate)
+function SlotTemplate({ refName, _children }: SlotTemplateProps) {
+  const addTemplate = useGuthrieTemplateStore((state) => state.addTemplate);
 
   useInitialize(() => {
-    if (refName)
-      addTemplate(refName, _children);
+    if (refName) addTemplate(refName, _children);
   });
 
-  return <></> // oxlint-disable-line eslint-plugin-react(jsx-no-useless-fragment)
+  return <></>; // oxlint-disable-line eslint-plugin-react(jsx-no-useless-fragment)
 }
 
 /**
@@ -54,8 +53,8 @@ function SlotTemplate ({refName, _children }: SlotTemplateProps) {
  * @author David Schummer
  */
 type SlotTemplateRendererProps = {
-  templateRef: string
-}
+  templateRef: string;
+};
 
 /**
  * Renders a previously registered template.
@@ -74,18 +73,14 @@ type SlotTemplateRendererProps = {
  * @author David Schummer
  * @author Simon Kovtyk
  */
-function SlotTemplateRenderer ({templateRef}: SlotTemplateRendererProps) {
-  const templates = useGuthrieTemplateStore((state)=> state.templates[templateRef]);
+function SlotTemplateRenderer({ templateRef }: SlotTemplateRendererProps) {
+  const templates = useGuthrieTemplateStore((state) => state.templates[templateRef]);
 
-  return templates?.map((dynamicElementProps, index) => <Renderer key={index} {...dynamicElementProps}/>)
+  return templates?.map((dynamicElementProps, index) => (
+    <Renderer key={index} {...dynamicElementProps} />
+  ));
 }
 
-export type {
-  SlotTemplateProps,
-  SlotTemplateRendererProps
-}
+export type { SlotTemplateProps, SlotTemplateRendererProps };
 
-export {
-  SlotTemplate,
-  SlotTemplateRenderer
-}
+export { SlotTemplate, SlotTemplateRenderer };

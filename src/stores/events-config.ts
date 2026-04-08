@@ -12,15 +12,15 @@ import { StateCreator, create, StoreApi, UseBoundStore } from "zustand";
  */
 type EventsConfigStore = {
   config: EventConfig;
-  setConfig: (config: EventConfig) => void
-}
+  setConfig: (config: EventConfig) => void;
+};
 
 const stateCreator: StateCreator<EventsConfigStore> = (set) => ({
   config: {
     autoApply: true
   },
-  setConfig: (config: EventConfig) => set({config})
-})
+  setConfig: (config: EventConfig) => set({ config })
+});
 
 /**
  * Zustand store for accessing and updating event configuration.
@@ -34,10 +34,6 @@ const stateCreator: StateCreator<EventsConfigStore> = (set) => ({
  */
 const useGuthrieEventsConfig: UseBoundStore<StoreApi<EventsConfigStore>> = create(stateCreator);
 
-export type {
-  EventsConfigStore
-}
+export type { EventsConfigStore };
 
-export {
-  useGuthrieEventsConfig
-}
+export { useGuthrieEventsConfig };

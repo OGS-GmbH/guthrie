@@ -1,14 +1,14 @@
-import type {Elements, EventConfig, Fns, Operators, Page, VariablesConfig} from "./type";
-import {useGuthrieElements} from "../stores/elements";
-import {Renderer} from "./renderer";
-import {useGuthrieOperators} from "../stores/operators";
-import {type RefObject, useEffect, useRef} from "react";
-import {useMountedEffect} from "@ogs-gmbh/react-hooks";
-import {useGuthrieEventsConfig} from "../stores/events-config";
-import {useGuthrieFns} from "../stores/fns";
-import {useGuthrieRefs} from "../stores/refs";
-import {useGuthrieEventsCallback} from "../hooks/event";
-import {callFn} from "./fns";
+import { useMountedEffect } from "@ogs-gmbh/react-hooks";
+import { type RefObject, useEffect, useRef } from "react";
+import { useGuthrieEventsCallback } from "../hooks/event";
+import { useGuthrieElements } from "../stores/elements";
+import { useGuthrieEventsConfig } from "../stores/events-config";
+import { useGuthrieFns } from "../stores/fns";
+import { useGuthrieOperators } from "../stores/operators";
+import { useGuthrieRefs } from "../stores/refs";
+import { callFn } from "./fns";
+import { Renderer } from "./renderer";
+import type { Elements, EventConfig, Fns, Operators, Page, VariablesConfig } from "./type";
 
 /**
  * Props for the {@link Guthrie} component.
@@ -19,15 +19,15 @@ import {callFn} from "./fns";
  * @author David Schummer
  */
 type GuthrieProps = {
-  elements: Elements,
-  fns: Fns,
-  page: Page,
-  operators: Operators,
-  variables?: VariablesConfig,
+  elements: Elements;
+  fns: Fns;
+  page: Page;
+  operators: Operators;
+  variables?: VariablesConfig;
   event?: {
-    rootRef?: RefObject<HTMLElement | null>,
-  } & Partial<EventConfig>
-}
+    rootRef?: RefObject<HTMLElement | null>;
+  } & Partial<EventConfig>;
+};
 
 /**
  * Root component of the Guthrie runtime.
@@ -56,59 +56,50 @@ type GuthrieProps = {
  * @author Simon Kovtyk
  * @author David Schummer
  */
-function Guthrie({elements, fns, page, operators, event}: GuthrieProps) {
+function Guthrie({ elements, fns, page, operators, event }: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);
-  const setEventsConfig = useGuthrieEventsConfig((state) => state.setConfig)
-  const setFns = useGuthrieFns((state) => state.setFns)
+  const setEventsConfig = useGuthrieEventsConfig((state) => state.setConfig);
+  const setFns = useGuthrieFns((state) => state.setFns);
   const addRef = useGuthrieRefs((state) => state.addRef);
   const eventsConfig = useGuthrieEventsConfig((state) => state.config);
   const windowRef = useRef(window);
-  const registerEvents = useGuthrieEventsCallback(
-    event?.rootRef ?? windowRef,
-    page.events
-  );
+  const registerEvents = useGuthrieEventsCallback(event?.rootRef ?? windowRef, page.events);
 
   useEffect(() => {
     setElements(elements);
-  }, [elements])
+  }, [elements]);
 
   useEffect(() => {
     setOperators(operators);
-  }, [operators])
+  }, [operators]);
 
   useEffect(() => {
     setFns(fns);
-  }, [fns])
+  }, [fns]);
 
   useEffect(() => {
     addRef("window", (event?.rootRef ?? windowRef).current);
     setEventsConfig({
       autoApply: event?.autoApply ?? true
     });
-  }, [event])
+  }, [event]);
 
   useEffect(() => {
     page.onInit?.forEach((onInitFn) => callFn(onInitFn));
 
     eventsConfig.autoApply && registerEvents();
 
-    return () => page.onDestroy?.forEach((onDestryFn) => callFn(onDestryFn))
-  }, [])
+    return () => page.onDestroy?.forEach((onDestryFn) => callFn(onDestryFn));
+  }, []);
 
   useMountedEffect(() => {
     page.onRender?.forEach((onRenderFn) => callFn(onRenderFn));
   });
 
-  return (
-    <Renderer {...page.content} />
-  )
+  return <Renderer {...page.content} />;
 }
 
-export type {
-  GuthrieProps
-}
+export type { GuthrieProps };
 
-export {
-  Guthrie
-}
+export { Guthrie };

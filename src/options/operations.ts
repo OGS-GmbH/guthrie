@@ -1,4 +1,3 @@
-import type {Operators} from "../renderer/type";
 import {
   addition,
   and,
@@ -27,6 +26,7 @@ import {
   substraction,
   xor
 } from "../operations";
+import type { Operators } from "../renderer/type";
 
 const universal: Operators = {
   addition,
@@ -58,7 +58,7 @@ const universal: Operators = {
   bitwiseLeftShift,
   bitwiseRightShift,
   bitwiseRightShiftZero
-}
+};
 
 const universalShort: Operators = {
   add: addition,
@@ -89,9 +89,6 @@ const universalShort: Operators = {
   shl: bitwiseLeftShift,
   shr: bitwiseRightShift,
   ushr: bitwiseRightShiftZero
-}
+};
 
-export {
-  universal,
-  universalShort
-}
+export { universal, universalShort };

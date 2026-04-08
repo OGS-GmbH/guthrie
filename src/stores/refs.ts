@@ -12,7 +12,7 @@ import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
  */
 type RefsStore = {
   refs: Record<string, Window | HTMLElement>;
-  addRef: (name: string, ref: Window | HTMLElement | null) => void
+  addRef: (name: string, ref: Window | HTMLElement | null) => void;
 };
 
 const stateCreator: StateCreator<RefsStore> = (set) => ({
@@ -24,7 +24,7 @@ const stateCreator: StateCreator<RefsStore> = (set) => ({
         [name]: ref!
       }
     }))
-})
+});
 
 /**
  * Zustand store for accessing and managing references.
@@ -37,14 +37,8 @@ const stateCreator: StateCreator<RefsStore> = (set) => ({
  * @category Stores
  * @author Simon Kovtyk
  */
-const useGuthrieRefs: UseBoundStore<StoreApi<RefsStore>> = create(
-  stateCreator
-);
+const useGuthrieRefs: UseBoundStore<StoreApi<RefsStore>> = create(stateCreator);
 
-export type {
-  RefsStore
-}
+export type { RefsStore };
 
-export {
-  useGuthrieRefs
-}
+export { useGuthrieRefs };

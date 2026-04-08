@@ -1,5 +1,5 @@
-import type { Events } from "../renderer/type";
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
+import type { Events } from "../renderer/type";
 
 /**
  * Store for managing registered event listeners.
@@ -12,36 +12,34 @@ import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
  * @author Simon Kovtyk
  */
 type EventsStore = {
-  events: Record<string, Events>,
-  addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => void,
-  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) => void
-}
+  events: Record<string, Events>;
+  addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) => void;
+  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) => void;
+};
 
 const stateCreator: StateCreator<EventsStore> = (set) => ({
   events: {},
-  addEvent: (
-    ref: string,
-    name: keyof GlobalEventHandlersEventMap,
-    listener: EventListener
-  ) => set((state) => ({
-    events: {
-      ...state.events,
-      [ref]: {
-        ...state.events[ref]!,
-        [name]: listener
+  addEvent: (ref: string, name: keyof GlobalEventHandlersEventMap, listener: EventListener) =>
+    set((state) => ({
+      events: {
+        ...state.events,
+        [ref]: {
+          ...state.events[ref]!,
+          [name]: listener
+        }
       }
-    }
-  })),
-  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) => set((state) => ({
-    events: {
-      ...state.events,
-      [ref]: {
-        ...state.events[ref]!,
-        [name]: undefined
+    })),
+  removeEvent: (ref: string, name: keyof GlobalEventHandlersEventMap) =>
+    set((state) => ({
+      events: {
+        ...state.events,
+        [ref]: {
+          ...state.events[ref]!,
+          [name]: undefined
+        }
       }
-    }
-  }))
-})
+    }))
+});
 
 /**
  * Zustand store for accessing and managing event listeners.
@@ -53,14 +51,8 @@ const stateCreator: StateCreator<EventsStore> = (set) => ({
  * @category Stores
  * @author Simon Kovtyk
  */
-const useGuthrieEvents: UseBoundStore<StoreApi<EventsStore>> = create(
-  stateCreator
-);
+const useGuthrieEvents: UseBoundStore<StoreApi<EventsStore>> = create(stateCreator);
 
-export type {
-  EventsStore
-}
+export type { EventsStore };
 
-export {
-  useGuthrieEvents,
-}
+export { useGuthrieEvents };

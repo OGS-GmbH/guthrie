@@ -1,8 +1,29 @@
-import type {DynamicElementProps, DynamicValue} from "../renderer/type";
-import {useGuthrieVariables} from "../stores/variables";
-import {useEffect, useState} from "react";
-import {touchByAccess} from "../renderer/variables";
-import {callFn} from "../renderer/fns";
+import { useCallback, useEffect, useState } from "react";
+import { callFn } from "../renderer/fns";
+import type { DynamicElementProps, DynamicValue, Variables } from "../renderer/type";
+import { touchByAccess } from "../renderer/variables";
+import { useGuthrieVariables } from "../stores/variables";
+
+/**
+ * Result type of {@link useGuthrieProperties} Hook.
+ *
+ * @since 1.0.0
+ * @author Simon Kovtyk
+ * @category Hooks
+ */
+type UseGuthriePropertiesResult = {
+  static: Record<string, unknown>;
+  dynamic: Record<string, DynamicElementProps>;
+};
+
+/**
+ * Return type of {@link useGuthrieProperties} Hook.
+ *
+ * @since 1.0.0
+ * @author Simon Kovtyk
+ * @category Hooks
+ */
+type UseGuthriePropertiesReturn = UseGuthriePropertiesResult | null;
 
 /**
  * Resolves dynamic properties into usable values.
@@ -19,80 +40,77 @@ import {callFn} from "../renderer/fns";
  * - `fn` → resolved via {@link callFn}
  *
  * @param properties - Record of dynamic properties to resolve
+ * @param scopedVariables - {@link Variables} to prioritize
  *
- * @returns Object containing resolved (`ready`) and recursive (`recursive`) properties, or `null` if no properties are provided
+ * @returns Object containing resolved (`static`) and recursive (`dynamic`) properties, or `null` if no properties are provided
  *
  * @since 1.0.0
  * @category Hooks
  * @author David Schummer
  * @author Simon Kovtyk
  */
-function useGuthrieProperties(properties?: Record<string, DynamicValue>) {
-  const [props, setProps] = useState<{
-    static: Record<string, unknown>,
-    dynamic: Record<string, DynamicElementProps>
-  } | null>(null);
+function useGuthrieProperties(
+  properties?: Record<string, DynamicValue>,
+  scopedVariables?: Variables
+): UseGuthriePropertiesReturn {
+  const [result, setResult] = useState<UseGuthriePropertiesReturn>(null);
   const variables = useGuthrieVariables((state) => state.variables);
+  const handleProperties = useCallback(async () => {
+    const staticProperties: Record<string, unknown> = {};
+    const dynamicProperties: Record<string, DynamicElementProps> = {};
+
+    if (!properties) return setResult(null);
+
+    await Promise.all(
+      Object.entries(properties).map(async ([key, dynamicValue]) => {
+        switch (dynamicValue.type) {
+          case "static":
+            staticProperties[key] = dynamicValue.value;
+
+            break;
+
+          case "variable": {
+            const variableValue =
+              scopedVariables?.[dynamicValue.name] ?? variables[dynamicValue.name];
+
+            if (!variableValue) return;
+
+            staticProperties[key] = dynamicValue.access
+              ? await touchByAccess(variableValue, dynamicValue.access)
+              : variableValue;
+
+            break;
+          }
+
+          case "child": {
+            const { type, ...dynamicElementProps } = dynamicValue;
+
+            dynamicProperties[key] = dynamicElementProps;
+
+            break;
+          }
+
+          case "fn": {
+            const { type, ...exposableFn } = dynamicValue;
+
+            staticProperties[key] = await callFn(exposableFn);
+
+            break;
+          }
+        }
+      })
+    );
+
+    setResult({ static: staticProperties, dynamic: dynamicProperties });
+  }, []);
 
   useEffect(() => {
-    if (!properties) {
-      setProps(null);
-      return;
-    }
+    handleProperties();
+  }, [properties, variables, scopedVariables]);
 
-    const run = async () => {
-      const ready: Record<string, unknown> = {};
-      const recursive: Record<string, DynamicElementProps> = {};
-
-      await Promise.all(
-        Object.entries(properties).map(async ([key, dynamicValue]) => {
-          switch (dynamicValue.type) {
-            case "static":
-              ready[key] = dynamicValue.value;
-
-              break;
-
-            case "variable": {
-              const storedVariable = variables[dynamicValue.name];
-
-              if (storedVariable) {
-                ready[key] = dynamicValue.access
-                  ? await touchByAccess(storedVariable, dynamicValue.access)
-                  : storedVariable;
-              } else
-                ready[key] = undefined;
-
-              break;
-            }
-
-            case "child": {
-              const { type, ...dynamicElementProps } = dynamicValue;
-
-              recursive[key] = dynamicElementProps;
-
-              break;
-            }
-
-            case "fn": {
-              const { type, ...exposableFn } = dynamicValue;
-
-              ready[key] = await callFn(exposableFn);
-
-              break;
-            }
-          }
-        })
-      );
-
-      setProps({ static: ready, dynamic: recursive });
-    };
-
-    void run();
-  }, [properties, variables]);
-
-  return props;
+  return result;
 }
 
-export {
-  useGuthrieProperties
-}
+export type { UseGuthriePropertiesResult, UseGuthriePropertiesReturn };
+
+export { useGuthrieProperties };

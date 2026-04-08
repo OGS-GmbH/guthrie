@@ -1,5 +1,5 @@
-import { create, StateCreator, StoreApi, type UseBoundStore } from "zustand"
-import type { Elements } from "../renderer/type"
+import { create, StateCreator, StoreApi, type UseBoundStore } from "zustand";
+import type { Elements } from "../renderer/type";
 
 /**
  * Store for managing the element registry.
@@ -12,14 +12,14 @@ import type { Elements } from "../renderer/type"
  * @author Simon Kovtyk
  */
 type ElementsStore = {
-  elements: Elements,
-  setElements: (elements: Elements) => void
-}
+  elements: Elements;
+  setElements: (elements: Elements) => void;
+};
 
 const stateCreator: StateCreator<ElementsStore> = (set) => ({
   elements: {},
-  setElements: (elements: Elements) => set({elements})
-})
+  setElements: (elements: Elements) => set({ elements })
+});
 
 /**
  * Zustand store for accessing and updating elements.
@@ -31,14 +31,8 @@ const stateCreator: StateCreator<ElementsStore> = (set) => ({
  * @category Stores
  * @author Simon Kovtyk
  */
-const useGuthrieElements: UseBoundStore<StoreApi<ElementsStore>> = create(
-  stateCreator
-);
+const useGuthrieElements: UseBoundStore<StoreApi<ElementsStore>> = create(stateCreator);
 
-export type {
-  ElementsStore
-}
+export type { ElementsStore };
 
-export {
-  useGuthrieElements
-}
+export { useGuthrieElements };

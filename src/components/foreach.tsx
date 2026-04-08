@@ -1,31 +1,38 @@
-import { Fragment } from "react/jsx-runtime"
-import type { DynamicElementProps } from "../renderer/type"
-import { Renderer } from "../renderer/renderer"
-import {FnRenderer} from "./fn";
+import { useMemo } from "react";
+import { Fragment } from "react/jsx-runtime";
+import { Renderer } from "../renderer/renderer";
+import type { DynamicElementProps, Exposable } from "../renderer/type";
+import { ScopedVariables } from "./scoped-variables";
 
+/**
+ * Props for the {@link ForEach} component.
+ *
+ * @since 1.0.0
+ * @category Components
+ * @author Simon Kovtyk
+ */
 type ForEachProps = {
-  items: unknown[],
+  items: unknown[];
   iterator: {
-    children: DynamicElementProps[]
-  }
+    children: DynamicElementProps[];
+  };
+} & Partial<Exposable>;
+
+function ForEach({ items, as, iterator }: ForEachProps) {
+  const children = useMemo(
+    () => iterator.children.map((child, childIndex) => <Renderer key={childIndex} {...child} />),
+    [iterator]
+  );
+
+  if (!as) return items.map((_, index) => <Fragment key={index}>{children}</Fragment>);
+
+  return items.map((item, index) => (
+    <ScopedVariables key={index} as={as} value={item}>
+      {children}
+    </ScopedVariables>
+  ));
 }
 
-function ForEach ({ items, iterator }: ForEachProps) {
-  return items.map((_, index) => ( // TODO: Expose item
-    <Fragment key={index}>
-      {
-        iterator.children.map((child, childIndex) => (
-          <Renderer key={childIndex} {...child} />
-        ))
-      }
-    </Fragment>
-  ))
-}
+export type { ForEachProps };
 
-export type {
-  ForEachProps
-}
-
-export {
-  ForEach
-}
+export { ForEach };

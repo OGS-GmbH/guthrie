@@ -1,8 +1,13 @@
-import { type ContextProps, type DynamicElementProps, type OperationDefinition, type Operators } from "../renderer/type";
+import { solveOperation } from "../renderer/operations";
 import { Renderer } from "../renderer/renderer";
+import {
+  type ContextProps,
+  type DynamicElementProps,
+  type OperationDefinition,
+  type Operators
+} from "../renderer/type";
 import { useGuthrieOperators } from "../stores/operators";
 import { useGuthrieVariables } from "../stores/variables";
-import { solveOperation } from "../renderer/operations";
 
 /**
  * Represents all possible values that can be used in a condition.
@@ -25,10 +30,10 @@ type ConditionValue = boolean | number | string | OperationDefinition;
  */
 type Condition = {
   /** Expression that will be evaluated */
-  condition: ConditionValue,
+  condition: ConditionValue;
 
   /** Elements to render if the condition is truthy */
-  children: DynamicElementProps[]
+  children: DynamicElementProps[];
 };
 
 /**
@@ -39,15 +44,15 @@ type Condition = {
  */
 type ConditionalProps = ContextProps & {
   /** Primary condition (equivalent to "if") */
-  if: Condition,
+  if: Condition;
 
   /** Optional additional conditions (equivalent to "else if") */
-  elseIf?: Condition[],
+  elseIf?: Condition[];
 
   /** Fallback branch if no condition matches */
   else?: {
-    children: DynamicElementProps[]
-  }
+    children: DynamicElementProps[];
+  };
 };
 
 /**
@@ -68,7 +73,7 @@ type ConditionalProps = ContextProps & {
  * @since 1.0.0
  * @category Utilities
  */
-function solveCondition (
+function solveCondition(
   condition: ConditionValue,
   operators: Operators,
   variables: Record<string, unknown>
@@ -118,34 +123,19 @@ function Conditional(props: ConditionalProps) {
   const operators = useGuthrieOperators((state) => state.operators);
   const variables = useGuthrieVariables((state) => state.variables);
 
-  if (solveCondition(props["if"].condition, operators, variables)) {
-    return props["if"].children.map((child, index) => (
-      <Renderer key={index} {...child} />
-    ))
-  }
+  if (solveCondition(props["if"].condition, operators, variables))
+    return props["if"].children.map((child, index) => <Renderer key={index} {...child} />);
 
   if (props["elseIf"]) {
     for (const condition of props["elseIf"]) {
-      if (!solveCondition(condition.condition, operators, variables))
-        continue;
+      if (!solveCondition(condition.condition, operators, variables)) continue;
 
-      return condition.children.map((child, index) => (
-        <Renderer key={index} {...child} />
-      ))
+      return condition.children.map((child, index) => <Renderer key={index} {...child} />);
     }
   }
 
-  return props["else"]?.children.map((child, index) => (
-    <Renderer key={index} {...child} />
-  ))
+  return props["else"]?.children.map((child, index) => <Renderer key={index} {...child} />);
 }
 
-export type {
-  ConditionValue,
-  Condition,
-  ConditionalProps
-}
-export {
-  Conditional,
-  solveCondition
-};
+export type { ConditionValue, Condition, ConditionalProps };
+export { Conditional, solveCondition };

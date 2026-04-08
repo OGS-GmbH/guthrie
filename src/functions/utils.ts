@@ -13,16 +13,12 @@
  * @internal
  * @author Simon Kovtyxk
  */
-function normalizeTargetName (target: HTMLElement | Window | string): string {
-  if (typeof target === "string")
-    return target;
+function normalizeTargetName(target: HTMLElement | Window | string): string {
+  if (typeof target === "string") return target;
 
-  if (target instanceof Window)
-    return "window"
+  if (target instanceof Window) return "window";
 
   return target.toString();
 }
 
-export {
-  normalizeTargetName
-}
+export { normalizeTargetName };

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
+import { solveOperation } from "../renderer/operations";
 import type { OperationDefinition as _Operation } from "../renderer/type";
 import { useGuthrieOperators } from "../stores/operators";
 import { useGuthrieVariables } from "../stores/variables";
-import { solveOperation } from "../renderer/operations";
 
 /**
  * Props for the {@link Operation} component.
@@ -12,8 +12,8 @@ import { solveOperation } from "../renderer/operations";
  * @author Simon Kovtyk
  */
 type OperationProps = {
-  operation: _Operation
-}
+  operation: _Operation;
+};
 
 /**
  * Evaluates an operation and returns its result.
@@ -31,23 +31,17 @@ type OperationProps = {
  * @category Components
  * @author Simon Kovtyk
  */
-function Operation ({ operation }: OperationProps) {
+function Operation({ operation }: OperationProps) {
   const operators = useGuthrieOperators((state) => state.operators);
   const variables = useGuthrieVariables((state) => state.variables);
   const result = useMemo(
-    () => operation === undefined
-      ? undefined
-      : solveOperation(operators, operation, variables),
+    () => (operation === undefined ? undefined : solveOperation(operators, operation, variables)),
     [operation, operators, variables]
   );
 
   return result;
 }
 
-export type {
-  OperationProps
-}
+export type { OperationProps };
 
-export {
-  Operation
-}
+export { Operation };

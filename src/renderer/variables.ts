@@ -1,4 +1,4 @@
-import type {Access} from "./type.ts";
+import type { Access } from "./type.js";
 
 /**
  * Resolves a value by applying an access chain {@link Access}.
@@ -28,7 +28,7 @@ async function touchByAccess<T>(value: unknown, access: Access): Promise<T> {
         touchedValue = await (touchedValue as Record<string, () => T>)[accessItem.read]!();
         break;
 
-     default:
+      default:
         touchedValue = (touchedValue as Record<string, T>)[accessItem.read]!;
     }
   }
@@ -36,6 +36,4 @@ async function touchByAccess<T>(value: unknown, access: Access): Promise<T> {
   return touchedValue;
 }
 
-export {
-  touchByAccess
-}
+export { touchByAccess };

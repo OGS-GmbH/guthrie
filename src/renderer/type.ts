@@ -19,8 +19,8 @@ type Elements = Record<string, ElementType>;
  * @author Simon Kovtyk
  */
 type Exposable = {
-  as?: string
-}
+  as: string;
+};
 
 /**
  * Allows accessing nested values.
@@ -30,8 +30,8 @@ type Exposable = {
  * @author David Schummer
  */
 type Accessible = {
-  access?: Access
-}
+  access?: Access;
+};
 
 /**
  * Lifecycle hooks for {@link Page}.
@@ -41,9 +41,9 @@ type Accessible = {
  * @author Simon Kovtyk
  */
 type Lifecycle = Partial<{
-  onInit: ExposableFn[],
-  onRender: ExposableFn[],
-  onDestroy: ExposableFn[]
+  onInit: ExposableFn[];
+  onRender: ExposableFn[];
+  onDestroy: ExposableFn[];
 }>;
 
 /**
@@ -58,9 +58,9 @@ type Lifecycle = Partial<{
  * @author David Schummer
  */
 type Page = {
-  route: string,
-  content: DynamicElementProps,
-  events?: ExposableEvent[]
+  route: string;
+  content: DynamicElementProps;
+  events?: ExposableEvent[];
 } & Lifecycle;
 
 /**
@@ -71,8 +71,8 @@ type Page = {
  * @author Simon Kovtyk
  */
 type EventConfig = {
-  autoApply: boolean
-}
+  autoApply: boolean;
+};
 
 /**
  * Variable configuration.
@@ -83,10 +83,10 @@ type EventConfig = {
  */
 type VariablesConfig = Partial<{
   mapping: Partial<{
-    dataSource: (value: string) => string,
-    event: (value: string) => string
-  }>
-}>
+    dataSource: (value: string) => string;
+    event: (value: string) => string;
+  }>;
+}>;
 
 /**
  * Function definition.
@@ -96,9 +96,9 @@ type VariablesConfig = Partial<{
  * @author Simon Kovtyk
  */
 type FnDefinition = {
-  name: string,
-  args?: Array<VariableFnArg | RecursiveFnArg | ObjectFnArg | PrimitiveFnArg  | EventFnArg>
-} & Accessible
+  name: string;
+  args?: Array<VariableFnArg | RecursiveFnArg | ObjectFnArg | PrimitiveFnArg | EventFnArg>;
+} & Accessible;
 
 /**
  * Primitive function arguments.
@@ -117,8 +117,8 @@ type PrimitiveFnArg = string | number | boolean;
  * @author Simon Kovtyk
  */
 type VariableFnArg = VariableWithAccess & {
-  type: "var",
-}
+  type: "var";
+};
 
 /**
  * Object function arguments.
@@ -128,9 +128,9 @@ type VariableFnArg = VariableWithAccess & {
  * @author Simon Kovtyk
  */
 type ObjectFnArg = {
-  type: "arg",
-  [key: string]: unknown
-}
+  type: "arg";
+  [key: string]: unknown;
+};
 
 /**
  * Recursive function arguments.
@@ -140,7 +140,7 @@ type ObjectFnArg = {
  * @author Simon Kovtyk
  */
 type RecursiveFnArg = ExposableFn & {
-  type: "fn"
+  type: "fn";
 };
 
 /**
@@ -150,7 +150,7 @@ type RecursiveFnArg = ExposableFn & {
  * @category Types
  * @author Simon Kovtyk
  */
-type EventFnArg = Accessible & {type: "event"}
+type EventFnArg = Accessible & { type: "event" };
 
 /**
  * Function with variable assignment support.
@@ -159,7 +159,7 @@ type EventFnArg = Accessible & {type: "event"}
  * @category Types
  * @author Simon Kovtyk
  */
-type ExposableFn = FnDefinition & Exposable;
+type ExposableFn = FnDefinition & Partial<Exposable>;
 
 /**
  * Function registry.
@@ -168,7 +168,9 @@ type ExposableFn = FnDefinition & Exposable;
  * @category Types
  * @author Simon Kovtyk
  */
-type Fns = Record<string,  Function>;
+type Fns = Record<string, Function>;
+
+type Variables = Record<string, unknown>;
 
 /**
  * Event definition.
@@ -178,8 +180,8 @@ type Fns = Record<string,  Function>;
  * @author Simon Kovtyk
  */
 type Event = {
-  name: keyof GlobalEventHandlersEventMap,
-  actions: ExposableFn[]
+  name: keyof GlobalEventHandlersEventMap;
+  actions: ExposableFn[];
 };
 
 /**
@@ -189,7 +191,7 @@ type Event = {
  * @category Types
  * @author Simon Kovtyk
  */
-type ExposableEvent = Event & Exposable;
+type ExposableEvent = Event & Partial<Exposable>;
 
 /**
  * Registered DOM events.
@@ -209,10 +211,10 @@ type Events = Record<keyof GlobalEventHandlersEventMap, EventListener>;
  * @author David Schummer
  */
 type DynamicValue =
-  {type: "static", value: unknown}
-  | {type: "variable"} & VariableWithAccess
-  | {type: "child"} & DynamicElementProps
-  | {type: "fn"} & ExposableFn
+  | { type: "static"; value: unknown }
+  | ({ type: "variable" } & VariableWithAccess)
+  | ({ type: "child" } & DynamicElementProps)
+  | ({ type: "fn" } & ExposableFn);
 
 /**
  * Dynamic element definition used by the {@link Renderer}.
@@ -223,12 +225,12 @@ type DynamicValue =
  */
 type DynamicElementProps = {
   element: string;
-  ref?: string,
-  children?: DynamicElementProps[],
-  events?: ExposableEvent[],
-  properties?: Record<string, DynamicValue>,
-  [key: string]: unknown
-}
+  ref?: string;
+  children?: DynamicElementProps[];
+  events?: ExposableEvent[];
+  properties?: Record<string, DynamicValue>;
+  [key: string]: unknown;
+};
 
 /**
  * Access chain for resolving nested values.
@@ -238,7 +240,7 @@ type DynamicElementProps = {
  * @author Simon Kovtyk
  * @author David Schummer
  */
-type Access = Array<PrototypeAccess | PropertyAccess | IndexAccess>
+type Access = Array<PrototypeAccess | PropertyAccess | IndexAccess>;
 
 /**
  * Variable provided in Variable Store {@link useGuthrieVariables}.
@@ -248,8 +250,8 @@ type Access = Array<PrototypeAccess | PropertyAccess | IndexAccess>
  * @author David Schummer
  */
 type VariableWithAccess = Accessible & {
-  name: string,
-}
+  name: string;
+};
 
 /**
  * Describes property access on an object.
@@ -261,8 +263,8 @@ type VariableWithAccess = Accessible & {
  * @author David Schummer
  */
 type PropertyAccess = {
-  type: "property"
-  read: string
+  type: "property";
+  read: string;
 };
 
 /**
@@ -275,8 +277,8 @@ type PropertyAccess = {
  * @author David Schummer
  */
 type IndexAccess = {
-  type: "index"
-  read: number
+  type: "index";
+  read: number;
 };
 
 /**
@@ -289,8 +291,8 @@ type IndexAccess = {
  * @author David Schummer
  */
 type PrototypeAccess = {
-  type: "prototype"
-  read: string
+  type: "prototype";
+  read: string;
 };
 
 /**
@@ -364,9 +366,9 @@ type Operators = Record<string, OperatorFn>;
  * @author Simon Kovtyk
  */
 type OperationDefinition = {
-  name: string,
-  args: OperatorArg[]
-}
+  name: string;
+  args: OperatorArg[];
+};
 
 /**
  * Context props passed to components.
@@ -377,11 +379,11 @@ type OperationDefinition = {
  * @todo to be completed
  */
 type ContextProps = {
-  refname: string,
-  events?: ExposableEvent[]
+  refname: string;
+  events?: ExposableEvent[];
   // Map children to elements since children is reserved by React
-  elements?: DynamicElementProps[]
-}
+  elements?: DynamicElementProps[];
+};
 
 export type {
   EventConfig,
@@ -395,6 +397,7 @@ export type {
   VariablesConfig,
   Access,
   VariableWithAccess,
+  Variables,
   PrototypeAccess,
   PropertyAccess,
   IndexAccess,
@@ -416,4 +419,4 @@ export type {
   Fns,
   Page,
   Lifecycle
-}
+};

@@ -1,6 +1,6 @@
-import type {ExposableEvent} from "../renderer/type";
-import {type RefObject} from "react";
-import {addListener} from "../functions/internals";
+import { type RefObject } from "react";
+import { addListener } from "../functions/internals";
+import type { ExposableEvent } from "../renderer/type";
 
 /**
  * Return type of {@link useGuthrieEventsCallback}.
@@ -30,21 +30,17 @@ type UseGuthrieEventsCallbackReturn = () => void;
  * @category Hooks
  * @author Simon Kovtyk
  */
-function useGuthrieEventsCallback (
+function useGuthrieEventsCallback(
   target: RefObject<HTMLElement | Window | string | null>,
-  events: ExposableEvent[] | undefined,
+  events: ExposableEvent[] | undefined
 ): UseGuthrieEventsCallbackReturn {
   return () => {
     events?.forEach((event) => {
       addListener(target.current, event.name, event.actions);
     });
-  }
+  };
 }
 
-export type {
-  UseGuthrieEventsCallbackReturn
-}
+export type { UseGuthrieEventsCallbackReturn };
 
-export {
-  useGuthrieEventsCallback
-}
+export { useGuthrieEventsCallback };

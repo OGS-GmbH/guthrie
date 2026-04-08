@@ -1,4 +1,5 @@
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
+import { Variables } from "../renderer/type";
 
 /**
  * Store for managing runtime variables.
@@ -12,21 +13,20 @@ import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
  * @author Simon Kovtyk
  */
 type VariablesStore = {
-  variables: Record<string, unknown>;
+  variables: Variables;
   addVariable: (name: string, value: unknown) => void;
-}
+};
 
 const stateCreator: StateCreator<VariablesStore> = (set) => ({
   variables: {},
-  addVariable: (name: string, value: unknown) => set(
-    (state) => ({
+  addVariable: (name: string, value: unknown) =>
+    set((state) => ({
       variables: {
         ...state.variables,
         [name]: value
       }
-    })
-  )
-})
+    }))
+});
 
 /**
  * Zustand store for accessing and managing variables.
@@ -41,14 +41,8 @@ const stateCreator: StateCreator<VariablesStore> = (set) => ({
  * @category Stores
  * @author Simon Kovtyk
  */
-const useGuthrieVariables: UseBoundStore<StoreApi<VariablesStore>> = create(
-  stateCreator
-);
+const useGuthrieVariables: UseBoundStore<StoreApi<VariablesStore>> = create(stateCreator);
 
-export type {
-  VariablesStore
-}
+export type { VariablesStore };
 
-export {
-  useGuthrieVariables
-}
+export { useGuthrieVariables };
