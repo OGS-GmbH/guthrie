@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/OGS-GmbH/guthrie/compare/v1.0.0...v1.0.1) (2026-04-08)
+
+
+### Bug Fixes
+
+* enfore proper build settings ([16a1f39](https://github.com/OGS-GmbH/guthrie/commit/16a1f390df4b5437b94e408cb09872596f21e841))
+
 ## 1.0.0 (2026-04-08)
 
 
