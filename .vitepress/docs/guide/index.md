@@ -15,50 +15,50 @@ next: false
 ::: code-group
 
 ```sh [npm]
-$ npm add @ogs-gmbh/rolldown-plugin-assets
+$ npm add @ogs-gmbh/guthrie
 ```
 
 ```sh [pnpm]
-$ pnpm add @ogs-gmbh/rolldown-plugin-assets
+$ pnpm add @ogs-gmbh/guthrie
 ```
 
 ```sh [yarn]
-$ yarn add @ogs-gmbh/rolldown-plugin-assets
+$ yarn add @ogs-gmbh/guthrie
 ```
 
 ```sh [bun]
-$ bun add @ogs-gmbh/rolldown-plugin-assets
+$ bun add @ogs-gmbh/guthrie
 ```
 
 :::
 
 ### Usage
 
-`Guthrie` is used to render declarative page objects.
+Guthrie offers almost any kind of expression, that can be done JavaScript-wise. Here, we provide just a simple example. Refer to our [reference](/reference) get a better understanding.
 
-```tsx [example-app.tsx]
+```tsx [example-component.tsx]
 import { Guthrie } from "@ogs-gmbh/guthrie";
 import type { Page } from "@ogs-gmbh/guthrie";
 
-export function ExampleApp() {
-  const page = {
-    route: "exapmle-route",
-    content: {
-      element: "main",
-      children: [
-        {
-          element: "h1",
-          children: [
-            {
-              element: "text",
-              content: "Hello to Guthries Stage"
-            }
-          ]
-        }
-      ]
-    }
-  } satisfies Page;
+const page = {
+  route: "example-route",
+  content: {
+    element: "main",
+    children: [
+      {
+        element: "h1",
+        children: [
+          {
+            element: "text",
+            content: "Hello to Guthries Stage"
+          }
+        ]
+      }
+    ]
+  }
+} satisfies Page;
 
+export function ExampleComponent() {
   return <Guthrie page={page} elements={{}} fns={{}} operators={{}} />;
 }
 ```
