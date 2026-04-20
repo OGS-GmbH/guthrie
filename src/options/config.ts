@@ -1,3 +1,5 @@
+"use client";
+
 import { ElementType } from "react";
 import type { Elements, Fns, Operators } from "../renderer/type.js";
 import { additional, flowControls, intrinsics } from "./elements.js";

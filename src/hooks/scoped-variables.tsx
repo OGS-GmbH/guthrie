@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext } from "react";
 import { ScopedVariablesContext } from "../context/variables.js";
 import { Variables } from "../renderer/type.js";

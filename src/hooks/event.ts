@@ -1,3 +1,5 @@
+"use client";
+
 import { type RefObject } from "react";
 import { addListener } from "../functions/internals.js";
 import type { ExposableEvent } from "../renderer/type.js";

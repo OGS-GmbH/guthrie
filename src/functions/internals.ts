@@ -1,3 +1,5 @@
+"use client";
+
 import { callFn } from "../renderer/fns.js";
 import { ExposableFn } from "../renderer/type.js";
 import { useGuthrieEvents } from "../stores/events.js";

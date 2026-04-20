@@ -1,3 +1,5 @@
+"use client";
+
 import { useMountedEffect } from "@ogs-gmbh/react-hooks";
 import { type RefObject, useEffect, useRef } from "react";
 import { useGuthrieEventsCallback } from "../hooks/event.js";
@@ -63,7 +65,7 @@ function Guthrie({ elements, fns, page, operators, event }: GuthrieProps) {
   const setFns = useGuthrieFns((state) => state.setFns);
   const addRef = useGuthrieRefs((state) => state.addRef);
   const eventsConfig = useGuthrieEventsConfig((state) => state.config);
-  const windowRef = useRef(window);
+  const windowRef = useRef(typeof window === "undefined" ? null : window);
   const registerEvents = useGuthrieEventsCallback(event?.rootRef ?? windowRef, page.events);
 
   useEffect(() => {

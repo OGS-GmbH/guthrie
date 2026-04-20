@@ -1,3 +1,5 @@
+"use client";
+
 import { solveOperation } from "../renderer/operations.js";
 import { Renderer } from "../renderer/renderer.js";
 import {

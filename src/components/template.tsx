@@ -1,3 +1,5 @@
+"use client";
+
 import { useInitialize } from "@ogs-gmbh/react-hooks";
 import { Renderer } from "../renderer/renderer.js";
 import type { DynamicElementProps } from "../renderer/type.js";

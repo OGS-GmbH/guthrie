@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo } from "react";
 import { solveOperation } from "../renderer/operations.js";
 import type { OperationDefinition as _Operation } from "../renderer/type.js";

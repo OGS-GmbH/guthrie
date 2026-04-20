@@ -1,3 +1,5 @@
+"use client";
+
 import { StateCreator, create, StoreApi, UseBoundStore } from "zustand";
 import { EventConfig } from "../renderer/type.js";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment, useMemo } from "react";
 import { Renderer } from "../renderer/renderer.js";
 import type { DynamicElementProps, Exposable } from "../renderer/type.js";

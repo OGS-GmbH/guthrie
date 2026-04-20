@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode, useMemo } from "react";
 import { ScopedVariablesContext } from "../context/variables.js";
 import { useScopedVariables } from "../hooks/scoped-variables.js";

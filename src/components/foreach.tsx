@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo } from "react";
 import { Fragment } from "react/jsx-runtime";
 import { Renderer } from "../renderer/renderer.js";

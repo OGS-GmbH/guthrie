@@ -1,3 +1,5 @@
+"use client";
+
 import { Conditional } from "../components/conditional.js";
 import { Fn, FnRenderer } from "../components/fn.js";
 import { For } from "../components/for.js";

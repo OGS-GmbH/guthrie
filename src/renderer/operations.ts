@@ -1,3 +1,5 @@
+"use client";
+
 import type {
   OperationDefinition as _Operation,
   OperatorArg,

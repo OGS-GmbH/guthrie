@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Normalizes a target into a consistent string identifier.
  *

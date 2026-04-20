@@ -1,3 +1,5 @@
+"use client";
+
 // oxlint-disable jsdoc/require-returns
 import { type ComponentPropsWithRef } from "react";
 

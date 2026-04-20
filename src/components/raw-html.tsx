@@ -1,3 +1,5 @@
+"use client";
+
 import { htmlToDOM } from "html-react-parser";
 
 type RawHtmlProps = {

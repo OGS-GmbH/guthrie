@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useState } from "react";
 import { callFn } from "../renderer/fns.js";
 import type { DynamicElementProps, DynamicValue, Variables } from "../renderer/type.js";

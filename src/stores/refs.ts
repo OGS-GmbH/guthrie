@@ -1,3 +1,5 @@
+"use client";
+
 import { create, StateCreator, StoreApi, UseBoundStore } from "zustand";
 
 /**

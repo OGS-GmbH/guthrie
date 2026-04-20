@@ -1,3 +1,5 @@
+"use client";
+
 import { addListener, removeListener } from "../functions/internals.js";
 import type { Fns } from "../renderer/type.js";
 

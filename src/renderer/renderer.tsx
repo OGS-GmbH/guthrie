@@ -1,7 +1,9 @@
+"use client";
+
 import { useEffect, useMemo, useRef } from "react";
-import { useScopedVariables } from "src/hooks/scoped-variables.js";
 import { useGuthrieEventsCallback } from "../hooks/event.js";
 import { useGuthrieProperties } from "../hooks/properties.js";
+import { useScopedVariables } from "../hooks/scoped-variables.js";
 import { useGuthrieElements } from "../stores/elements.js";
 import { useGuthrieEventsConfig } from "../stores/events-config.js";
 import { useGuthrieRefs } from "../stores/refs.js";

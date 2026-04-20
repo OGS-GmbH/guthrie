@@ -1,3 +1,5 @@
+"use client";
+
 import { useGuthrieFns } from "../stores/fns.js";
 import { useGuthrieVariables } from "../stores/variables.js";
 import type { ExposableFn, Variables } from "./type.js";

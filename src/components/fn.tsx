@@ -1,3 +1,5 @@
+"use client";
+
 import { usePromise } from "@ogs-gmbh/react-hooks";
 import { useEffect, useMemo } from "react";
 import { callFn } from "../renderer/fns.js";

@@ -1,3 +1,5 @@
+"use client";
+
 import { create, StateCreator, StoreApi, type UseBoundStore } from "zustand";
 import type { Elements } from "../renderer/type.js";
 

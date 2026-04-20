@@ -1,3 +1,5 @@
+"use client";
+
 import type { Access } from "./type.js";
 
 /**

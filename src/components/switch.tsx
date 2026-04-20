@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Renderer } from "../renderer/renderer.js";
 import { type DynamicElementProps, type VariableWithAccess } from "../renderer/type.js";
