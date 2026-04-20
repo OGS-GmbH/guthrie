@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/OGS-GmbH/guthrie/compare/v1.0.1...v1.1.0) (2026-04-20)
+
+
+### Features
+
+* add nextjs compatibility ([2b6b8a7](https://github.com/OGS-GmbH/guthrie/commit/2b6b8a786df9993c30887068494c9714043e27c2))
+
 ## [1.0.1](https://github.com/OGS-GmbH/guthrie/compare/v1.0.0...v1.0.1) (2026-04-08)
 
 
