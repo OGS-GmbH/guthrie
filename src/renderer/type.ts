@@ -221,6 +221,10 @@ type DynamicValue =
 /**
  * Dynamic element definition used by the {@link Renderer}.
  *
+ * @remarks
+ * To register and attach events to a rendered element, the `ref` property must be provided.
+ * The `ref` is used internally to identify the target element for event bindings.
+ *
  * @since 1.0.0
  * @category Types
  * @author Simon Kovtyk
