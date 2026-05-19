@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/OGS-GmbH/guthrie/compare/v1.1.0...v1.2.0) (2026-05-19)
+
+
+### Features
+
+* feat for everything ([84c30ab](https://github.com/OGS-GmbH/guthrie/commit/84c30ab81344755c051f110f0b0331fee8a96c96))
+
 ## [1.1.0](https://github.com/OGS-GmbH/guthrie/compare/v1.0.1...v1.1.0) (2026-04-20)
 
 
