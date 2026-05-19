@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { Ref, useEffect, useMemo, useRef } from "react";
+import { mergeRefs } from "react-merge-refs";
 import { useGuthrieEventsCallback } from "../hooks/event.js";
 import { useGuthrieProperties } from "../hooks/properties.js";
-import { useScopedVariables } from "../hooks/scoped-variables.js";
 import { useGuthrieElements } from "../stores/elements.js";
 import { useGuthrieEventsConfig } from "../stores/events-config.js";
 import { useGuthrieRefs } from "../stores/refs.js";
+import { useDefaultProps } from "./root.js";
 import { type DynamicElementProps } from "./type.js";
 
 /**
@@ -16,7 +17,7 @@ import { type DynamicElementProps } from "./type.js";
  * @category Components
  * @author Simon Kovtyk
  */
-type RendererProps = DynamicElementProps;
+type RendererProps = DynamicElementProps & { rawRef?: Ref<unknown> };
 
 /**
  * Core rendering engine for dynamic elements.
@@ -44,10 +45,11 @@ type RendererProps = DynamicElementProps;
 function Renderer({
   element,
   ref: refName,
+  rawRef,
   children,
   events,
   properties,
-  ...props
+  rawProperties
 }: RendererProps) {
   const elements = useGuthrieElements((state) => state.elements);
   const Element = useMemo(() => elements[element], [elements]);
@@ -55,40 +57,48 @@ function Renderer({
   const elementRef = useRef<HTMLElement | null>(null);
   const refNameAsRef = useRef(refName ?? null);
   const eventsConfig = useGuthrieEventsConfig((state) => state.config);
-  const scopedVariables = useScopedVariables();
-  const resolvedProperties = useGuthrieProperties(properties, scopedVariables);
 
+  const defaultProperties = useDefaultProps()?.[element];
+  const [propsWithDefaults, rawPropsWithDefaults] = useMemo(
+    () => [
+      { ...properties, ...defaultProperties?.properties },
+      { ...rawProperties, ...defaultProperties?.rawProperties }
+    ],
+    [element, defaultProperties, properties, rawProperties]
+  );
+
+  const resolvedProperties = useGuthrieProperties(propsWithDefaults);
+  const registerEvents = useGuthrieEventsCallback();
   const elementProps = useMemo(
     () => ({
-      ...props,
+      ...rawPropsWithDefaults,
       ...resolvedProperties?.static,
-      ...(resolvedProperties?.dynamic
+      ...(resolvedProperties?.renderable
         ? Object.fromEntries(
-            Object.entries(resolvedProperties?.dynamic).map(([key, dynamicElementProps]) => [
+            Object.entries(resolvedProperties?.renderable).map(([key, dynamicElementProps]) => [
               key,
               <Renderer key={key} {...dynamicElementProps} />
             ])
           )
         : {}),
-      ref: elementRef,
       events,
       refname: refName,
       elements: children
     }),
-    [props, refName, events, children, resolvedProperties]
+    [refName, events, children, resolvedProperties]
   );
-  const registerEvents = useGuthrieEventsCallback(refNameAsRef, events);
 
   useEffect(() => {
-    if (refName && elementRef.current) addRef(refName, elementRef.current);
-
-    if (elementRef.current && eventsConfig.autoApply) registerEvents();
-  }, [Element]);
+    refName && elementRef.current && addRef(refName, elementRef.current);
+    eventsConfig.autoApply &&
+      (elementRef.current || refNameAsRef.current) &&
+      registerEvents(refNameAsRef.current ? refNameAsRef : elementRef, events);
+  }, [Element, elementRef.current, refNameAsRef.current]);
 
   if (!Element) return null;
 
   return (
-    <Element {...elementProps} ref={elementRef}>
+    <Element {...elementProps} ref={mergeRefs([elementRef, rawRef])}>
       {children?.map((child, index) => (
         <Renderer key={index} {...child} />
       ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { callFn } from "../renderer/fns.js";
+import { callFnAsync } from "../renderer/fns.js";
 import { ExposableFn } from "../renderer/type.js";
 import { useGuthrieEvents } from "../stores/events.js";
 import { useGuthrieRefs } from "../stores/refs.js";
@@ -55,18 +55,20 @@ function removeListener(
  * @since 1.0.0
  * @category Internal
  * @internal
- * @author David Schummer
  * @author Simon Kovtyk
  */
 function addListener(
   target: HTMLElement | Window | string | null,
   name: keyof GlobalEventHandlersEventMap,
-  actions: ExposableFn[]
+  actions: ExposableFn[],
+  onEvent?: (event: Event) => Promise<void>
 ) {
   if (target === null) return;
 
   const targetName = normalizeTargetName(target);
-  const listener = (event: Event) =>
+  const listener = (event: Event) => {
+    onEvent?.(event);
+
     actions.forEach((fn) => {
       const argSubs: Record<number, Event> = {};
 
@@ -76,8 +78,9 @@ function addListener(
         if (arg.type === "event") argSubs[index] = event;
       });
 
-      void callFn(fn, argSubs);
+      void callFnAsync(fn, argSubs);
     });
+  };
 
   let domTarget: HTMLElement | Window;
 

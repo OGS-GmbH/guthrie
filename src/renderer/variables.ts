@@ -21,7 +21,7 @@ import type { Access } from "./type.js";
  * @author Simon Kovtyk
  * @author David Schummer
  */
-async function touchByAccess<T>(value: unknown, access: Access): Promise<T> {
+async function touchByAccessAsync<T>(value: unknown, access: Access): Promise<T> {
   let touchedValue: T = value as T;
 
   for (const accessItem of access) {
@@ -38,4 +38,21 @@ async function touchByAccess<T>(value: unknown, access: Access): Promise<T> {
   return touchedValue;
 }
 
-export { touchByAccess };
+function touchByAccessSync<T>(value: unknown, access: Access): T {
+  let touchedValue: T = value as T;
+
+  for (const accessItem of access) {
+    switch (accessItem.type) {
+      case "prototype":
+        touchedValue = (touchedValue as Record<string, () => T>)[accessItem.read]!();
+        break;
+
+      default:
+        touchedValue = (touchedValue as Record<string, T>)[accessItem.read]!;
+    }
+  }
+
+  return touchedValue;
+}
+
+export { touchByAccessAsync, touchByAccessSync };

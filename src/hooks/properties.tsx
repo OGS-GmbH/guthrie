@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { callFn } from "../renderer/fns.js";
-import type { DynamicElementProps, DynamicValue, Variables } from "../renderer/type.js";
-import { touchByAccess } from "../renderer/variables.js";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { callFnAsync, callFnSync } from "../renderer/fns.js";
+import type { DynamicElementProps, DynamicProperty } from "../renderer/type.js";
+import { touchByAccessAsync, touchByAccessSync } from "../renderer/variables.js";
 import { useGuthrieVariables } from "../stores/variables.js";
+import { useScopedVariables } from "./scoped-variables.js";
 
 /**
  * Result type of {@link useGuthrieProperties} Hook.
@@ -15,7 +16,7 @@ import { useGuthrieVariables } from "../stores/variables.js";
  */
 type UseGuthriePropertiesResult = {
   static: Record<string, unknown>;
-  dynamic: Record<string, DynamicElementProps>;
+  renderable: Record<string, DynamicElementProps>;
 };
 
 /**
@@ -30,16 +31,16 @@ type UseGuthriePropertiesReturn = UseGuthriePropertiesResult | null;
 /**
  * Resolves dynamic properties into usable values.
  *
- * This hook processes a record of {@link DynamicValue} entries and separates them into:
+ * This hook processes a record of {@link DynamicProperty} entries and separates them into:
  * - `static`: resolved values (static, variables, function results)
  * - `dynamic`: child elements that need to be rendered later
  *
  * @remarks
  * Supported dynamic value types:
  * - `static` → returned as-is
- * - `variable` → resolved via {@link touchByAccess}
+ * - `variable` → resolved via {@link touchByAccessAsync}
  * - `child` → stored for recursive rendering
- * - `fn` → resolved via {@link callFn}
+ * - `fn` → resolved via {@link callFnAsync}
  *
  * @param properties - Record of dynamic properties to resolve
  * @param scopedVariables - {@link Variables} to prioritize
@@ -52,33 +53,45 @@ type UseGuthriePropertiesReturn = UseGuthriePropertiesResult | null;
  * @author Simon Kovtyk
  */
 function useGuthrieProperties(
-  properties?: Record<string, DynamicValue>,
-  scopedVariables?: Variables
+  properties?: Record<string, DynamicProperty>
 ): UseGuthriePropertiesReturn {
-  const [result, setResult] = useState<UseGuthriePropertiesReturn>(null);
+  const scopedVariables = useScopedVariables();
   const variables = useGuthrieVariables((state) => state.variables);
-  const handleProperties = useCallback(async () => {
-    const staticProperties: Record<string, unknown> = {};
-    const dynamicProperties: Record<string, DynamicElementProps> = {};
+  const [syncProperties, asyncProperties] = useMemo(() => {
+    const syncProps: Record<string, DynamicProperty> = {};
+    const asyncProps: Record<string, DynamicProperty> = {};
 
-    if (!properties) return setResult(null);
+    properties &&
+      Object.entries(properties).forEach(([key, value]) => {
+        if (value.async) asyncProps[key] = value;
+        else syncProps[key] = value;
+      });
 
-    await Promise.all(
-      Object.entries(properties).map(async ([key, dynamicValue]) => {
+    return [syncProps, asyncProps];
+  }, [properties]);
+
+  const [result, setResult] = useState<UseGuthriePropertiesReturn>(
+    useMemo(() => {
+      const staticProperties: Record<string, unknown> = {};
+      const renderableProperties: Record<string, DynamicElementProps> = {};
+
+      if (!syncProperties) return null;
+
+      Object.entries(syncProperties).forEach(([key, dynamicValue]) => {
         switch (dynamicValue.type) {
           case "static":
             staticProperties[key] = dynamicValue.value;
 
             break;
 
-          case "variable": {
+          case "var": {
             const variableValue =
               scopedVariables?.[dynamicValue.name] ?? variables[dynamicValue.name];
 
             if (!variableValue) return;
 
             staticProperties[key] = dynamicValue.access
-              ? await touchByAccess(variableValue, dynamicValue.access)
+              ? touchByAccessSync(variableValue, dynamicValue.access)
               : variableValue;
 
             break;
@@ -87,7 +100,7 @@ function useGuthrieProperties(
           case "child": {
             const { type, ...dynamicElementProps } = dynamicValue;
 
-            dynamicProperties[key] = dynamicElementProps;
+            renderableProperties[key] = dynamicElementProps;
 
             break;
           }
@@ -95,7 +108,56 @@ function useGuthrieProperties(
           case "fn": {
             const { type, ...exposableFn } = dynamicValue;
 
-            staticProperties[key] = await callFn(exposableFn);
+            staticProperties[key] = callFnSync(exposableFn);
+
+            break;
+          }
+        }
+      });
+
+      return { static: staticProperties, renderable: renderableProperties };
+    }, [syncProperties])
+  );
+
+  const handleAsyncProperties = useCallback(async () => {
+    const staticProperties: Record<string, unknown> = {};
+    const renderableProperties: Record<string, DynamicElementProps> = {};
+
+    if (!asyncProperties) return;
+
+    await Promise.all(
+      Object.entries(asyncProperties).map(async ([key, dynamicValue]) => {
+        switch (dynamicValue.type) {
+          case "static":
+            staticProperties[key] = dynamicValue.value;
+
+            break;
+
+          case "var": {
+            const variableValue =
+              scopedVariables?.[dynamicValue.name] ?? variables[dynamicValue.name];
+
+            if (!variableValue) return;
+
+            staticProperties[key] = dynamicValue.access
+              ? await touchByAccessAsync(variableValue, dynamicValue.access)
+              : variableValue;
+
+            break;
+          }
+
+          case "child": {
+            const { type, ...dynamicElementProps } = dynamicValue;
+
+            renderableProperties[key] = dynamicElementProps;
+
+            break;
+          }
+
+          case "fn": {
+            const { type, ...exposableFn } = dynamicValue;
+
+            staticProperties[key] = await callFnAsync(exposableFn);
 
             break;
           }
@@ -103,12 +165,15 @@ function useGuthrieProperties(
       })
     );
 
-    setResult({ static: staticProperties, dynamic: dynamicProperties });
-  }, []);
+    setResult({
+      static: { ...staticProperties, ...result?.static },
+      renderable: { ...renderableProperties, ...result?.renderable }
+    });
+  }, [asyncProperties, variables, scopedVariables]);
 
   useEffect(() => {
-    handleProperties();
-  }, [properties, variables, scopedVariables]);
+    void handleAsyncProperties();
+  }, [asyncProperties, variables, scopedVariables]);
 
   return result;
 }

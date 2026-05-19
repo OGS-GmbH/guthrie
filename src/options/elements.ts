@@ -3,6 +3,7 @@
 import { Conditional } from "../components/conditional.js";
 import { Fn, FnRenderer } from "../components/fn.js";
 import { For } from "../components/for.js";
+import { ZodForm, FormControl } from "../components/form/form.js";
 import {
   A,
   Abbr,
@@ -150,7 +151,9 @@ const additional: Elements = {
   "slot-template": SlotTemplate,
   "slot-template-renderer": SlotTemplateRenderer,
   fn: Fn,
-  "fn-renderer": FnRenderer
+  "fn-renderer": FnRenderer,
+  "zod-form": ZodForm,
+  "form-control": FormControl
 };
 
 /**

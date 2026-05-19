@@ -20,9 +20,9 @@ type Elements = Record<string, ElementType>;
  * @category Types
  * @author Simon Kovtyk
  */
-type Exposable = {
+type Exposable = Partial<{
   as: string;
-};
+}>;
 
 /**
  * Allows accessing nested values.
@@ -60,11 +60,15 @@ type Lifecycle = Partial<{
  * @author David Schummer
  */
 type Page = {
-  route: string;
   content: DynamicElementProps;
   events?: ExposableEvent[];
+  defaultProperties?: Record<string, DefaultProperties>;
 } & Lifecycle;
 
+type DefaultProperties = Partial<{
+  properties: Record<string, DynamicProperty>;
+  rawProperties: object;
+}>;
 /**
  * Event configuration.
  *
@@ -99,7 +103,17 @@ type VariablesConfig = Partial<{
  */
 type FnDefinition = {
   name: string;
-  args?: Array<VariableFnArg | RecursiveFnArg | ObjectFnArg | PrimitiveFnArg | EventFnArg>;
+  args?: Array<
+    | VariableFnArg
+    | RecursiveFnArg
+    | ObjectFnArg
+    | PrimitiveFnArg
+    | EventFnArg
+    | FormFnArg
+    | FormIssueFnArg
+    | SchemaFnArg
+    | ZodCallbackFnArg
+  >;
 } & Accessible;
 
 /**
@@ -155,6 +169,18 @@ type RecursiveFnArg = ExposableFn & {
 type EventFnArg = Accessible & { type: "event" };
 
 /**
+ * Form function arguments.
+ *
+ * @since 1.0.0
+ * @category Types
+ * @author Simon Kovtyk
+ */
+type FormFnArg = Accessible & { type: "form" };
+type ZodCallbackFnArg = Accessible & { type: "zod-callback" };
+
+type FormIssueFnArg = Accessible & { type: "form-issue" };
+type SchemaFnArg = Accessible & { type: "schema" };
+/**
  * Function with variable assignment support.
  *
  * @since 1.0.0
@@ -174,6 +200,10 @@ type Fns = Record<string, Function>;
 
 type Variables = Record<string, unknown>;
 
+type EventFnAction = ExposableFn & { type: "fn" };
+
+type EventVarAction = VariableWithAccess & { type: "var" };
+
 /**
  * Event definition.
  *
@@ -183,7 +213,7 @@ type Variables = Record<string, unknown>;
  */
 type Event = {
   name: keyof GlobalEventHandlersEventMap;
-  actions: ExposableFn[];
+  actions: Array<EventFnAction | EventVarAction>;
 };
 
 /**
@@ -205,6 +235,10 @@ type ExposableEvent = Event & Partial<Exposable>;
  */
 type Events = Record<keyof GlobalEventHandlersEventMap, EventListener>;
 
+type MaybeAsync = {
+  async?: boolean;
+};
+
 /**
  * Dynamic value definition used in properties.
  *
@@ -212,11 +246,11 @@ type Events = Record<keyof GlobalEventHandlersEventMap, EventListener>;
  * @category Types
  * @author David Schummer
  */
-type DynamicValue =
-  | { type: "static"; value: unknown }
-  | ({ type: "variable" } & VariableWithAccess)
-  | ({ type: "child" } & DynamicElementProps)
-  | ({ type: "fn" } & ExposableFn);
+type DynamicProperty =
+  | ({ type: "static"; value: unknown } & MaybeAsync)
+  | ({ type: "var" } & VariableWithAccess & MaybeAsync)
+  | ({ type: "child" } & DynamicElementProps & MaybeAsync)
+  | ({ type: "fn" } & ExposableFn & MaybeAsync);
 
 /**
  * Dynamic element definition used by the {@link Renderer}.
@@ -226,11 +260,13 @@ type DynamicValue =
  * @author Simon Kovtyk
  */
 type DynamicElementProps = {
+  sync?: boolean;
   element: string;
   ref?: string;
   children?: DynamicElementProps[];
   events?: ExposableEvent[];
-  properties?: Record<string, DynamicValue>;
+  properties?: Record<string, DynamicProperty>;
+  rawProperties?: object;
   [key: string]: unknown;
 };
 
@@ -388,13 +424,16 @@ type ContextProps = {
 };
 
 export type {
+  EventFnAction,
+  EventVarAction,
   EventConfig,
   Event,
   ExposableEvent,
   Exposable,
   Accessible,
   DynamicElementProps,
-  DynamicValue,
+  DynamicProperty,
+  DefaultProperties,
   Elements,
   VariablesConfig,
   Access,
@@ -416,6 +455,7 @@ export type {
   VariableFnArg,
   EventFnArg,
   RecursiveFnArg,
+  ZodCallbackFnArg,
   ContextProps,
   FnDefinition,
   Fns,

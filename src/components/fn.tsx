@@ -2,7 +2,7 @@
 
 import { usePromise } from "@ogs-gmbh/react-hooks";
 import { useEffect, useMemo } from "react";
-import { callFn } from "../renderer/fns.js";
+import { callFnAsync } from "../renderer/fns.js";
 import { Renderer } from "../renderer/renderer.js";
 import type { DynamicElementProps, ExposableFn } from "../renderer/type.js";
 
@@ -19,7 +19,7 @@ type FnProps = ExposableFn;
  * Executes a function without rendering any content.
  *
  * This component is used for side effects only. It calls the provided function
- * via {@link callFn} and does not produce any DOM output.
+ * via {@link callFnAsync} and does not produce any DOM output.
  *
  * If the function is exposable, its result will be made available as a variable
  * within the rendering context.
@@ -35,7 +35,9 @@ type FnProps = ExposableFn;
  * @author Simon Kovtyk
  */
 function Fn({ ...props }: FnProps) {
-  useEffect(() => void callFn(props), [props]);
+  useEffect(() => {
+    void callFnAsync(props);
+  }, [props.name, props.as]);
 
   return <></>; // oxlint-disable-line eslint-plugin-react(jsx-no-useless-fragment)
 }
@@ -59,7 +61,7 @@ type FnRendererProps = ExposableFn;
  * @author Simon Kovtyk
  */
 function FnRenderer(props: FnRendererProps) {
-  const promise = useMemo(() => callFn(props) as Promise<DynamicElementProps>, [props]);
+  const promise = useMemo(() => callFnAsync(props) as Promise<DynamicElementProps>, [props]);
   const content = usePromise<DynamicElementProps>(promise);
 
   return content && <Renderer {...content} />;

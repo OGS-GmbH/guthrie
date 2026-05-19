@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Renderer } from "../renderer/renderer.js";
 import { type DynamicElementProps, type VariableWithAccess } from "../renderer/type.js";
-import { touchByAccess } from "../renderer/variables.js";
+import { touchByAccessAsync } from "../renderer/variables.js";
 import { useGuthrieVariables } from "../stores/variables.js";
 
 /**
@@ -80,7 +80,7 @@ function Switch({ condition, cases, ...props }: SwitchProps) {
 
     if (access === undefined) return;
 
-    touchByAccess(variable, access).then((result) => {
+    touchByAccessAsync(variable, access).then((result) => {
       if (cancelled) return;
 
       setActiveCase(cases[result as string] ?? props["default"]);

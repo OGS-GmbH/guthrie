@@ -2,7 +2,10 @@
 
 import { type RefObject } from "react";
 import { addListener } from "../functions/internals.js";
-import type { ExposableEvent } from "../renderer/type.js";
+import type { EventFnAction, EventVarAction, ExposableEvent } from "../renderer/type.js";
+import { touchByAccessAsync } from "../renderer/variables.js";
+import { useGuthrieVariables } from "../stores/variables.js";
+import { useScopedVariables } from "./scoped-variables.js";
 
 /**
  * Return type of {@link useGuthrieEventsCallback}.
@@ -11,7 +14,10 @@ import type { ExposableEvent } from "../renderer/type.js";
  * @category Hooks
  * @author Simon Kovtyk
  */
-type UseGuthrieEventsCallbackReturn = () => void;
+type UseGuthrieEventsCallbackReturn = (
+  target: RefObject<HTMLElement | Window | string | null>,
+  events: ExposableEvent[] | undefined
+) => void;
 
 /**
  * Creates a callback that attaches event listeners to a target.
@@ -32,13 +38,41 @@ type UseGuthrieEventsCallbackReturn = () => void;
  * @category Hooks
  * @author Simon Kovtyk
  */
-function useGuthrieEventsCallback(
-  target: RefObject<HTMLElement | Window | string | null>,
-  events: ExposableEvent[] | undefined
-): UseGuthrieEventsCallbackReturn {
-  return () => {
+function useGuthrieEventsCallback(): UseGuthrieEventsCallbackReturn {
+  const scopedVariables = useScopedVariables();
+
+  return (
+    target: RefObject<HTMLElement | Window | string | null>,
+    events: ExposableEvent[] | undefined
+  ) => {
     events?.forEach((event) => {
-      addListener(target.current, event.name, event.actions);
+      const actions = { fn: [] as EventFnAction[], var: [] as EventVarAction[] };
+
+      event.actions.forEach((action) => {
+        switch (action.type) {
+          case "fn":
+            actions.fn.push(action);
+            break;
+          case "var":
+            actions.var.push(action);
+            break;
+        }
+      });
+      // oxlint-disable-next-line no-shadow
+      addListener(target.current, event.name, actions.fn, async (event: Event) => {
+        for (const variableAction of actions.var) {
+          const variable =
+            scopedVariables?.[variableAction.name] ??
+            useGuthrieVariables.getState().variables[variableAction.name];
+          const touched = (
+            variableAction.access
+              ? await touchByAccessAsync(variable, variableAction.access)
+              : variable
+          ) as (event: Event) => void;
+
+          touched(event);
+        }
+      });
     });
   };
 }

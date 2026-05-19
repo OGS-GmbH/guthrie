@@ -54,8 +54,23 @@ const native: Fns = {
   timeEnd: console.timeEnd,
   trace: console.trace,
   assert: console.assert,
-  clear: console.clear
+  clear: console.clear,
   // oxlint-enable no-console
+  toNumber: (val: unknown) => Number(val),
+  toString: (val: unknown) => String(val),
+  toBoolean: (val: unknown) => Boolean(val),
+  // TODO: Array
+
+  /*
+   * https://es-toolkit.dev/
+   *
+   * */
+  map: (iterable: unknown[], callback: (value: unknown, index: number) => unknown[]) =>
+    iterable.map(callback),
+  forEach: (iterable: unknown[], callback: (value: unknown, index: number) => void) =>
+    iterable.map(callback),
+  filter: (iterable: unknown[], callback: (value: unknown, index: number) => boolean) =>
+    iterable.map(callback)
 };
 
 export { native, internal };

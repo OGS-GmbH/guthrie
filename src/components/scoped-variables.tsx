@@ -29,11 +29,14 @@ type ScopedVariablesProps = Exposable & {
 function ScopedVariables({ as, value, children }: ScopedVariablesProps) {
   const scopedVariables = useScopedVariables();
   const variables = useMemo(
-    (): Variables => ({
-      ...scopedVariables,
-      [as]: value
-    }),
-    [scopedVariables]
+    (): Variables =>
+      as
+        ? {
+            ...scopedVariables,
+            [as]: value
+          }
+        : scopedVariables,
+    [scopedVariables, as, value]
   );
 
   return (
