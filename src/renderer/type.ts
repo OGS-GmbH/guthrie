@@ -36,7 +36,7 @@ type Accessible = {
 };
 
 /**
- * Lifecycle hooks for {@link Page}.
+ * Lifecycle hooks for {@link Render}.
  *
  * @since 1.0.0
  * @category Types
@@ -59,7 +59,7 @@ type Lifecycle = Partial<{
  * @author Simon Kovtyk
  * @author David Schummer
  */
-type Page = {
+type Render = {
   content: DynamicElementProps;
   events?: ExposableEvent[];
   defaultProperties?: Record<string, DefaultProperties>;
@@ -459,6 +459,6 @@ export type {
   ContextProps,
   FnDefinition,
   Fns,
-  Page,
+  Render,
   Lifecycle
 };

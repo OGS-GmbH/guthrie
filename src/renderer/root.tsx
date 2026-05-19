@@ -16,7 +16,7 @@ import type {
   EventConfig,
   Fns,
   Operators,
-  Page,
+  Render,
   VariablesConfig
 } from "./type.js";
 
@@ -31,7 +31,7 @@ import type {
 type GuthrieProps = {
   elements: Elements;
   fns: Fns;
-  render: Page;
+  render: Render;
   operators: Operators;
   variables?: VariablesConfig;
   event?: {
