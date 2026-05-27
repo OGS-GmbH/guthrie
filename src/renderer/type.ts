@@ -101,19 +101,21 @@ type VariablesConfig = Partial<{
  * @category Types
  * @author Simon Kovtyk
  */
+type Args = Array<
+  | VariableFnArg
+  | RecursiveFnArg
+  | ObjectFnArg
+  | PrimitiveFnArg
+  | EventFnArg
+  | FormFnArg
+  | FormIssueFnArg
+  | SchemaFnArg
+  | ZodCallbackFnArg
+>;
+
 type FnDefinition = {
   name: string;
-  args?: Array<
-    | VariableFnArg
-    | RecursiveFnArg
-    | ObjectFnArg
-    | PrimitiveFnArg
-    | EventFnArg
-    | FormFnArg
-    | FormIssueFnArg
-    | SchemaFnArg
-    | ZodCallbackFnArg
-  >;
+  args?: Args;
 } & Accessible;
 
 /**
@@ -202,7 +204,7 @@ type Variables = Record<string, unknown>;
 
 type EventFnAction = ExposableFn & { type: "fn" };
 
-type EventVarAction = VariableWithAccess & { type: "var" };
+type EventVarAction = VariableWithAccess & { type: "var" } & {args?: EventFnArg[]};
 
 /**
  * Event definition.
@@ -247,6 +249,7 @@ type MaybeAsync = {
  * @author David Schummer
  */
 type DynamicProperty =
+  { type: "callback"} & VariableWithAccess & {args?: Args }  & MaybeAsync
   | ({ type: "static"; value: unknown } & MaybeAsync)
   | ({ type: "var" } & VariableWithAccess & MaybeAsync)
   | ({ type: "child" } & DynamicElementProps & MaybeAsync)

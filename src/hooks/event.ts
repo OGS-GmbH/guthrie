@@ -59,7 +59,7 @@ function useGuthrieEventsCallback(): UseGuthrieEventsCallbackReturn {
         }
       });
       // oxlint-disable-next-line no-shadow
-      addListener(target.current, event.name, actions.fn, async (event: Event) => {
+      addListener(target.current, event.name, actions.fn, async (...eventArgs: unknown[]) => {
         for (const variableAction of actions.var) {
           const variable =
             scopedVariables?.[variableAction.name] ??
@@ -68,9 +68,9 @@ function useGuthrieEventsCallback(): UseGuthrieEventsCallbackReturn {
             variableAction.access
               ? await touchByAccessAsync(variable, variableAction.access)
               : variable
-          ) as (event: Event) => void;
+          ) as (...eventArgs: unknown[]) => void;
 
-          touched(event);
+          typeof touched === "function" && touched(eventArgs);
         }
       });
     });

@@ -34,21 +34,21 @@ function FormControl({ elements, name, as, autoApply, ...props }: FormControlPro
       control={control}
       name={name}
       render={({ field, fieldState, formState }) => (
-        <ScopedVariables as={as} value={{ field, fieldState, formState }}>
-          {elements.map((element, index) => (
-            <Renderer
-              {...element}
-              key={index}
-              rawRef={field.ref}
-              rawProperties={
-                autoApply || autoApply === undefined
-                  ? { ...element.rawProperties, ...field }
-                  : element.rawProperties
-              }
-            />
-          ))}
-        </ScopedVariables>
-      )}
+          <ScopedVariables as={as} value={{field, fieldState, formState}}>
+            {elements.map((element, index) => (
+              <Renderer
+                {...element}
+                key={index}
+                rawRef={field.ref}
+                rawProperties={
+                  autoApply || autoApply === undefined
+                    ? {...element.rawProperties, ...field}
+                    : element.rawProperties
+                }
+              />
+            ))}
+          </ScopedVariables>
+        )}
     />
   );
 }

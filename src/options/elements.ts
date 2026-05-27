@@ -124,6 +124,7 @@ import { RawHtml } from "../components/raw-html.js";
 import { Switch } from "../components/switch.js";
 import { SlotTemplate, SlotTemplateRenderer } from "../components/template.js";
 import type { Elements } from "../renderer/type.js";
+import {ForEach} from "../components/foreach.js";
 
 /**
  * Built-in flow control components.
@@ -135,7 +136,8 @@ import type { Elements } from "../renderer/type.js";
 const flowControls: Elements = {
   conditional: Conditional,
   switch: Switch,
-  for: For
+  for: For,
+  "for-each": ForEach,
 };
 
 /**

@@ -90,12 +90,15 @@ function Renderer({
 
   useEffect(() => {
     refName && elementRef.current && addRef(refName, elementRef.current);
-    eventsConfig.autoApply &&
-      (elementRef.current || refNameAsRef.current) &&
+    if (eventsConfig.autoApply && (elementRef.current || refNameAsRef.current))
       registerEvents(refNameAsRef.current ? refNameAsRef : elementRef, events);
+
   }, [Element, elementRef.current, refNameAsRef.current]);
 
   if (!Element) return null;
+
+  if (element === "mui-menu-item")
+    console.log(elementProps)
 
   return (
     <Element {...elementProps} ref={mergeRefs([elementRef, rawRef])}>

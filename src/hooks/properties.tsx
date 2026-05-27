@@ -79,6 +79,24 @@ function useGuthrieProperties(
 
       Object.entries(syncProperties).forEach(([key, dynamicValue]) => {
         switch (dynamicValue.type) {
+          case "callback": {
+
+            const variableValue =
+              scopedVariables?.[dynamicValue.name] ?? variables[dynamicValue.name];
+
+            if (!variableValue) return;
+
+             const touched = (dynamicValue.access
+              ? touchByAccessSync(variableValue, dynamicValue.access)
+              : variableValue) as Function;
+
+            staticProperties[key] = (...args: unknown[]) => {
+              debugger
+              touched(dynamicValue.access ? touchByAccessSync(args, dynamicValue.access) : args)
+            }
+
+            break;
+          }
           case "static":
             staticProperties[key] = dynamicValue.value;
 
@@ -115,6 +133,8 @@ function useGuthrieProperties(
         }
       });
 
+      console.log("syncProperties", syncProperties)
+      console.log("staticProperties", staticProperties)
       return { static: staticProperties, renderable: renderableProperties };
     }, [syncProperties])
   );

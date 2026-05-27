@@ -61,21 +61,21 @@ function addListener(
   target: HTMLElement | Window | string | null,
   name: keyof GlobalEventHandlersEventMap,
   actions: ExposableFn[],
-  onEvent?: (event: Event) => Promise<void>
+  onEvent?: (...eventArgs: unknown[]) => Promise<void>
 ) {
   if (target === null) return;
 
   const targetName = normalizeTargetName(target);
-  const listener = (event: Event) => {
-    onEvent?.(event);
+  const listener = (...eventArgs: unknown[]) => {
+    onEvent?.(eventArgs);
 
     actions.forEach((fn) => {
-      const argSubs: Record<number, Event> = {};
+      const argSubs: Record<number, unknown[]> = {};
 
       fn.args?.forEach((arg, index) => {
         if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string") return;
 
-        if (arg.type === "event") argSubs[index] = event;
+        if (arg.type === "event") argSubs[index] = eventArgs;
       });
 
       void callFnAsync(fn, argSubs);

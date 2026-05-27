@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
-import { Fragment } from "react/jsx-runtime";
-import { Renderer } from "../renderer/renderer.js";
-import type { DynamicElementProps, Exposable } from "../renderer/type.js";
-import { ScopedVariables } from "./scoped-variables.js";
+import {ReactNode} from "react";
+import {Fragment} from "react/jsx-runtime";
+import type {Exposable} from "../renderer/type.js";
+import {ScopedVariables} from "./scoped-variables.js";
 
 /**
  * Props for the {@link ForEach} component.
@@ -15,16 +14,10 @@ import { ScopedVariables } from "./scoped-variables.js";
  */
 type ForEachProps = {
   items: unknown[];
-  iterator: {
-    children: DynamicElementProps[];
-  };
+  children: ReactNode;
 } & Partial<Exposable>;
 
-function ForEach({ items, as, iterator }: ForEachProps) {
-  const children = useMemo(
-    () => iterator.children.map((child, childIndex) => <Renderer key={childIndex} {...child} />),
-    [iterator]
-  );
+function ForEach({ items, as, children }: ForEachProps) {
 
   if (!as) return items.map((_, index) => <Fragment key={index}>{children}</Fragment>);
 
