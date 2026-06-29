@@ -125,6 +125,7 @@ import { Switch } from "../components/switch.js";
 import { SlotTemplate, SlotTemplateRenderer } from "../components/template.js";
 import type { Elements } from "../renderer/type.js";
 import {ForEach} from "../components/foreach.js";
+import {ScopedVariables} from "../components/scoped-variables.js";
 
 /**
  * Built-in flow control components.
@@ -153,6 +154,7 @@ const additional: Elements = {
   "slot-template": SlotTemplate,
   "slot-template-renderer": SlotTemplateRenderer,
   fn: Fn,
+  "scoped-variables": ScopedVariables,
   "fn-renderer": FnRenderer,
   "zod-form": ZodForm,
   "form-control": FormControl

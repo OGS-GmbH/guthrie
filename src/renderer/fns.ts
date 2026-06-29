@@ -23,16 +23,20 @@ function callFnSync(
     if (arg.type === "zod-callback")
       return arg.access ? touchByAccessSync(overriddenArg, arg.access) : overriddenArg;
 
-    if (overriddenArg && arg.access) return touchByAccessSync(overriddenArg, arg.access);
+    if (overriddenArg && arg.access)
+      return touchByAccessSync(overriddenArg, arg.access);
+
 
     if (arg.type === "var") {
       const variable =
         scopedVariables?.[arg.name] ?? useGuthrieVariables.getState().variables[arg.name];
 
-      return arg.access ? touchByAccessSync(variable, arg.access) : variable;
+      if (arg.name === "BXVNM1-control")
+        console.log(variable)
+      return arg.access && variable ? touchByAccessSync(variable, arg.access) : variable;
     }
 
-    const result = callFnSync(rest as ExposableFn);
+    const result = callFnSync(rest as ExposableFn, undefined, scopedVariables);
 
     if (arg.type === "fn" && arg.as) useGuthrieVariables.getState().addVariable(arg.as, result);
 

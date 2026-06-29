@@ -14,9 +14,9 @@ function addMinConstraint(zSchema: ZodType, schema: Schema): ZodType {
 }
 function addMaxConstraint(zSchema: ZodType, schema: Schema): ZodType {
   if (!("max" in schema) || !schema.max) return zSchema;
-  if ("max" in zSchema && typeof (zSchema as any).max === "function") {
+  if ("max" in zSchema && typeof (zSchema as any).max === "function")
     return (zSchema as any).max(schema.max[0], buildErrorCallback(schema.max[1]));
-  }
+
 
   return zSchema;
 }
@@ -24,9 +24,9 @@ function addMaxConstraint(zSchema: ZodType, schema: Schema): ZodType {
 function addLengthConstraint(zSchema: ZodType, schema: Schema): ZodType {
   if (!("length" in schema) || !schema.length) return zSchema;
 
-  if ("length" in zSchema && typeof (zSchema as any).length === "function") {
+  if ("length" in zSchema && typeof (zSchema as any).length === "function")
     return (zSchema as any).min(schema.length[0], buildErrorCallback(schema.length[1]));
-  }
+
 
   return zSchema;
 }
@@ -43,9 +43,9 @@ function addNullableConstraint(zSchema: ZodType, schema: Schema): ZodType {
 function addNonemptyConstraint(zSchema: ZodType, schema: Schema) {
   if (!("nonempty" in schema)) return zSchema;
 
-  if ("nonempty" in zSchema && typeof (zSchema as any).nonempty === "function") {
+  if ("nonempty" in zSchema && typeof (zSchema as any).nonempty === "function")
     return (zSchema as any).nonempty(buildErrorCallback(schema.nonempty as SchemaErrorParams));
-  }
+
 
   return zSchema;
 }

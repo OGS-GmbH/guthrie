@@ -241,6 +241,10 @@ type MaybeAsync = {
   async?: boolean;
 };
 
+type DynamicChildProperty = { type: "child" } & DynamicElementProps & MaybeAsync;
+type DynamicNestedChildProperty = {
+  [key: string] : unknown | DynamicChildProperty | DynamicNestedChildProperty
+}
 /**
  * Dynamic value definition used in properties.
  *
@@ -250,10 +254,11 @@ type MaybeAsync = {
  */
 type DynamicProperty =
   { type: "callback"} & VariableWithAccess & {args?: Args }  & MaybeAsync
-  | ({ type: "static"; value: unknown } & MaybeAsync)
+  | ({ type: "static"; value: unknown | DynamicNestedChildProperty } & MaybeAsync)
   | ({ type: "var" } & VariableWithAccess & MaybeAsync)
-  | ({ type: "child" } & DynamicElementProps & MaybeAsync)
+  | DynamicChildProperty
   | ({ type: "fn" } & ExposableFn & MaybeAsync);
+
 
 /**
  * Dynamic element definition used by the {@link Renderer}.
@@ -281,7 +286,7 @@ type DynamicElementProps = {
  * @author Simon Kovtyk
  * @author David Schummer
  */
-type Access = Array<PrototypeAccess | PropertyAccess | IndexAccess>;
+type Access = Array<(PrototypeAccess | PropertyAccess | IndexAccess) & {optional?:boolean}>;
 
 /**
  * Variable provided in Variable Store {@link useGuthrieVariables}.
@@ -436,6 +441,8 @@ export type {
   Accessible,
   DynamicElementProps,
   DynamicProperty,
+  DynamicChildProperty,
+  DynamicNestedChildProperty,
   DefaultProperties,
   Elements,
   VariablesConfig,

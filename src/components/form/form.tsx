@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ComponentPropsWithRef, createContext, useContext, useEffect, useMemo } from "react";
+import {ComponentPropsWithRef, createContext, useContext, useEffect, useMemo, useState} from "react";
 import { Control, Controller, FieldValues, useForm, UseFormProps } from "react-hook-form";
 import { ZodType } from "zod";
 import { $ZodTypeInternals } from "zod/v4/core";
@@ -27,6 +27,7 @@ type FormControlProps = {
 
 function FormControl({ elements, name, as, autoApply, ...props }: FormControlProps) {
   const control = useFormControl();
+  const [hasFocus, setHasFocus] = useState(false);
 
   return (
     <Controller
@@ -34,7 +35,7 @@ function FormControl({ elements, name, as, autoApply, ...props }: FormControlPro
       control={control}
       name={name}
       render={({ field, fieldState, formState }) => (
-          <ScopedVariables as={as} value={{field, fieldState, formState}}>
+          <ScopedVariables as={as} value={{ field, fieldState, formState, hasFocus}}>
             {elements.map((element, index) => (
               <Renderer
                 {...element}

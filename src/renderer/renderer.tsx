@@ -1,14 +1,15 @@
 "use client";
 
-import { Ref, useEffect, useMemo, useRef } from "react";
-import { mergeRefs } from "react-merge-refs";
-import { useGuthrieEventsCallback } from "../hooks/event.js";
-import { useGuthrieProperties } from "../hooks/properties.js";
-import { useGuthrieElements } from "../stores/elements.js";
-import { useGuthrieEventsConfig } from "../stores/events-config.js";
-import { useGuthrieRefs } from "../stores/refs.js";
-import { useDefaultProps } from "./root.js";
-import { type DynamicElementProps } from "./type.js";
+import {Ref, useEffect, useMemo, useRef} from "react";
+import {mergeRefs} from "react-merge-refs";
+import {useGuthrieEventsCallback} from "../hooks/event.js";
+import {useGuthrieProperties} from "../hooks/properties.js";
+import {useGuthrieElements} from "../stores/elements.js";
+import {useGuthrieEventsConfig} from "../stores/events-config.js";
+import {useGuthrieRefs} from "../stores/refs.js";
+import {useDefaultProps} from "./root.js";
+import {DynamicChildProperty, type DynamicElementProps} from "./type.js";
+import {toMerged} from "es-toolkit";
 
 /**
  * Props for the {@link Renderer} component.
@@ -61,8 +62,8 @@ function Renderer({
   const defaultProperties = useDefaultProps()?.[element];
   const [propsWithDefaults, rawPropsWithDefaults] = useMemo(
     () => [
-      { ...properties, ...defaultProperties?.properties },
-      { ...rawProperties, ...defaultProperties?.rawProperties }
+      toMerged(defaultProperties?.properties ?? {}, properties ?? {}) ,
+      toMerged(defaultProperties?.rawProperties ?? {}, rawProperties ?? {})
     ],
     [element, defaultProperties, properties, rawProperties]
   );
@@ -70,23 +71,30 @@ function Renderer({
   const resolvedProperties = useGuthrieProperties(propsWithDefaults);
   const registerEvents = useGuthrieEventsCallback();
   const elementProps = useMemo(
-    () => ({
-      ...rawPropsWithDefaults,
-      ...resolvedProperties?.static,
-      ...(resolvedProperties?.renderable
-        ? Object.fromEntries(
-            Object.entries(resolvedProperties?.renderable).map(([key, dynamicElementProps]) => [
-              key,
-              <Renderer key={key} {...dynamicElementProps} />
-            ])
-          )
-        : {}),
-      events,
-      refname: refName,
-      elements: children
-    }),
-    [refName, events, children, resolvedProperties]
+    () => {
+        // oxlint-disable-next-line no-use-before-define
+      const staticProperties = resolveStaticProperties(toMerged(resolvedProperties?.sync?.static ?? {}, resolvedProperties?.async?.static ?? {})) as Record<string, unknown>;
+      const renderableProperties = Object.fromEntries(
+        Object.entries(toMerged(resolvedProperties?.sync?.renderable ?? {}, resolvedProperties?.async?.renderable ?? {})).map(([key, dynamicElementProps]) => [
+          key,
+          <Renderer key={key} {...dynamicElementProps} />
+        ])
+      );
+
+      return ({
+        ...toMerged(toMerged(rawPropsWithDefaults, staticProperties), renderableProperties),
+        events,
+        refname: refName,
+        elements: children
+      })
+    },
+    [refName, events, children, resolvedProperties?.sync, resolvedProperties?.async]
   );
+
+ /* useEffect(() => {
+    console.log("yoyoyoyo", elementProps);
+  }, [elementProps]);*/
+
 
   useEffect(() => {
     refName && elementRef.current && addRef(refName, elementRef.current);
@@ -97,15 +105,49 @@ function Renderer({
 
   if (!Element) return null;
 
-  if (element === "mui-menu-item")
-    console.log(elementProps)
-
   return (
     <Element {...elementProps} ref={mergeRefs([elementRef, rawRef])}>
       {children?.map((child, index) => (
         <Renderer key={index} {...child} />
       ))}
     </Element>
+  );
+}
+
+function resolveStaticProperties(
+  value: unknown,
+  key?: string
+): unknown {
+  if (value === undefined)
+    return undefined;
+
+
+  if (value === null || typeof value !== "object")
+    return value;
+
+
+  if (Array.isArray(value)) {
+    return value.map((item, index) =>
+      resolveStaticProperties(item, String(index))
+    );
+  }
+
+  if ("type" in value && value.type === "child") {
+    const { type, ...rest } = value as DynamicChildProperty;
+
+    return (
+      <Renderer
+        key={key}
+        {...(rest as DynamicElementProps)}
+      />
+    );
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).map(([childKey, childValue]) => [
+      childKey,
+      resolveStaticProperties(childValue, childKey),
+    ])
   );
 }
 

@@ -2,11 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { callFnAsync, callFnSync } from "../renderer/fns.js";
-import type { DynamicElementProps, DynamicProperty } from "../renderer/type.js";
+import type {DynamicElementProps, DynamicNestedChildProperty, DynamicProperty, ExposableFn} from "../renderer/type.js";
 import { touchByAccessAsync, touchByAccessSync } from "../renderer/variables.js";
 import { useGuthrieVariables } from "../stores/variables.js";
 import { useScopedVariables } from "./scoped-variables.js";
+import {isPrimitive} from "es-toolkit";
 
+type PartialGuthriePropertiesResult = {
+  static: Record<string, unknown | DynamicNestedChildProperty>;
+  renderable: Record<string, DynamicElementProps>;
+} | null;
 /**
  * Result type of {@link useGuthrieProperties} Hook.
  *
@@ -15,8 +20,8 @@ import { useScopedVariables } from "./scoped-variables.js";
  * @category Hooks
  */
 type UseGuthriePropertiesResult = {
-  static: Record<string, unknown>;
-  renderable: Record<string, DynamicElementProps>;
+  sync: PartialGuthriePropertiesResult,
+  async: PartialGuthriePropertiesResult
 };
 
 /**
@@ -57,6 +62,18 @@ function useGuthrieProperties(
 ): UseGuthriePropertiesReturn {
   const scopedVariables = useScopedVariables();
   const variables = useGuthrieVariables((state) => state.variables);
+
+  const varArgsValues = Object.values(properties ?? {})
+    .filter((value) => value.type === "fn")
+    .map((value) => (value as ExposableFn).args?.filter((arg) => !isPrimitive(arg) && arg.type === "var" ))
+    .flat()
+    .map((arg) => (arg as ExposableFn).name)
+    .map((name) => scopedVariables[name] ?? variables[name] );
+
+  const variableDeps = useMemo(()=>Object.values(
+    varArgsValues.map((value) => typeof value === "object" ? Object.values(value ?? {}) : value).flat()
+  ).flatMap((val)=>Object.values(val ?? {})), [...varArgsValues])
+
   const [syncProperties, asyncProperties] = useMemo(() => {
     const syncProps: Record<string, DynamicProperty> = {};
     const asyncProps: Record<string, DynamicProperty> = {};
@@ -68,76 +85,77 @@ function useGuthrieProperties(
       });
 
     return [syncProps, asyncProps];
-  }, [properties]);
+  }, [properties, ...variableDeps]);
 
-  const [result, setResult] = useState<UseGuthriePropertiesReturn>(
-    useMemo(() => {
-      const staticProperties: Record<string, unknown> = {};
-      const renderableProperties: Record<string, DynamicElementProps> = {};
 
-      if (!syncProperties) return null;
+  const initialState = useMemo(() => {
+    const staticProperties: Record<string, unknown | DynamicNestedChildProperty> = {};
+    const renderableProperties: Record<string, DynamicElementProps> = {};
 
-      Object.entries(syncProperties).forEach(([key, dynamicValue]) => {
-        switch (dynamicValue.type) {
-          case "callback": {
+    if (!syncProperties) return null;
 
-            const variableValue =
-              scopedVariables?.[dynamicValue.name] ?? variables[dynamicValue.name];
+    Object.entries(syncProperties).forEach(([key, dynamicValue]) => {
+      switch (dynamicValue.type) {
+        case "callback": {
+          const variableValue =
+            scopedVariables?.[dynamicValue.name] ?? variables[dynamicValue.name];
 
-            if (!variableValue) return;
+          if (!variableValue) return;
 
-             const touched = (dynamicValue.access
-              ? touchByAccessSync(variableValue, dynamicValue.access)
-              : variableValue) as Function;
+          const touched = (dynamicValue.access
+            ? touchByAccessSync(variableValue, dynamicValue.access)
+            : variableValue) as Function;
 
-            staticProperties[key] = (...args: unknown[]) => {
-              debugger
-              touched(dynamicValue.access ? touchByAccessSync(args, dynamicValue.access) : args)
-            }
-
-            break;
-          }
-          case "static":
-            staticProperties[key] = dynamicValue.value;
-
-            break;
-
-          case "var": {
-            const variableValue =
-              scopedVariables?.[dynamicValue.name] ?? variables[dynamicValue.name];
-
-            if (!variableValue) return;
-
-            staticProperties[key] = dynamicValue.access
-              ? touchByAccessSync(variableValue, dynamicValue.access)
-              : variableValue;
-
-            break;
+          staticProperties[key] = (...args: unknown[]) => {
+            touched(dynamicValue.access ? touchByAccessSync(args, dynamicValue.access) : args)
           }
 
-          case "child": {
-            const { type, ...dynamicElementProps } = dynamicValue;
-
-            renderableProperties[key] = dynamicElementProps;
-
-            break;
-          }
-
-          case "fn": {
-            const { type, ...exposableFn } = dynamicValue;
-
-            staticProperties[key] = callFnSync(exposableFn);
-
-            break;
-          }
+          break;
         }
-      });
+        case "static":
+          staticProperties[key] = dynamicValue.value;
 
-      console.log("syncProperties", syncProperties)
-      console.log("staticProperties", staticProperties)
-      return { static: staticProperties, renderable: renderableProperties };
-    }, [syncProperties])
-  );
+          break;
+
+        case "var": {
+          const variableValue =
+            scopedVariables?.[dynamicValue.name] ?? variables[dynamicValue.name];
+
+          if (!variableValue) return;
+
+          staticProperties[key] = dynamicValue.access
+            ? touchByAccessSync(variableValue, dynamicValue.access)
+            : variableValue;
+
+          break;
+        }
+
+        case "child": {
+          const { type, ...dynamicElementProps } = dynamicValue;
+
+          renderableProperties[key] = dynamicElementProps;
+
+          break;
+        }
+
+        case "fn": {
+          const { type, ...exposableFn } = dynamicValue;
+
+          staticProperties[key] = callFnSync(exposableFn, undefined, scopedVariables);
+          break;
+        }
+      }
+    });
+
+    return { static: staticProperties, renderable: renderableProperties };
+  }, [syncProperties, ...variableDeps]);
+
+  const [result, setResult] = useState<PartialGuthriePropertiesResult>(initialState);
+  const [asyncResult, setAsyncResult] = useState<PartialGuthriePropertiesResult>(initialState);
+
+  useEffect(()=>{
+    setResult({static: initialState?.static ?? {}, renderable: initialState?.renderable ?? {}});
+  }, [initialState]);
 
   const handleAsyncProperties = useCallback(async () => {
     const staticProperties: Record<string, unknown> = {};
@@ -177,7 +195,7 @@ function useGuthrieProperties(
           case "fn": {
             const { type, ...exposableFn } = dynamicValue;
 
-            staticProperties[key] = await callFnAsync(exposableFn);
+            staticProperties[key] = await callFnAsync(exposableFn, undefined, scopedVariables);
 
             break;
           }
@@ -185,17 +203,17 @@ function useGuthrieProperties(
       })
     );
 
-    setResult({
-      static: { ...staticProperties, ...result?.static },
-      renderable: { ...renderableProperties, ...result?.renderable }
+    setAsyncResult({
+      static: staticProperties,
+      renderable: renderableProperties
     });
-  }, [asyncProperties, variables, scopedVariables]);
+  }, [asyncProperties, variables, scopedVariables, ...variableDeps]);
 
   useEffect(() => {
     void handleAsyncProperties();
   }, [asyncProperties, variables, scopedVariables]);
 
-  return result;
+  return {sync: result, async: asyncResult};
 }
 
 export type { UseGuthriePropertiesResult, UseGuthriePropertiesReturn };

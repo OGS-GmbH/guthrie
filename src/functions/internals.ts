@@ -67,6 +67,7 @@ function addListener(
 
   const targetName = normalizeTargetName(target);
   const listener = (...eventArgs: unknown[]) => {
+    debugger
     onEvent?.(eventArgs);
 
     actions.forEach((fn) => {

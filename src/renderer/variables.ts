@@ -27,11 +27,17 @@ async function touchByAccessAsync<T>(value: unknown, access: Access): Promise<T>
   for (const accessItem of access) {
     switch (accessItem.type) {
       case "prototype":
-        touchedValue = await (touchedValue as Record<string, () => T>)[accessItem.read]!();
+        if (accessItem.optional)
+          touchedValue = await (touchedValue as Record<string, () => T>)?.[accessItem.read]?.() ?? touchedValue;
+        else
+          touchedValue = await (touchedValue as Record<string, () => T>)[accessItem.read]!();
         break;
 
       default:
-        touchedValue = (touchedValue as Record<string, T>)[accessItem.read]!;
+        if (accessItem.optional)
+          touchedValue = (touchedValue as Record<string, T>)?.[accessItem.read] ?? touchedValue;
+        else
+          touchedValue = (touchedValue as Record<string, T>)[accessItem.read]!;
     }
   }
 
@@ -39,16 +45,23 @@ async function touchByAccessAsync<T>(value: unknown, access: Access): Promise<T>
 }
 
 function touchByAccessSync<T>(value: unknown, access: Access): T {
+
   let touchedValue: T = value as T;
 
   for (const accessItem of access) {
     switch (accessItem.type) {
       case "prototype":
-        touchedValue = (touchedValue as Record<string, () => T>)[accessItem.read]!();
+        if (accessItem.optional)
+          touchedValue = (touchedValue as Record<string, () => T>)?.[accessItem.read]?.() ?? touchedValue;
+        else
+          touchedValue = (touchedValue as Record<string, () => T>)[accessItem.read]!();
         break;
 
       default:
-        touchedValue = (touchedValue as Record<string, T>)[accessItem.read]!;
+        if (accessItem.optional)
+          touchedValue = (touchedValue as Record<string, T>)?.[accessItem.read] ?? touchedValue;
+        else
+          touchedValue = (touchedValue as Record<string, T>)[accessItem.read]!;
     }
   }
 
