@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {ComponentPropsWithRef, createContext, useContext, useEffect, useMemo, useState} from "react";
+import { ComponentPropsWithRef, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Control, Controller, FieldValues, useForm, UseFormProps } from "react-hook-form";
 import { ZodType } from "zod";
 import { $ZodTypeInternals } from "zod/v4/core";
@@ -18,14 +18,15 @@ function useFormControl() {
   return useContext(FormControlProvider)!;
 }
 
-type FormControlProps = {
+type ZodFormControlProps = {
   elements: DynamicElementProps[];
   name: string;
   as?: string;
   autoApply?: boolean;
 } & ComponentPropsWithRef<typeof Controller>;
 
-function FormControl({ elements, name, as, autoApply, ...props }: FormControlProps) {
+function ZodFormControl({ elements, name, as, autoApply, ...props }: ZodFormControlProps) {
+  console.log("Form Control", as);
   const control = useFormControl();
   const [hasFocus, setHasFocus] = useState(false);
 
@@ -35,85 +36,88 @@ function FormControl({ elements, name, as, autoApply, ...props }: FormControlPro
       control={control}
       name={name}
       render={({ field, fieldState, formState }) => (
-          <ScopedVariables as={as} value={{ field, fieldState, formState, hasFocus}}>
-            {elements.map((element, index) => (
-              <Renderer
-                {...element}
-                key={index}
-                rawRef={field.ref}
-                rawProperties={
-                  autoApply || autoApply === undefined
-                    ? {...element.rawProperties, ...field}
-                    : element.rawProperties
-                }
-              />
-            ))}
-          </ScopedVariables>
-        )}
+        <ScopedVariables as={as} value={{ field, fieldState, formState, hasFocus }}>
+          {elements.map((element, index) => (
+            <Renderer
+              {...element}
+              key={index}
+              rawRef={field.ref}
+              rawProperties={
+                autoApply || autoApply === undefined
+                  ? { ...element.rawProperties, ...field }
+                  : element.rawProperties
+              }
+            />
+          ))}
+        </ScopedVariables>
+      )}
     />
   );
 }
 
-function useSchema(schema: Schema) {
+function useSchema(schema: Schema | undefined) {
   return useMemo(
     () =>
       schema
         ? (buildSchema(schema) as ZodType<
-            unknown,
-            FieldValues,
-            $ZodTypeInternals<unknown, FieldValues>
-          >)
+          unknown,
+          FieldValues,
+          $ZodTypeInternals<unknown, FieldValues>
+        >)
         : undefined,
     [schema]
   );
 }
 
-type FormProps = {
+type ZodFormProps = Partial<{
   form: Omit<UseFormProps, "resolver">;
   schema: Schema;
   values: FieldValues;
   onSubmit: ExposableFn;
-} & ComponentPropsWithRef<"form"> &
+}> & ComponentPropsWithRef<"form"> &
   Exposable;
 
-function ZodForm({ children, onSubmit, schema, form, values, as, ...props }: FormProps) {
-  const zSchema = useSchema(schema);
-  const useFormConfig = useMemo(
+function ZodForm({ children, onSubmit, schema, form, values, as, ...props }: ZodFormProps) {
+  const zodSchema = useSchema(schema);
+  const useFormProps = useMemo(
     () =>
       ({
-        resolver: zSchema ? zodResolver(zSchema) : undefined,
+        resolver: zodSchema ? zodResolver(zodSchema) : undefined,
         ...form
       }) as const,
-    [schema, form]
+    [schema, form, zodSchema]
   );
-
-  const formReturn = useForm(useFormConfig);
+  const addVariable = useGuthrieVariables((state) => state.addVariable);
+  const formReturn = useForm(useFormProps);
 
   useEffect(() => {
-    if (as) useGuthrieVariables.getState().addVariable(as, formReturn);
-  }, [as, formReturn]);
+    if (as) addVariable(as, formReturn);
+  }, [as, formReturn, addVariable]);
 
   useEffect(() => {
     formReturn.reset(values);
   }, [values]);
 
-  function delegateSubmit(data: unknown) {
-    const argSubs: Record<number, unknown> = {};
+  const delegateSubmit = useCallback((data: unknown) => {
+    if (onSubmit !== undefined) {
+      const argSubs: Record<number, unknown> = {};
 
-    onSubmit.args?.forEach((arg, index) => {
-      if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string") return;
+      onSubmit.args?.forEach((arg, index) => {
+        if (arg.type !== "form")
+          return;
 
-      if (arg.type === "form") argSubs[index] = data;
-    });
+        argSubs[index] = data;
+      });
 
-    void callFnAsync(onSubmit, argSubs);
-  }
+      void callFnAsync(onSubmit, argSubs);
+    }
+  }, [onSubmit])
 
   return (
-    <form onSubmit={formReturn.handleSubmit((data) => delegateSubmit(data))} {...props}>
+    <form onSubmit={formReturn.handleSubmit(delegateSubmit)} {...props}>
       <FormControlProvider value={formReturn.control}>{children}</FormControlProvider>
     </form>
   );
 }
 
-export { ZodForm, FormControl };
+export { ZodForm, ZodFormControl };

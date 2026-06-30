@@ -1,6 +1,6 @@
 "use client";
 
-import type { Access } from "./type.js";
+import { AccessDeclaration } from "../public-api.js";
 
 /**
  * Resolves a value by applying an access chain {@link Access}.
@@ -21,7 +21,7 @@ import type { Access } from "./type.js";
  * @author Simon Kovtyk
  * @author David Schummer
  */
-async function touchByAccessAsync<T>(value: unknown, access: Access): Promise<T> {
+async function touchByAccessAsync<T>(value: unknown, access: AccessDeclaration): Promise<T> {
   let touchedValue: T = value as T;
 
   for (const accessItem of access) {
@@ -44,17 +44,16 @@ async function touchByAccessAsync<T>(value: unknown, access: Access): Promise<T>
   return touchedValue;
 }
 
-function touchByAccessSync<T>(value: unknown, access: Access): T {
-
+function touchByAccessSync<T>(value: unknown, access: AccessDeclaration, args?: unknown[]): T {
   let touchedValue: T = value as T;
 
   for (const accessItem of access) {
     switch (accessItem.type) {
       case "prototype":
         if (accessItem.optional)
-          touchedValue = (touchedValue as Record<string, () => T>)?.[accessItem.read]?.() ?? touchedValue;
+          touchedValue = (touchedValue as Record<string, (args?: unknown[]) => T>)?.[accessItem.read]?.(args) ?? touchedValue;
         else
-          touchedValue = (touchedValue as Record<string, () => T>)[accessItem.read]!();
+          touchedValue = (touchedValue as Record<string, (args?: unknown[]) => T>)[accessItem.read]!(args);
         break;
 
       default:

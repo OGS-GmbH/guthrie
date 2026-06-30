@@ -1,7 +1,7 @@
 "use client";
 
 import { useMountedEffect } from "@ogs-gmbh/react-hooks";
-import { createContext, type RefObject, useContext, useEffect, useRef } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 import { useGuthrieEventsCallback } from "../hooks/event.js";
 import { useGuthrieElements } from "../stores/elements.js";
 import { useGuthrieEventsConfig } from "../stores/events-config.js";
@@ -10,15 +10,12 @@ import { useGuthrieOperators } from "../stores/operators.js";
 import { useGuthrieRefs } from "../stores/refs.js";
 import { callFnAsync } from "./fns.js";
 import { Renderer } from "./renderer.js";
-import type {
-  DefaultProperties,
-  Elements,
-  EventConfig,
-  Fns,
-  Operators,
-  Render,
-  VariablesConfig
-} from "./type.js";
+import { Elements } from "../types/element.js";
+import { Functions } from "../types/function.js";
+import { Render } from "./types.js";
+import { VariablesConfig } from "../types/variable.js";
+import { EventConfig } from "../types/event.js";
+import { DefaultPropertiesProvider } from "../components/default-properties.js";
 
 /**
  * Props for the {@link Guthrie} component.
@@ -30,9 +27,9 @@ import type {
  */
 type GuthrieProps = {
   elements: Elements;
-  fns: Fns;
+  functions: Functions;
   render: Render;
-  operators: Operators;
+  //operators: Operators;
   variables?: VariablesConfig;
   event?: {
     rootRef?: RefObject<HTMLElement | null>;
@@ -66,12 +63,13 @@ type GuthrieProps = {
  * @author Simon Kovtyk
  * @author David Schummer
  */
-const DefaultPropsProvider = createContext<Record<string, DefaultProperties> | null>(null);
-function useDefaultProps() {
-  return useContext(DefaultPropsProvider);
-}
-
-function Guthrie({ elements, fns, render, operators, event }: GuthrieProps) {
+function Guthrie({
+  elements,
+  functions,
+  render,
+  //operators,
+  event
+}: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
   const setOperators = useGuthrieOperators((state) => state.setOperators);
   const setEventsConfig = useGuthrieEventsConfig((state) => state.setConfig);
@@ -86,12 +84,8 @@ function Guthrie({ elements, fns, render, operators, event }: GuthrieProps) {
   }, [elements]);
 
   useEffect(() => {
-    setOperators(operators);
-  }, [operators]);
-
-  useEffect(() => {
-    setFns(fns);
-  }, [fns]);
+    setFns(functions);
+  }, [functions]);
 
   useEffect(() => {
     addRef("window", (event?.rootRef ?? windowRef).current);
@@ -113,12 +107,15 @@ function Guthrie({ elements, fns, render, operators, event }: GuthrieProps) {
   });
 
   return (
-    <DefaultPropsProvider value={render.defaultProperties ?? null}>
+    <DefaultPropertiesProvider
+      properties={render.defaultProperties}
+      rawProperties={render.defaultRawProperties}
+    >
       <Renderer {...render.content} />
-    </DefaultPropsProvider>
+    </DefaultPropertiesProvider>
   );
 }
 
 export type { GuthrieProps };
 
-export { Guthrie, useDefaultProps };
+export { Guthrie };

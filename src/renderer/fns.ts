@@ -91,7 +91,7 @@ async function callFnAsync(
 
   const mappedArgs = await Promise.all(
     fn.args?.map(async (arg, index) => {
-      if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string")
+      if (arg.type === "primitive")
         return arg;
 
       const { type, ...rest } = arg;
@@ -100,7 +100,7 @@ async function callFnAsync(
 
       const overriddenArg = argsSubs?.[index];
 
-      if (arg.type === "zod-callback")
+      if (arg.type === "callback")
         return arg.access ? touchByAccessAsync(overriddenArg, arg.access) : overriddenArg;
 
       if (overriddenArg && arg.access) return touchByAccessAsync(overriddenArg, arg.access);

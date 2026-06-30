@@ -2,11 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { callFnAsync, callFnSync } from "../renderer/fns.js";
-import type {DynamicElementProps, DynamicNestedChildProperty, DynamicProperty, ExposableFn} from "../renderer/type.js";
+import type { DynamicElementProps, DynamicNestedChildProperty, DynamicProperty, ExposableFn } from "../renderer/type.js";
 import { touchByAccessAsync, touchByAccessSync } from "../renderer/variables.js";
 import { useGuthrieVariables } from "../stores/variables.js";
 import { useScopedVariables } from "./scoped-variables.js";
-import {isPrimitive} from "es-toolkit";
+import { isPrimitive } from "es-toolkit";
 
 type PartialGuthriePropertiesResult = {
   static: Record<string, unknown | DynamicNestedChildProperty>;
@@ -65,14 +65,14 @@ function useGuthrieProperties(
 
   const varArgsValues = Object.values(properties ?? {})
     .filter((value) => value.type === "fn")
-    .map((value) => (value as ExposableFn).args?.filter((arg) => !isPrimitive(arg) && arg.type === "var" ))
+    .map((value) => (value as ExposableFn).args?.filter((arg) => !isPrimitive(arg) && arg.type === "var"))
     .flat()
     .map((arg) => (arg as ExposableFn).name)
-    .map((name) => scopedVariables[name] ?? variables[name] );
+    .map((name) => scopedVariables[name] ?? variables[name]);
 
-  const variableDeps = useMemo(()=>Object.values(
+  const variableDeps = useMemo(() => Object.values(
     varArgsValues.map((value) => typeof value === "object" ? Object.values(value ?? {}) : value).flat()
-  ).flatMap((val)=>Object.values(val ?? {})), [...varArgsValues])
+  ).flatMap((val) => Object.values(val ?? {})), [...varArgsValues])
 
   const [syncProperties, asyncProperties] = useMemo(() => {
     const syncProps: Record<string, DynamicProperty> = {};
@@ -153,8 +153,10 @@ function useGuthrieProperties(
   const [result, setResult] = useState<PartialGuthriePropertiesResult>(initialState);
   const [asyncResult, setAsyncResult] = useState<PartialGuthriePropertiesResult>(initialState);
 
-  useEffect(()=>{
-    setResult({static: initialState?.static ?? {}, renderable: initialState?.renderable ?? {}});
+  useEffect(() => {
+    setResult({
+      static: initialState?.static ?? {}, renderable: initialState?.renderable ?? {}
+    });
   }, [initialState]);
 
   const handleAsyncProperties = useCallback(async () => {
@@ -213,7 +215,7 @@ function useGuthrieProperties(
     void handleAsyncProperties();
   }, [asyncProperties, variables, scopedVariables]);
 
-  return {sync: result, async: asyncResult};
+  return { sync: result, async: asyncResult };
 }
 
 export type { UseGuthriePropertiesResult, UseGuthriePropertiesReturn };

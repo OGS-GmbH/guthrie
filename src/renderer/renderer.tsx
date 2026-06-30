@@ -1,15 +1,16 @@
 "use client";
 
-import {Ref, useEffect, useMemo, useRef} from "react";
-import {mergeRefs} from "react-merge-refs";
-import {useGuthrieEventsCallback} from "../hooks/event.js";
-import {useGuthrieProperties} from "../hooks/properties.js";
-import {useGuthrieElements} from "../stores/elements.js";
-import {useGuthrieEventsConfig} from "../stores/events-config.js";
-import {useGuthrieRefs} from "../stores/refs.js";
-import {useDefaultProps} from "./root.js";
-import {DynamicChildProperty, type DynamicElementProps} from "./type.js";
-import {toMerged} from "es-toolkit";
+import { Children, Ref, useEffect, useMemo, useRef } from "react";
+import { mergeRefs } from "react-merge-refs";
+import { useGuthrieEventsCallback } from "../hooks/event.js";
+import { useGuthrieProperties } from "../hooks/properties.js";
+import { useGuthrieElements } from "../stores/elements.js";
+import { useGuthrieEventsConfig } from "../stores/events-config.js";
+import { useGuthrieRefs } from "../stores/refs.js";
+import { toMerged } from "es-toolkit";
+import { ElementDeclaration } from "../types/element.js";
+import { useDefaultProperties } from "../hooks/props.js";
+import { useGuthriePropertiesRewrite } from "../hooks/properties-rewrite.js";
 
 /**
  * Props for the {@link Renderer} component.
@@ -18,7 +19,7 @@ import {toMerged} from "es-toolkit";
  * @category Components
  * @author Simon Kovtyk
  */
-type RendererProps = DynamicElementProps & { rawRef?: Ref<unknown> };
+type RendererProps = ElementDeclaration & { rawRef?: Ref<unknown> };
 
 /**
  * Core rendering engine for dynamic elements.
@@ -52,49 +53,31 @@ function Renderer({
   properties,
   rawProperties
 }: RendererProps) {
-  const elements = useGuthrieElements((state) => state.elements);
-  const Element = useMemo(() => elements[element], [elements]);
+  const Element = useGuthrieElements((state) => state.elements[element]);
   const addRef = useGuthrieRefs((state) => state.addRef);
   const elementRef = useRef<HTMLElement | null>(null);
   const refNameAsRef = useRef(refName ?? null);
   const eventsConfig = useGuthrieEventsConfig((state) => state.config);
-
-  const defaultProperties = useDefaultProps()?.[element];
-  const [propsWithDefaults, rawPropsWithDefaults] = useMemo(
-    () => [
-      toMerged(defaultProperties?.properties ?? {}, properties ?? {}) ,
-      toMerged(defaultProperties?.rawProperties ?? {}, rawProperties ?? {})
-    ],
-    [element, defaultProperties, properties, rawProperties]
+  const {
+    properties: defaultProperties,
+    rawProperties: defaultRawProperties
+  } = useDefaultProperties(element);
+  const propertiesDeclaration = useMemo(() =>
+    toMerged(defaultProperties || {}, properties || {}),
+    [defaultProperties, properties]
   );
-
-  const resolvedProperties = useGuthrieProperties(propsWithDefaults);
+  const settledProperties = useGuthriePropertiesRewrite({ properties: propertiesDeclaration, Renderer });
+  const rawPropertyDeclaration = useMemo(() =>
+    toMerged(defaultRawProperties || {}, rawProperties || {}),
+    [defaultRawProperties, rawProperties]
+  );
+  const props = useMemo(() => ({
+    ...toMerged(rawPropertyDeclaration, settledProperties),
+    events,
+    refname: refName,
+    elements: children
+  }), [rawPropertyDeclaration, settledProperties, refName, children, events]);
   const registerEvents = useGuthrieEventsCallback();
-  const elementProps = useMemo(
-    () => {
-        // oxlint-disable-next-line no-use-before-define
-      const staticProperties = resolveStaticProperties(toMerged(resolvedProperties?.sync?.static ?? {}, resolvedProperties?.async?.static ?? {})) as Record<string, unknown>;
-      const renderableProperties = Object.fromEntries(
-        Object.entries(toMerged(resolvedProperties?.sync?.renderable ?? {}, resolvedProperties?.async?.renderable ?? {})).map(([key, dynamicElementProps]) => [
-          key,
-          <Renderer key={key} {...dynamicElementProps} />
-        ])
-      );
-
-      return ({
-        ...toMerged(toMerged(rawPropsWithDefaults, staticProperties), renderableProperties),
-        events,
-        refname: refName,
-        elements: children
-      })
-    },
-    [refName, events, children, resolvedProperties?.sync, resolvedProperties?.async]
-  );
-
- /* useEffect(() => {
-    console.log("yoyoyoyo", elementProps);
-  }, [elementProps]);*/
-
 
   useEffect(() => {
     refName && elementRef.current && addRef(refName, elementRef.current);
@@ -106,48 +89,13 @@ function Renderer({
   if (!Element) return null;
 
   return (
-    <Element {...elementProps} ref={mergeRefs([elementRef, rawRef])}>
-      {children?.map((child, index) => (
-        <Renderer key={index} {...child} />
-      ))}
+    <Element {...props} ref={mergeRefs([elementRef, rawRef])}>
+      {
+        children?.map((child, index) => (
+          <Renderer key={index} {...child} />
+        ))
+      }
     </Element>
-  );
-}
-
-function resolveStaticProperties(
-  value: unknown,
-  key?: string
-): unknown {
-  if (value === undefined)
-    return undefined;
-
-
-  if (value === null || typeof value !== "object")
-    return value;
-
-
-  if (Array.isArray(value)) {
-    return value.map((item, index) =>
-      resolveStaticProperties(item, String(index))
-    );
-  }
-
-  if ("type" in value && value.type === "child") {
-    const { type, ...rest } = value as DynamicChildProperty;
-
-    return (
-      <Renderer
-        key={key}
-        {...(rest as DynamicElementProps)}
-      />
-    );
-  }
-
-  return Object.fromEntries(
-    Object.entries(value).map(([childKey, childValue]) => [
-      childKey,
-      resolveStaticProperties(childValue, childKey),
-    ])
   );
 }
 

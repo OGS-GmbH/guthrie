@@ -3,7 +3,7 @@
 import { Conditional } from "../components/conditional.js";
 import { Fn, FnRenderer } from "../components/fn.js";
 import { For } from "../components/for.js";
-import { ZodForm, FormControl } from "../components/form/form.js";
+import { ZodForm, ZodFormControl } from "../components/form/form.js";
 import {
   A,
   Abbr,
@@ -124,8 +124,8 @@ import { RawHtml } from "../components/raw-html.js";
 import { Switch } from "../components/switch.js";
 import { SlotTemplate, SlotTemplateRenderer } from "../components/template.js";
 import type { Elements } from "../renderer/type.js";
-import {ForEach} from "../components/foreach.js";
-import {ScopedVariables} from "../components/scoped-variables.js";
+import { ForEach } from "../components/foreach.js";
+import { ScopedVariables } from "../components/scoped-variables.js";
 
 /**
  * Built-in flow control components.
@@ -157,7 +157,7 @@ const additional: Elements = {
   "scoped-variables": ScopedVariables,
   "fn-renderer": FnRenderer,
   "zod-form": ZodForm,
-  "form-control": FormControl
+  "zod-form-control": ZodFormControl
 };
 
 /**
