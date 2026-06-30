@@ -1,9 +1,8 @@
 "use client";
 
-import { Children, Ref, useEffect, useMemo, useRef } from "react";
+import { Ref, useEffect, useMemo, useRef } from "react";
 import { mergeRefs } from "react-merge-refs";
 import { useGuthrieEventsCallback } from "../hooks/event.js";
-import { useGuthrieProperties } from "../hooks/properties.js";
 import { useGuthrieElements } from "../stores/elements.js";
 import { useGuthrieEventsConfig } from "../stores/events-config.js";
 import { useGuthrieRefs } from "../stores/refs.js";
@@ -51,7 +50,8 @@ function Renderer({
   children,
   events,
   properties,
-  rawProperties
+  rawProperties,
+  ...rest
 }: RendererProps) {
   const Element = useGuthrieElements((state) => state.elements[element]);
   const addRef = useGuthrieRefs((state) => state.addRef);
@@ -72,11 +72,12 @@ function Renderer({
     [defaultRawProperties, rawProperties]
   );
   const props = useMemo(() => ({
+    ...rest,
     ...toMerged(rawPropertyDeclaration, settledProperties),
     events,
     refname: refName,
     elements: children
-  }), [rawPropertyDeclaration, settledProperties, refName, children, events]);
+  }), [rawPropertyDeclaration, settledProperties, refName, children, events, rest]);
   const registerEvents = useGuthrieEventsCallback();
 
   useEffect(() => {
@@ -86,15 +87,19 @@ function Renderer({
 
   }, [Element, elementRef.current, refNameAsRef.current]);
 
+  console.log(Element, children);
+
+  const renderedChildren = useMemo(() => children?.map((child, index) => (
+    <Renderer key={index} {...child} />
+  )), [children])
+
+  console.log(renderedChildren);
+
   if (!Element) return null;
 
   return (
     <Element {...props} ref={mergeRefs([elementRef, rawRef])}>
-      {
-        children?.map((child, index) => (
-          <Renderer key={index} {...child} />
-        ))
-      }
+      {renderedChildren}
     </Element>
   );
 }

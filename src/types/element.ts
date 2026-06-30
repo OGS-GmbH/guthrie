@@ -92,6 +92,9 @@ type DeclarationContext = {
   events?: ExposableEventDeclaration[];
   // Map children to elements since children is reserved by React
   elements?: ElementDeclaration[];
+
+  // HACK(simonkov): See https://github.com/mui/material-ui/blob/v9.1.2/packages/mui-material/src/Select/SelectInput.js#L736
+  [p: string]: unknown;
 };
 
 /**

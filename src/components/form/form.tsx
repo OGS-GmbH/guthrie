@@ -6,11 +6,11 @@ import { ZodType } from "zod";
 import { $ZodTypeInternals } from "zod/v4/core";
 import { callFnAsync } from "../../renderer/fns.js";
 import { Renderer } from "../../renderer/renderer.js";
-import { DynamicElementProps, Exposable, ExposableFn } from "../../renderer/type.js";
 import { useGuthrieVariables } from "../../stores/variables.js";
 import { ScopedVariables } from "../scoped-variables.js";
 import { buildSchema } from "./zod/schema.js";
 import { Schema } from "./zod/types.js";
+import { ElementDeclaration, Exposable, ExposableFnDeclaration } from "../../public-api.js";
 
 const FormControlProvider = createContext<Control<FieldValues, unknown, unknown> | null>(null);
 
@@ -19,7 +19,7 @@ function useFormControl() {
 }
 
 type ZodFormControlProps = {
-  elements: DynamicElementProps[];
+  elements: ElementDeclaration[];
   name: string;
   as?: string;
   autoApply?: boolean;
@@ -28,7 +28,6 @@ type ZodFormControlProps = {
 function ZodFormControl({ elements, name, as, autoApply, ...props }: ZodFormControlProps) {
   console.log("Form Control", as);
   const control = useFormControl();
-  const [hasFocus, setHasFocus] = useState(false);
 
   return (
     <Controller
@@ -36,7 +35,7 @@ function ZodFormControl({ elements, name, as, autoApply, ...props }: ZodFormCont
       control={control}
       name={name}
       render={({ field, fieldState, formState }) => (
-        <ScopedVariables as={as} value={{ field, fieldState, formState, hasFocus }}>
+        <ScopedVariables as={as} value={{ field, fieldState, formState }}>
           {elements.map((element, index) => (
             <Renderer
               {...element}
@@ -73,7 +72,7 @@ type ZodFormProps = Partial<{
   form: Omit<UseFormProps, "resolver">;
   schema: Schema;
   values: FieldValues;
-  onSubmit: ExposableFn;
+  onSubmit: ExposableFnDeclaration;
 }> & ComponentPropsWithRef<"form"> &
   Exposable;
 
@@ -103,7 +102,7 @@ function ZodForm({ children, onSubmit, schema, form, values, as, ...props }: Zod
       const argSubs: Record<number, unknown> = {};
 
       onSubmit.args?.forEach((arg, index) => {
-        if (arg.type !== "form")
+        if (arg.type !== "form-data")
           return;
 
         argSubs[index] = data;
@@ -115,7 +114,11 @@ function ZodForm({ children, onSubmit, schema, form, values, as, ...props }: Zod
 
   return (
     <form onSubmit={formReturn.handleSubmit(delegateSubmit)} {...props}>
-      <FormControlProvider value={formReturn.control}>{children}</FormControlProvider>
+      <FormControlProvider
+        value={formReturn.control}
+      >
+        {children}
+      </FormControlProvider>
     </form>
   );
 }
