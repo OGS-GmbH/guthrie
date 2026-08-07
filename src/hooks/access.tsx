@@ -21,11 +21,11 @@ function useGuthrieAccessCallback() {
               ) ?? touchedValue;
           }
           else {
-            touchedValue = (touchedValue as Record<string, (args?: unknown[]) => unknown>)[accessItem.read]!(
-              accessItem.args
-                ? accessItem.args?.map((arg) => fnArgCallback(arg, event))
-                : undefined
-            );
+            const prototypeCallArg = accessItem.args
+              ? accessItem.args.map((arg) => fnArgCallback(arg, event))
+              : [];
+
+            touchedValue = (touchedValue as Record<string, (...args: unknown[]) => unknown>)[accessItem.read]!.apply(null, prototypeCallArg);
           }
           break;
 
@@ -33,7 +33,7 @@ function useGuthrieAccessCallback() {
           if (accessItem.optional)
             touchedValue = (touchedValue as Record<string, unknown>)?.[accessItem.read] ?? touchedValue;
           else
-            touchedValue = (touchedValue as Record<string, unknown>)[accessItem.read]!;
+            touchedValue = (touchedValue as Record<string, unknown>)[accessItem.read];
       }
     }
 

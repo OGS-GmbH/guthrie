@@ -1,6 +1,7 @@
-import { Exposable } from "./access.js";
+import {Accessible, Exposable} from "./access.js";
 import { ExposableFnDeclaration, FnArgsDeclaration } from "./function.js";
 import { WithType } from "./type.js";
+import {VariableDeclaration} from "./variable.js";
 
 /**
  * Event configuration.
@@ -13,11 +14,13 @@ type EventConfig = {
   autoApply: boolean;
 };
 
-type FunctionEventActionDeclaration = WithType<"fn"> & ExposableFnDeclaration;
+type FunctionEventActionDeclaration = WithType<"fn"> & ExposableFnDeclaration & {condition?: ExposableFnDeclaration};
 
-type VariableEventActionDeclaration = WithType<"var"> & VariableWithAccess & { args?: FnArgsDeclaration };
+type VariableEventActionDeclaration = WithType<"var"> & VariableDeclaration & { args?: FnArgsDeclaration };
 
-type EventActionDeclaration = FunctionEventActionDeclaration | VariableEventActionDeclaration;
+type CallbackEventActionDeclaration = WithType<"callback"> & Accessible & {condition?: ExposableFnDeclaration};
+
+type EventActionDeclaration = FunctionEventActionDeclaration | VariableEventActionDeclaration | CallbackEventActionDeclaration;
 
 type EventActionsDeclaration = EventActionDeclaration[];
 
@@ -40,7 +43,7 @@ type EventDeclaration = {
  * @category Types
  * @author Simon Kovtyk
  */
-type ExposableEventDeclaration = Event & Exposable;
+type ExposableEventDeclaration = EventDeclaration & Exposable;
 
 /**
  * Registered DOM events.
@@ -56,6 +59,7 @@ export type {
   EventConfig,
   FunctionEventActionDeclaration,
   VariableEventActionDeclaration,
+  CallbackEventActionDeclaration,
   EventActionDeclaration,
   EventActionsDeclaration,
   EventDeclaration,

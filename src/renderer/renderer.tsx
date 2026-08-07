@@ -1,15 +1,8 @@
 "use client";
 
-import { Ref, useEffect, useMemo, useRef } from "react";
-import { mergeRefs } from "react-merge-refs";
-import { useGuthrieEventsCallback } from "../hooks/event.js";
-import { useGuthrieElements } from "../stores/elements.js";
-import { useGuthrieEventsConfig } from "../stores/events-config.js";
-import { useGuthrieRefs } from "../stores/refs.js";
-import { toMerged } from "es-toolkit";
-import { ElementDeclaration } from "../types/element.js";
-import { useDefaultProperties } from "../hooks/props.js";
-import { useGuthriePropertiesRewrite } from "../hooks/properties-rewrite.js";
+import {Ref} from "react";
+import {ElementDeclaration} from "../types/element.js";
+import {useRendererProps} from "./hooks.js";
 
 /**
  * Props for the {@link Renderer} component.
@@ -43,6 +36,7 @@ type RendererProps = ElementDeclaration & { rawRef?: Ref<unknown> };
  * @author Simon Kovtyk
  * @author David Schummer
  */
+
 function Renderer({
   element,
   ref: refName,
@@ -53,52 +47,22 @@ function Renderer({
   rawProperties,
   ...rest
 }: RendererProps) {
-  const Element = useGuthrieElements((state) => state.elements[element]);
-  const addRef = useGuthrieRefs((state) => state.addRef);
-  const elementRef = useRef<HTMLElement | null>(null);
-  const refNameAsRef = useRef(refName ?? null);
-  const eventsConfig = useGuthrieEventsConfig((state) => state.config);
-  const {
-    properties: defaultProperties,
-    rawProperties: defaultRawProperties
-  } = useDefaultProperties(element);
-  const propertiesDeclaration = useMemo(() =>
-    toMerged(defaultProperties || {}, properties || {}),
-    [defaultProperties, properties]
-  );
-  const settledProperties = useGuthriePropertiesRewrite({ properties: propertiesDeclaration, Renderer });
-  const rawPropertyDeclaration = useMemo(() =>
-    toMerged(defaultRawProperties || {}, rawProperties || {}),
-    [defaultRawProperties, rawProperties]
-  );
-  const props = useMemo(() => ({
-    ...rest,
-    ...toMerged(rawPropertyDeclaration, settledProperties),
+  const resolveProps = useRendererProps();
+  const { Element, ref, props, renderedChildren } = resolveProps({
+    element,
+    ref: refName,
+    rawRef,
+    children,
     events,
-    refname: refName,
-    elements: children
-  }), [rawPropertyDeclaration, settledProperties, refName, children, events, rest]);
-  const registerEvents = useGuthrieEventsCallback();
-
-  useEffect(() => {
-    refName && elementRef.current && addRef(refName, elementRef.current);
-    if (eventsConfig.autoApply && (elementRef.current || refNameAsRef.current))
-      registerEvents(refNameAsRef.current ? refNameAsRef : elementRef, events);
-
-  }, [Element, elementRef.current, refNameAsRef.current]);
-
-  console.log(Element, children);
-
-  const renderedChildren = useMemo(() => children?.map((child, index) => (
-    <Renderer key={index} {...child} />
-  )), [children])
-
-  console.log(renderedChildren);
+    properties,
+    rawProperties,
+    ...rest
+  });
 
   if (!Element) return null;
 
   return (
-    <Element {...props} ref={mergeRefs([elementRef, rawRef])}>
+    <Element {...props} ref={ref}>
       {renderedChildren}
     </Element>
   );

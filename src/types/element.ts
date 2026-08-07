@@ -3,7 +3,7 @@ import { ExposableEventDeclaration } from "./event.js";
 import { MaybeAsync } from "./async.js";
 import { ExposableFnDeclaration } from "./function.js";
 import { WithType } from "./type.js";
-import { AccesibleVariableDeclaration } from "./variable.js";
+import { VariableDeclaration } from "./variable.js";
 import { CallbackDeclaration } from "./callback.js";
 
 type NumberPropertyDeclaration = WithType<"number"> & {
@@ -26,7 +26,7 @@ type AnyPropertyDeclaration = WithType<"any"> & {
   value: unknown
 }
 
-type VariablePropertyDeclaration = WithType<"var"> & AccesibleVariableDeclaration & MaybeAsync;
+type VariablePropertyDeclaration = WithType<"var"> & VariableDeclaration & MaybeAsync;
 
 type FunctionPropertyDeclaration = WithType<"fn"> & ExposableFnDeclaration & MaybeAsync;
 
@@ -70,6 +70,7 @@ type RawPropertiesDeclaration = Record<string, unknown>;
  * @category Types
  * @author Simon Kovtyk
  */
+
 type ElementDeclaration = {
   element: string;
   ref?: string;

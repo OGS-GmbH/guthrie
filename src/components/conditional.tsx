@@ -2,14 +2,10 @@
 
 import { solveOperation } from "../renderer/operations.js";
 import { Renderer } from "../renderer/renderer.js";
-import {
-  type ContextProps,
-  type DynamicElementProps,
-  type OperationDefinition,
-  type Operators
-} from "../renderer/type.js";
 import { useGuthrieOperators } from "../stores/operators.js";
 import { useGuthrieVariables } from "../stores/variables.js";
+import {OperationDefinition, Operators} from "../types/operation.js";
+import {ElementDeclaration} from "../types/element.js";
 
 /**
  * Represents all possible values that can be used in a condition.
@@ -35,7 +31,7 @@ type Condition = {
   condition: ConditionValue;
 
   /** Elements to render if the condition is truthy */
-  children: DynamicElementProps[];
+  children: ElementDeclaration[];
 };
 
 /**
@@ -44,7 +40,7 @@ type Condition = {
  * @since 1.0.0
  * @category Components
  */
-type ConditionalProps = ContextProps & {
+type ConditionalProps = {
   /** Primary condition (equivalent to "if") */
   if: Condition;
 
@@ -53,7 +49,7 @@ type ConditionalProps = ContextProps & {
 
   /** Fallback branch if no condition matches */
   else?: {
-    children: DynamicElementProps[];
+    children: ElementDeclaration[];
   };
 };
 

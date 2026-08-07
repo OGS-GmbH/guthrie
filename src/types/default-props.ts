@@ -1,8 +1,8 @@
 import type { PropertiesDeclaration, RawPropertiesDeclaration } from "./element.js";
 
-type DefaultPropertiesDeclaration = Record<string, PropertiesDeclaration>;
+type DefaultPropertiesDeclaration = Record<string, PropertiesDeclaration | undefined>;
 
-type DefaultRawPropertiesDeclaration = Record<string, RawPropertiesDeclaration>;
+type DefaultRawPropertiesDeclaration = Record<string, RawPropertiesDeclaration | undefined>;
 
 type DefaultPropertiesContextValue = Partial<{
   properties: DefaultPropertiesDeclaration,

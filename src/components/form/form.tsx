@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ComponentPropsWithRef, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { ComponentPropsWithRef, createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import { Control, Controller, FieldValues, useForm, UseFormProps } from "react-hook-form";
 import { ZodType } from "zod";
 import { $ZodTypeInternals } from "zod/v4/core";
@@ -26,7 +26,6 @@ type ZodFormControlProps = {
 } & ComponentPropsWithRef<typeof Controller>;
 
 function ZodFormControl({ elements, name, as, autoApply, ...props }: ZodFormControlProps) {
-  console.log("Form Control", as);
   const control = useFormControl();
 
   return (
@@ -35,21 +34,22 @@ function ZodFormControl({ elements, name, as, autoApply, ...props }: ZodFormCont
       control={control}
       name={name}
       render={({ field, fieldState, formState }) => (
-        <ScopedVariables as={as} value={{ field, fieldState, formState }}>
-          {elements.map((element, index) => (
-            <Renderer
-              {...element}
-              key={index}
-              rawRef={field.ref}
-              rawProperties={
-                autoApply || autoApply === undefined
-                  ? { ...element.rawProperties, ...field }
-                  : element.rawProperties
-              }
-            />
-          ))}
-        </ScopedVariables>
-      )}
+        /*TODO: key={undefined}?*/
+          <ScopedVariables key={undefined} as={as} value={{ field, fieldState, formState }}>
+            {elements?.map((element, index) => (
+              <Renderer
+                {...element}
+                key={index}
+                rawRef={field.ref}
+                rawProperties={
+                  autoApply || autoApply === undefined
+                    ? { ...element.rawProperties, ...field }
+                    : element.rawProperties
+                }
+              />
+            ))}
+          </ScopedVariables>
+        )}
     />
   );
 }

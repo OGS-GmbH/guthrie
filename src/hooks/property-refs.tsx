@@ -12,7 +12,7 @@ function useGuthriePropertiesRef({ properties }: UseGuthriePropertiesRefOptions)
   const scopedVariables = useScopedVariables();
   const variables = useGuthrieVariables((state) => state.variables);
   const functions = useGuthrieFns((state) => state.fns);
-  const findRef = useCallback((property: PropertyDeclaration): unknown => {
+  const findRef = useCallback((property: PropertyDeclaration): unknown[] => {
 
     switch (property.type) {
       case "object": {
@@ -35,7 +35,7 @@ function useGuthriePropertiesRef({ properties }: UseGuthriePropertiesRefOptions)
       case "array": {
         const deps: unknown[] = [];
 
-        property.items.map((nestedProperty) => {
+        property.items.forEach((nestedProperty) => {
           const ref = findRef(nestedProperty);
 
           if (ref === null)
@@ -49,15 +49,24 @@ function useGuthriePropertiesRef({ properties }: UseGuthriePropertiesRefOptions)
         return deps;
       }
 
+      /*TODO: split fn deps api*/
       case "fn": {
-        return functions[property.name]
+        const fn = functions[property.name];
+        const deps: unknown[] = [fn];
+
+        property.args?.forEach((arg)=>{
+          if (arg.type === "var" && variables[arg.name] !== undefined)
+            deps.push(variables[arg.name]);
+        })
+
+        return deps;
       }
 
       case "var": {
         const value = scopedVariables?.[property.name] ?? variables[property.name];
 
         if (value === undefined)
-          return null;
+          return [];
 
         if (property.async) {
           const accessed = property.access
@@ -67,19 +76,19 @@ function useGuthriePropertiesRef({ properties }: UseGuthriePropertiesRefOptions)
             )
             : Promise.resolve(value);
 
-          return accessed;
+          return [accessed];
         }
 
-        return property.access
+        return [property.access
           ? touchByAccessSync(value, property.access)
-          : value;
+          : value];
       }
 
       default: {
-        return null;
+        return [];
       }
     }
-  }, [scopedVariables, variables, functions])
+  }, [properties, scopedVariables, variables, functions])
 
   return useMemo(() => {
     const deps: unknown[] = [];
@@ -94,7 +103,7 @@ function useGuthriePropertiesRef({ properties }: UseGuthriePropertiesRefOptions)
     }
 
     return deps;
-  }, [properties])
+  }, [properties, variables, scopedVariables, functions])
 }
 
 export type {

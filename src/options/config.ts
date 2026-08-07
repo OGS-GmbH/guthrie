@@ -1,10 +1,12 @@
 "use client";
 
 import { ElementType } from "react";
-import type { Elements, Fns, Operators } from "../renderer/type.js";
 import { additional, flowControls, intrinsics } from "./elements.js";
 import { internal, native } from "./fns.js";
 import { universal, universalShort } from "./operations.js";
+import {Functions} from "../types/function.js";
+import {Operators} from "../types/operation.js";
+import {Elements} from "../types/element.js";
 
 /**
  * Options for {@link withElements}.
@@ -117,7 +119,7 @@ const defaultFnsOptions: WithFnsOptions = {
  * @author Simon Kovtyk
  */
 type WithFnsConfig = Partial<{
-  fns: Fns;
+  fns: Functions;
   options: WithFnsOptions;
 }>;
 
@@ -135,11 +137,11 @@ type WithFnsConfig = Partial<{
  * @category Configuration
  * @author Simon Kovtyk
  */
-function withFns({ fns, options }: WithFnsConfig): Fns {
+function withFns({ fns, options }: WithFnsConfig): Functions {
   const configuredNatives = (options?.native ?? defaultFnsOptions.native) ? native : {};
   const configuredInternals = (options?.internal ?? defaultFnsOptions.internal) ? internal : {};
 
-  const fnsResult: Fns = {
+  const fnsResult: Functions = {
     ...fns,
     ...configuredNatives,
     ...configuredInternals

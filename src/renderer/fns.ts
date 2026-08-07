@@ -1,50 +1,59 @@
 "use client";
 
-import { isEqual } from "es-toolkit";
 import { useGuthrieFns } from "../stores/fns.js";
 import { useGuthrieVariables } from "../stores/variables.js";
-import type { ExposableFn, Variables } from "./type.js";
 import { touchByAccessAsync, touchByAccessSync } from "./variables.js";
+import {ExposableFnDeclaration, FnArgDeclaration} from "../types/function.js";
+import {Variables} from "../types/variable.js";
+
+type MapArgCallback = (arg: FnArgDeclaration, index: number) => unknown[];
 
 function callFnSync(
-  fn: ExposableFn,
+  fn: ExposableFnDeclaration,
   argsSubs?: Record<number, unknown>,
   scopedVariables?: Variables
 ): unknown {
-  const mappedArgs = fn.args?.map((arg, index) => {
-    if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string") return arg;
+  const mapArgCallback: MapArgCallback = (arg: FnArgDeclaration, index: number) => {
+    if (arg.type === "string" || arg.type === "number" || arg.type === "boolean" )
+      return arg.value;
 
     const { type, ...rest } = arg;
 
-    if (type === "arg") return rest;
 
-    const overriddenArg = argsSubs?.[index];
+    const overriddenArg = argsSubs?.[index]; /*TODO: no need to index argsubs (accessItem.type === "index")*/
 
-    if (arg.type === "zod-callback")
+    if (arg.type === "event")
+      return arg.access ? touchByAccessSync(argsSubs, arg.access) : overriddenArg;
+
+    if (arg.type === "form-issue")
       return arg.access ? touchByAccessSync(overriddenArg, arg.access) : overriddenArg;
 
-    if (overriddenArg && arg.access)
-      return touchByAccessSync(overriddenArg, arg.access);
-
+    /*TODO: check cases*/
+    /*if (overriddenArg && arg.access)
+      return touchByAccessSync(overriddenArg, arg.access);*/
 
     if (arg.type === "var") {
       const variable =
         scopedVariables?.[arg.name] ?? useGuthrieVariables.getState().variables[arg.name];
 
-      if (arg.name === "BXVNM1-control")
-        console.log(variable)
       return arg.access && variable ? touchByAccessSync(variable, arg.access) : variable;
     }
 
-    const result = callFnSync(rest as ExposableFn, undefined, scopedVariables);
+    if (arg.type === "array")
+      return arg.items.map(mapArgCallback);
+
+    const result = callFnSync(rest as ExposableFnDeclaration, argsSubs, scopedVariables);
 
     if (arg.type === "fn" && arg.as) useGuthrieVariables.getState().addVariable(arg.as, result);
 
     return result;
-  })!;
+  };
+
+  const mappedArgs = fn.args?.map(mapArgCallback)!;
 
   const fnRef = useGuthrieFns.getState().fns[fn.name]!;
-  const preResult = fnRef(...mappedArgs);
+
+  const preResult = mappedArgs ? fnRef(...mappedArgs) : fnRef();
   const result = fn.access ? touchByAccessSync(preResult, fn.access) : preResult;
 
   if (fn.as) useGuthrieVariables.getState().addVariable(fn.as, result);
@@ -83,7 +92,7 @@ function callFnSync(
  * @author David Schummer
  */
 async function callFnAsync(
-  fn: ExposableFn,
+  fn: ExposableFnDeclaration,
   argsSubs?: Record<number, unknown>,
   scopedVariables?: Variables
 ): Promise<unknown> {
@@ -91,19 +100,24 @@ async function callFnAsync(
 
   const mappedArgs = await Promise.all(
     fn.args?.map(async (arg, index) => {
-      if (arg.type === "primitive")
-        return arg;
+      if (arg.type === "string" || arg.type === "number" || arg.type === "boolean" )
+        return arg.value;
+
+      if (arg.type === "null" || arg.type === "undefined")
+        return;
 
       const { type, ...rest } = arg;
 
-      if (type === "arg") return rest;
+      if (type === "any") return rest;
 
-      const overriddenArg = argsSubs?.[index];
+      const overriddenArg = argsSubs?.[index]; /*TODO: no need to index argsubs (accessItem.type === "index")*/
 
-      if (arg.type === "callback")
-        return arg.access ? touchByAccessAsync(overriddenArg, arg.access) : overriddenArg;
+      if (arg.type === "event")
+        return arg.access ? touchByAccessAsync(argsSubs, arg.access) : argsSubs;
 
-      if (overriddenArg && arg.access) return touchByAccessAsync(overriddenArg, arg.access);
+      /*TODO: check cases*/
+      /*if (overriddenArg && arg.access)
+        return touchByAccessAsync(overriddenArg, arg.access);*/
 
       if (arg.type === "var") {
         const variable =
@@ -112,7 +126,7 @@ async function callFnAsync(
         return arg.access ? touchByAccessAsync(variable, arg.access) : variable;
       }
 
-      return callFnAsync(rest as ExposableFn).then((result) => {
+      return callFnAsync(rest as ExposableFnDeclaration).then((result) => {
         if (arg.type === "fn" && arg.as) useGuthrieVariables.getState().addVariable(arg.as, result);
 
         return result;
@@ -124,15 +138,10 @@ async function callFnAsync(
     const resolvedResult = fn.access ? touchByAccessAsync(result, fn.access) : result;
 
     if (fn.as) {
-      const oldVar = useGuthrieVariables.getState().variables[fn.name];
-
-      /*TODO: Do we need this check?*/
-      if (!isEqual(resolvedResult, oldVar))
         useGuthrieVariables.getState().addVariable(fn.as, resolvedResult);
-    }
 
     return resolvedResult;
-  });
+  }});
 }
 
 export { callFnSync, callFnAsync };

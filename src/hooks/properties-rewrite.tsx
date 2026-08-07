@@ -1,14 +1,13 @@
-import { ElementType, useCallback, useEffect, useRef, useState } from "react";
-import { useScopedVariables } from "./scoped-variables.js";
-import { callFnAsync, callFnSync, touchByAccessAsync, touchByAccessSync, useGuthrieVariables } from "../public-api.js";
-import { PropertiesDeclaration, PropertyDeclaration } from "../types/element.js";
-import { produce } from "immer";
-import { updateByPath } from "../utils/path.js";
-import { useGuthriePropertiesRef } from "./property-refs.js";
-import { useGuthrieFnArgCallback } from "./function.js";
-import { useGuthrieAccessCallback } from "./access.js";
+import {ElementType, useCallback, useEffect, useRef, useState} from "react";
+import {useScopedVariables} from "./scoped-variables.js";
+import {callFnAsync, callFnSync, touchByAccessAsync, touchByAccessSync, useGuthrieVariables} from "../public-api.js";
+import {PropertiesDeclaration, PropertyDeclaration} from "../types/element.js";
+import {produce} from "immer";
+import {updateByPath} from "../utils/path.js";
+import {useGuthriePropertiesRef} from "./property-refs.js";
+import {useGuthrieAccessCallback} from "./access.js";
 
-type UseGuthriePropertiesRewriteReturn = {};
+type UseGuthriePropertiesRewriteReturn = Record<string, unknown>;
 
 type UseGuthriePropertiesRewriteOptions = {
   properties: PropertiesDeclaration,
@@ -22,12 +21,9 @@ function useGuthriePropertiesRewrite({
   const scopedVariables = useScopedVariables();
   const variables = useGuthrieVariables((state) => state.variables);
   const addVariable = useGuthrieVariables((state) => state.addVariable);
-  const fnArgCallback = useGuthrieFnArgCallback();
   const commitRef = useRef<((value: unknown, path: Array<string | number>) => void) | null>(null);
-
   const deps = useGuthriePropertiesRef({ properties });
   const access = useGuthrieAccessCallback();
-
   const settleProperty = useCallback((property: PropertyDeclaration, path: Array<string | number>): unknown => {
     switch (property.type) {
       case "any":
@@ -89,25 +85,20 @@ function useGuthriePropertiesRewrite({
         }
 
         return (...args: unknown[]) => {
-          console.log("Callback fired");
           if (property.takeAs)
             addVariable(property.takeAs, args);
 
           const event = args.at(property.eventIndex ?? 0);
 
-          console.log("Event", event);
-
           property.do.forEach((doItem) => {
             switch (doItem.type) {
               case "fn": {
-                callFnSync(doItem, undefined, scopedVariables);
+                callFnSync(doItem, {0: event}, scopedVariables);
                 break;
               }
 
               case "var": {
                 const value = scopedVariables[doItem.name] ?? variables[doItem.name];
-
-                console.log("Value", value);
 
                 if (value === undefined)
                   break;
@@ -151,7 +142,7 @@ function useGuthriePropertiesRewrite({
           : value;
       }
     }
-  }, [Renderer, scopedVariables, variables]);
+  }, [Renderer, scopedVariables, variables, ...deps]);
 
   const [props, setProps] = useState<{}>((): {} => Object.fromEntries(
     Object.entries(properties)
@@ -164,7 +155,7 @@ function useGuthriePropertiesRewrite({
         updateByPath(previousProps, value, path);
       })
     );
-  }, [setProps]);
+  }, [setProps, ...deps]);
 
   useEffect(() => {
     commitRef.current = commitProperty;

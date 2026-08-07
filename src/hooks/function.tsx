@@ -33,7 +33,7 @@ function useGuthrieFnArgCallback() {
       }
 
       case "event": {
-        return event;
+        return arg.access ? touchByAccessSync(event, arg.access) : event;
       }
 
       case "fn": {

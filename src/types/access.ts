@@ -66,6 +66,7 @@ type Accessible = {
   access?: AccessDeclaration;
 };
 
+
 /**
  * Allows assigning a result to a variable.
  *
@@ -84,5 +85,5 @@ export type {
   Optionalable,
   AccessDeclaration,
   Accessible,
-  Exposable
+  Exposable,
 }

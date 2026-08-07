@@ -1,10 +1,10 @@
 "use client";
 
-import { callFnAsync } from "../renderer/fns.js";
-import { ExposableFn } from "../renderer/type.js";
+import { callFnAsync, callFnSync } from "../renderer/fns.js";
 import { useGuthrieEvents } from "../stores/events.js";
 import { useGuthrieRefs } from "../stores/refs.js";
 import { normalizeTargetName } from "./utils.js";
+import {FunctionEventActionDeclaration} from "../types/event.js";
 
 /**
  * Removes a previously registered event listener.
@@ -60,26 +60,27 @@ function removeListener(
 function addListener(
   target: HTMLElement | Window | string | null,
   name: keyof GlobalEventHandlersEventMap,
-  actions: ExposableFn[],
+  actions: FunctionEventActionDeclaration[],
   onEvent?: (...eventArgs: unknown[]) => Promise<void>
 ) {
   if (target === null) return;
 
   const targetName = normalizeTargetName(target);
-  const listener = (...eventArgs: unknown[]) => {
-    debugger
+  const listener = (eventArgs: unknown[]) => {
     onEvent?.(eventArgs);
 
     actions.forEach((fn) => {
+      if (fn.condition && !callFnSync(fn.condition, [eventArgs])) return;
+
       const argSubs: Record<number, unknown[]> = {};
 
       fn.args?.forEach((arg, index) => {
-        if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string") return;
+        if (arg.type === "number" || arg.type === "boolean" || arg.type === "string") return;
 
         if (arg.type === "event") argSubs[index] = eventArgs;
       });
-
-      void callFnAsync(fn, argSubs);
+      //void callFnAsync(fn, argSubs);
+      void callFnAsync(fn, eventArgs);
     });
   };
 
@@ -94,6 +95,7 @@ function addListener(
 
   if (oldListener) domTarget.removeEventListener(name, oldListener);
 
+  /*TODO: check listener type*/
   domTarget.addEventListener(name, listener);
   useGuthrieEvents.getState().addEvent(targetName, name, listener);
 }

@@ -16,6 +16,7 @@ import { Render } from "./types.js";
 import { VariablesConfig } from "../types/variable.js";
 import { EventConfig } from "../types/event.js";
 import { DefaultPropertiesProvider } from "../components/default-properties.js";
+import {Operators} from "../types/operation.js";
 
 /**
  * Props for the {@link Guthrie} component.
@@ -29,7 +30,7 @@ type GuthrieProps = {
   elements: Elements;
   functions: Functions;
   render: Render;
-  //operators: Operators;
+  operators: Operators;
   variables?: VariablesConfig;
   event?: {
     rootRef?: RefObject<HTMLElement | null>;
@@ -67,7 +68,7 @@ function Guthrie({
   elements,
   functions,
   render,
-  //operators,
+  operators,
   event
 }: GuthrieProps) {
   const setElements = useGuthrieElements((state) => state.setElements);
@@ -86,6 +87,10 @@ function Guthrie({
   useEffect(() => {
     setFns(functions);
   }, [functions]);
+
+  useEffect(() => {
+    setOperators(operators);
+  }, [operators]);
 
   useEffect(() => {
     addRef("window", (event?.rootRef ?? windowRef).current);

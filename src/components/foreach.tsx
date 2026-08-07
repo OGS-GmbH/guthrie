@@ -2,8 +2,9 @@
 
 import {ReactNode} from "react";
 import {Fragment} from "react/jsx-runtime";
-import type {Exposable} from "../renderer/type.js";
 import {ScopedVariables} from "./scoped-variables.js";
+import {Exposable} from "../types/access.js";
+import {ElementDeclaration} from "../types/element.js";
 
 /**
  * Props for the {@link ForEach} component.
@@ -14,6 +15,7 @@ import {ScopedVariables} from "./scoped-variables.js";
  */
 type ForEachProps = {
   items: unknown[];
+  elements: ElementDeclaration[]
   children: ReactNode;
 } & Partial<Exposable>;
 

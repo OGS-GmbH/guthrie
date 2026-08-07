@@ -15,6 +15,7 @@ export * from "./functions/utils.js";
 export * from "./hooks/event.js";
 export * from "./hooks/properties.js";
 export * from "./hooks/scoped-variables.js";
+export * from "./hooks/flow-control.js";
 
 export * from "./options/config.js";
 export * from "./options/elements.js";
@@ -24,6 +25,7 @@ export * from "./options/operations.js";
 export * from "./renderer/fns.js";
 export * from "./renderer/operations.js";
 export * from "./renderer/renderer.js";
+export * from "./renderer/hooks.js";
 export * from "./renderer/root.js";
 export * from "./renderer/variables.js";
 export * from "./renderer/types.js";

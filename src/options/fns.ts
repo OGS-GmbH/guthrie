@@ -1,8 +1,8 @@
 "use client";
 
 import { addListener, removeListener } from "../functions/internals.js";
-import type { Fns } from "../renderer/type.js";
 import {useGuthrieVariables} from "../stores/variables.js";
+import {Functions} from "../types/function.js";
 
 /**
  * Internal functions provided by the system.
@@ -14,7 +14,7 @@ import {useGuthrieVariables} from "../stores/variables.js";
  * @category Configuration
  * @author Simon Kovtyk
  */
-const internal: Fns = {
+const internal: Functions = {
   "remove-listener": removeListener,
   "add-listener": addListener
 };
@@ -34,7 +34,7 @@ const internal: Fns = {
  * @author Simon Kovtyk
  * @todo To be completed
  */
-const native: Fns = {
+const native: Functions = {
   fetch: fetch,
   // oxlint-disable no-console
   log: console.log,
@@ -76,10 +76,11 @@ const native: Fns = {
     iterable.map(callback),
   filter: (iterable: unknown[], callback: (value: unknown, index: number) => boolean) =>
     iterable.map(callback),
+  includes:(iterable: unknown[], value: unknown) => iterable.includes(value),
+  not: (value: unknown) => !value,
 
   "set-variable": (name: string, value: unknown) => {
-    console.log("set-variable", name, value);
-    useGuthrieVariables.getState().variables[name] = value;
+    useGuthrieVariables.getState().addVariable(name, value);
   }
 };
 
