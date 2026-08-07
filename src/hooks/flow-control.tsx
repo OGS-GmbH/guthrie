@@ -1,9 +1,10 @@
-import {Renderer, useRendererProps} from "../renderer/renderer.js";
+import {Renderer } from "../renderer/renderer.js";
 import {ScopedVariables} from "../components/scoped-variables.js";
 import {ElementDeclaration} from "../types/element.js";
 import {ForProps} from "../components/for.js";
 import {ForEachProps} from "../components/foreach.js";
 import {touchByAccessSync} from "../renderer/variables.js";
+import {useRendererProps} from "../renderer/hooks.js";
 
 type ForEachDeclaration = Omit<ElementDeclaration, "element" | "rawProperties"> & {
   element: "for-each";
