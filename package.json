@@ -58,6 +58,7 @@
     "@ogs-gmbh/react-hooks": "^1.0.1",
     "es-toolkit": "^1.46.1",
     "html-react-parser": "^6.0.1",
+    "immer": "^11.1.8",
     "react": "^19.2.5",
     "react-hook-form": "^7.73.1",
     "react-merge-refs": "^3.0.2",

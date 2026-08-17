@@ -2,8 +2,9 @@
 
 import { Fragment, useMemo } from "react";
 import { Renderer } from "../renderer/renderer.js";
-import type { DynamicElementProps, Exposable } from "../renderer/type.js";
 import { ScopedVariables } from "./scoped-variables.js";
+import {ElementDeclaration} from "../types/element.js";
+import {Exposable} from "../types/access.js";
 
 /**
  * Props for the {@link For} component.
@@ -15,7 +16,7 @@ import { ScopedVariables } from "./scoped-variables.js";
 type ForProps = {
   count: number;
   iterator: {
-    children: DynamicElementProps[];
+    children: ElementDeclaration[];
   };
 } & Partial<Exposable>;
 

@@ -2,10 +2,16 @@
 
 import { type RefObject } from "react";
 import { addListener } from "../functions/internals.js";
-import type { EventFnAction, EventVarAction, ExposableEvent } from "../renderer/type.js";
 import { touchByAccessAsync } from "../renderer/variables.js";
 import { useGuthrieVariables } from "../stores/variables.js";
+import {
+  CallbackEventActionDeclaration,
+  ExposableEventDeclaration,
+  FunctionEventActionDeclaration,
+  VariableEventActionDeclaration
+} from "../types/event.js";
 import { useScopedVariables } from "./scoped-variables.js";
+import {callFnSync} from "../renderer/fns.js";
 
 /**
  * Return type of {@link useGuthrieEventsCallback}.
@@ -16,7 +22,7 @@ import { useScopedVariables } from "./scoped-variables.js";
  */
 type UseGuthrieEventsCallbackReturn = (
   target: RefObject<HTMLElement | Window | string | null>,
-  events: ExposableEvent[] | undefined
+  events: ExposableEventDeclaration[] | undefined
 ) => void;
 
 /**
@@ -43,10 +49,14 @@ function useGuthrieEventsCallback(): UseGuthrieEventsCallbackReturn {
 
   return (
     target: RefObject<HTMLElement | Window | string | null>,
-    events: ExposableEvent[] | undefined
+    events: ExposableEventDeclaration[] | undefined
   ) => {
     events?.forEach((event) => {
-      const actions = { fn: [] as EventFnAction[], var: [] as EventVarAction[] };
+      const actions = {
+        fn: [] as FunctionEventActionDeclaration[],
+        var: [] as VariableEventActionDeclaration[],
+        callback: [] as CallbackEventActionDeclaration[]
+      };
 
       event.actions.forEach((action) => {
         switch (action.type) {
@@ -56,10 +66,22 @@ function useGuthrieEventsCallback(): UseGuthrieEventsCallbackReturn {
           case "var":
             actions.var.push(action);
             break;
+          case "callback":
+            actions.callback.push(action);
+            break;
         }
       });
+
       // oxlint-disable-next-line no-shadow
-      addListener(target.current, event.name, actions.fn, async (event: Event) => {
+      addListener(target.current, event.name, actions.fn, async (...eventArgs: unknown[]) => {
+        for (const callbackAction of actions.callback) {
+          if (!callbackAction.access) continue;
+
+          if (callbackAction.condition && !callFnSync(callbackAction.condition, eventArgs, scopedVariables)) continue;
+
+          await touchByAccessAsync(eventArgs, callbackAction.access);
+        }
+
         for (const variableAction of actions.var) {
           const variable =
             scopedVariables?.[variableAction.name] ??
@@ -68,9 +90,9 @@ function useGuthrieEventsCallback(): UseGuthrieEventsCallbackReturn {
             variableAction.access
               ? await touchByAccessAsync(variable, variableAction.access)
               : variable
-          ) as (event: Event) => void;
+          ) as (...eventArgs: unknown[]) => void;
 
-          touched(event);
+          typeof touched === "function" && touched(eventArgs);
         }
       });
     });

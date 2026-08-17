@@ -15,6 +15,7 @@ export * from "./functions/utils.js";
 export * from "./hooks/event.js";
 export * from "./hooks/properties.js";
 export * from "./hooks/scoped-variables.js";
+export * from "./hooks/flow-control.js";
 
 export * from "./options/config.js";
 export * from "./options/elements.js";
@@ -24,9 +25,10 @@ export * from "./options/operations.js";
 export * from "./renderer/fns.js";
 export * from "./renderer/operations.js";
 export * from "./renderer/renderer.js";
+export * from "./renderer/hooks.js";
 export * from "./renderer/root.js";
-export * from "./renderer/type.js";
 export * from "./renderer/variables.js";
+export * from "./renderer/types.js";
 
 export * from "./stores/elements.js";
 export * from "./stores/events.js";
@@ -36,5 +38,17 @@ export * from "./stores/operators.js";
 export * from "./stores/refs.js";
 export * from "./stores/templates.js";
 export * from "./stores/variables.js";
+
+export * from "./types/access.js";
+export * from "./types/async.js";
+export * from "./types/callback.js";
+export * from "./types/default-props.js";
+export * from "./types/element.js";
+export * from "./types/event.js";
+export * from "./types/function.js";
+export * from "./types/lifecycle.js";
+export * from "./types/operation.js";
+export * from "./types/type.js";
+export * from "./types/variable.js";
 
 export * from "./operations.js";

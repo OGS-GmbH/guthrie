@@ -38,9 +38,10 @@ function buildCallback(fn: ExposableFn) {
     const argSubs: Record<number, unknown> = {};
 
     fn.args?.forEach((arg, index) => {
-      if (typeof arg === "number" || typeof arg === "boolean" || typeof arg === "string") return;
+      if (arg.type !== "callback")
+        return;
 
-      if (arg.type === "zod-callback") argSubs[index] = val;
+      argSubs[index] = val;
     });
 
     return callFnSync(fn, argSubs);
@@ -60,9 +61,10 @@ function buildSuperRefineCallback(fn: ExposableFn) {
     const argSubs: Record<number, unknown> = {};
 
     fn.args?.forEach((arg, index) => {
-      if (isPrimitive(arg)) return;
+      if (arg.type !== "callback")
+        return;
 
-      if (arg.type === "zod-callback") argSubs[index] = { val, ctx };
+      argSubs[index] = { val, ctx };
     });
 
     void callFnSync(fn, argSubs);

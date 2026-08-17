@@ -1,7 +1,8 @@
 "use client";
 
 import { addListener, removeListener } from "../functions/internals.js";
-import type { Fns } from "../renderer/type.js";
+import {useGuthrieVariables} from "../stores/variables.js";
+import {Functions} from "../types/function.js";
 
 /**
  * Internal functions provided by the system.
@@ -13,9 +14,9 @@ import type { Fns } from "../renderer/type.js";
  * @category Configuration
  * @author Simon Kovtyk
  */
-const internal: Fns = {
-  removeListener: removeListener,
-  addListener: addListener
+const internal: Functions = {
+  "remove-listener": removeListener,
+  "add-listener": addListener
 };
 
 /**
@@ -33,7 +34,7 @@ const internal: Fns = {
  * @author Simon Kovtyk
  * @todo To be completed
  */
-const native: Fns = {
+const native: Functions = {
   fetch: fetch,
   // oxlint-disable no-console
   log: console.log,
@@ -59,6 +60,10 @@ const native: Fns = {
   toNumber: (val: unknown) => Number(val),
   toString: (val: unknown) => String(val),
   toBoolean: (val: unknown) => Boolean(val),
+  join: (separator: string, ...args: string[]) => args.join(separator),
+  when: (condition: boolean, ifCase: unknown, elseCase?: unknown, elseCondition=true) =>
+    condition ? ifCase : elseCondition ? elseCase : undefined,
+
   // TODO: Array
 
   /*
@@ -70,7 +75,13 @@ const native: Fns = {
   forEach: (iterable: unknown[], callback: (value: unknown, index: number) => void) =>
     iterable.map(callback),
   filter: (iterable: unknown[], callback: (value: unknown, index: number) => boolean) =>
-    iterable.map(callback)
+    iterable.map(callback),
+  includes:(iterable: unknown[], value: unknown) => iterable.includes(value),
+  not: (value: unknown) => !value,
+
+  "set-variable": (name: string, value: unknown) => {
+    useGuthrieVariables.getState().addVariable(name, value);
+  }
 };
 
 export { native, internal };
